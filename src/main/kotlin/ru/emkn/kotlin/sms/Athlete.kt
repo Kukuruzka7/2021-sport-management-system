@@ -1,6 +1,14 @@
 package ru.emkn.kotlin.sms
 
-typealias AthleteNumber = Int
+data class AthleteNumber (val value: String){
+    init {
+        TODO()
+    }
+}
+
+enum class Sex {
+    MALE, FEMALE
+}
 
 class Athlete {
 
