@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.*
+import java.util.*
 
 class AthleteNumber(val value: String) {
 }
@@ -26,10 +27,10 @@ class MedicalCondition(val canParticipate: Boolean = false) {
 
 class Athlete(
     val number: AthleteNumber,
-    private val name: Name,
+    val name: Name,
     private val sex: Sex,
-    private val birthDate: LocalDate,
-    private val sportCategory: Category,
+    val birthDate: Date,
+    val sportCategory: Category,
     private val insurance: Insurance,
     private val medicalCondition: MedicalCondition,
     private val team: Team
