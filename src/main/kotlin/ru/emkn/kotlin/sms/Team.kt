@@ -1,8 +1,8 @@
 package ru.emkn.kotlin.sms
 
-class TeamName(val name: String){
+class TeamName(val name: String) {
 }
 
-class Team(val teamName: TeamName, val athleteList: List<Athlete>) {
-
+class Team(val teamName: TeamName) {
+    var athleteList: List<Athlete> = emptyList()
 }
