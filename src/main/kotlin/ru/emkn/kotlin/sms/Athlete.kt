@@ -32,7 +32,7 @@ class Athlete(
     private val sportCategory: Category,
     private val insurance: Insurance,
     private val medicalCondition: MedicalCondition,
-    private val Team: Team
+    private val team: Team
 ) {
     private val group: Group = TODO() // в какой момент мы им это присваиваем? или может это не должно быть?
 }
