@@ -14,4 +14,13 @@ class Competition(val info: MetaInfo, val application: Application) {
     val groups: List<Group> = TODO()
     val numerator: Map<Athlete, AthleteNumber> = TODO()
 
+    val protocol = StartProtocol(groups)
+
+    init {
+     ///   protocol.save(TODO())
+    }
+
+    fun run(table: Table): FinishProtocol {
+        TODO()
+    }
 }

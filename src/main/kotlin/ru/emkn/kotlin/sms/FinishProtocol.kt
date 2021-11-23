@@ -10,7 +10,7 @@ class GroupProtocol {
 
 class AthleteProtocol
 
-class Protocol(table: Table) {
+class FinishProtocol(table: Table) {
     private val groupProtocol: Map<Group, GroupProtocol> = TODO()
     private val teamProtocols: Map<Team, TeamProtocol> = TODO()
     private val athleteProtocol: Map<Athlete, AthleteProtocol> = TODO()
