@@ -1,4 +1,5 @@
-package ru.emkn.kotlin.sms
+package ru.emkn.kotlin.sms.startprotocol
+import ru.emkn.kotlin.sms.Group
 
 import java.io.File
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter

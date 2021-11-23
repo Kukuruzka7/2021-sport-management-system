@@ -1,4 +1,9 @@
-package ru.emkn.kotlin.sms
+package ru.emkn.kotlin.sms.resultprotocol
+
+import ru.emkn.kotlin.sms.Athlete
+import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.Table
+import ru.emkn.kotlin.sms.Team
 
 class TeamProtocol() {
     fun toCSV(): Any = TODO()
@@ -17,7 +22,7 @@ class Protocol(table: Table) {
 
     val csvByTeams = generateCSVbyTeams()
     val csvByGroups = generateCSVbyGroups()
-    val overallCSB = generateOverallCSV()
+    val overallCSV = generateOverallCSV()
 
     private fun generateCSVbyTeams(): Any = TODO()
     private fun generateCSVbyGroups(): Any = TODO()
