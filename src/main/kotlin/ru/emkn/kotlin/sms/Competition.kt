@@ -12,6 +12,6 @@ class Competition(val info: MetaInfo, val application: Application) {
     val teamList: List<Team> = TODO()
     val athleteList: List<Athlete> = TODO()
     val groupList: List<Group> = TODO()
-    val numerator: Map<AthleteNumber, Athlete> = TODO()
+    val numerator: Map<Athlete, AthleteNumber> = TODO()
 
 }
