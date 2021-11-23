@@ -1,8 +1,19 @@
 package ru.emkn.kotlin.sms
 
+import java.io.File
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+
 class StartProtocol(listGroup: List<Group>) {
-    val generateCsv: List<GroupStartProtocol>
+    val generateCSV: List<GroupStartProtocol>
     init {
-        generateCsv = listGroup.map { GroupStartProtocol(it) }
+        generateCSV = listGroup.map { GroupStartProtocol(it) }
+    }
+}
+
+class GroupStartProtocol(val group: Group) {
+    val toCSV: Any = writeGroupToCSV()
+
+    private fun writeGroupToCSV() {
+        TODO("Не обсудили файловую систему")
     }
 }
