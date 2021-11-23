@@ -1,6 +1,6 @@
 package ru.emkn.kotlin.sms
 
-import kotlinx.datetime.*
+import kotlinx.datetime.LocalDate
 
 class AthleteNumber(val value: String) {
 }
@@ -23,11 +23,11 @@ class Athlete(
     private val sex: Sex,
     private val birthDate: LocalDate,
     private val sportCategory: Category,
-    private val preferredGroup: GroupType = GroupType("")
+    private val preferredGroup: GroupType = GroupType(""),
+    val team: Team
 ) {
-    val team: Team = TODO()
     val number: AthleteNumber = TODO()
-    private val group: Group = TODO() // в какой момент мы им это присваиваем? или может это не должно быть?
+    private val group: Group = TODO()
 }
 
 
