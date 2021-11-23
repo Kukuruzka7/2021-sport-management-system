@@ -1,8 +1,5 @@
 package ru.emkn.kotlin.sms
 
-import java.io.File
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-
 class StartProtocol(listGroup: List<Group>) {
     val generateCSV: List<GroupStartProtocol>
     init {

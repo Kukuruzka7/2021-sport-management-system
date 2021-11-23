@@ -20,6 +20,7 @@ dependencies {
     testImplementation "junit:junit:4.13.2"
 
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0") //for JVM platform
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.0")
 }
 
 test {
