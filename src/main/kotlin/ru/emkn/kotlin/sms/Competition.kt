@@ -9,9 +9,9 @@ enum class SportType {
 data class MetaInfo(val name: String, val date: Date, val sport: SportType)
 
 class Competition(val info: MetaInfo, val application: Application) {
-    val teamList: List<Team> = TODO()
-    val athleteList: List<Athlete> = TODO()
-    val groupList: List<Group> = TODO()
-    val numerator: Map<AthleteNumber, Athlete> = TODO()
+    val teams: List<Team> = TODO()
+    val athletes: List<Athlete> = TODO()
+    val groups: List<Group> = TODO()
+    val numerator: Map<Athlete, AthleteNumber> = TODO()
 
 }

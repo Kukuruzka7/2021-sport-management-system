@@ -15,7 +15,8 @@ class TeamApplication(file: File) {
     }
 
     private fun getTeamName(rows: List<List<String>>): TeamName {
-        //обработка не корректных данных
+        //обработка некорректных данных
+        //выглядит как что-то непонятное, нужно в комментариях описать, какой с каким форматом csv-файла мы работаем
         return TeamName(rows[0][0])
     }
 
