@@ -8,10 +8,22 @@ enum class SportType {
 
 data class MetaInfo(val name: String, val date: Date, val sport: SportType)
 
-class Competition(val info: MetaInfo, val application: Application) {
-    val teamList: List<Team> = TODO()
-    val athleteList: List<Athlete> = TODO()
-    val groupList: List<Group> = TODO()
-    val numerator: Map<Athlete, AthleteNumber> = TODO()
+class Competition {
+    lateinit var info: MetaInfo
+    lateinit var teamList: List<Team>
+    lateinit var athleteList: List<Athlete>
+    lateinit var groupList: List<Group>
+    lateinit var numerator: Map<Athlete, AthleteNumber>
+    lateinit var athleteByNumber: Map<Athlete, Number>
 
+    constructor(application: Application) {
+    }
+
+    constructor(data: CompetitionData) {
+
+    }
+
+    fun toCompetitionData(): CompetitionData {
+        return TODO()
+    }
 }
