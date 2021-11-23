@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms
 
 class StartProtocol(listGroup: List<Group>) {
     val generateCSV: List<GroupStartProtocol>
+
     init {
         generateCSV = listGroup.map { GroupStartProtocol(it) }
     }
