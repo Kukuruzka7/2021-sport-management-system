@@ -1,14 +1,25 @@
 package ru.emkn.kotlin.sms
+
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import java.io.File
+import java.util.*
+
 class AthleteData
-//Номер,Имя,Пол,ГодРождения,Разряд, ПредпочтительнаяГруппа
-class CompetitionData (val athletesData: List<List<String>>) {
+
+class CompetitionData(val athletesData: List<List<String>>) {
     fun save(fileName: String) {
-        TODO()
+        try {
+            csvWriter().open(fileName) {
+                writeRow(firstRaw)
+                athletesData.forEach { writeRow(it) }
+            }
+        } catch (_: Exception) {
+            throw FileCouldNotBeCreated(fileName)
+        }
     }
 
     companion object {
-        enum class Fields {
-            NUMBER, NAME, BIRTH_DATE, SPORT_CATEGORY, PREFERRED_GROUP, GROUP, TEAM
-        }
+        val firstRaw = listOf("Номер", "Имя", "Год рождения", "Разряд", "Предпочитаемая группа", "Группа", "Команда")
+
     }
 }

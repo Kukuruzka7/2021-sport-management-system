@@ -35,3 +35,5 @@ class ResultByCheckpointInvalidRow(fileName: String, line: List<String>) :
     Exception("Файл $fileName содержит некорректную строку. Ожидается \n${InputCheckpointResults.CHECKPOINT_RESULT_FORMAT}\n В реальность\n $line")
 
 class DirectoryCouldNotBeCreated(path: String) : Exception("Не получилось создать директорию $path")
+
+class FileCouldNotBeCreated(fileName: String) : Exception("Не получилось создать файл $fileName")
