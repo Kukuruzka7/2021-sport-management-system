@@ -1,16 +1,25 @@
-package ru.emkn.kotlin.sms
+package ru.emkn.kotlin.sms.finishprotocol
+
+import ru.emkn.kotlin.sms.*
+import java.time.LocalDateTime
+import java.time.Year
 
 class TeamProtocol() {
-    fun toCSV(): Any = TODO()
+    val toCSV: Any = TODO()
 }
 
 class GroupProtocol {
-    fun toCSV(): Any = TODO()
+    val toCSV: Any = TODO()
 }
 
-class AthleteProtocol(fileName: String) {
-
-}
+data class AthleteProtocol(
+    val place: Int,
+    val number: AthleteNumber,
+    val name: Name,
+    val year: Year,
+    val category: Category,
+    val finishTime: LocalDateTime
+)
 
 class FinishProtocol(table: Table) {
     private val groupProtocol: Map<Group, GroupProtocol> = TODO()
@@ -19,10 +28,14 @@ class FinishProtocol(table: Table) {
 
     val csvByTeams = generateCSVbyTeams()
     val csvByGroups = generateCSVbyGroups()
-    val overallCSB = generateOverallCSV()
+    val overallCSV = generateOverallCSV()
 
     private fun generateCSVbyTeams(): Any = TODO()
     private fun generateCSVbyGroups(): Any = TODO()
     private fun generateOverallCSV(): Any = TODO()
+
+    init {
+        table.map.map { it -> }
+    }
 
 }

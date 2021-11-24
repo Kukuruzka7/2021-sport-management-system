@@ -18,10 +18,10 @@ class Category(val categoryName: String) {
 }
 
 class Athlete(
-    private val name: Name,
+    val name: Name,
     private val sex: Sex,
-    private val birthDate: LocalDate,
-    private val sportCategory: Category,
+    val birthDate: LocalDate?,
+    val sportCategory: Category,
     private val preferredGroup: GroupType = GroupType(""),
     val team: Team
 ) {
