@@ -1,8 +1,5 @@
 package ru.emkn.kotlin.sms
 
-import ru.emkn.kotlin.sms.input_result.InputAthleteResults
-import ru.emkn.kotlin.sms.input_result.InputCheckpointResults
-
 class WeHaveAProblem(problem: String) : Exception(problem)
 
 class InvalidDateFormat(fileName: String, date: String) : Exception("В файле $fileName некорректный формат даты: $date")
@@ -43,12 +40,11 @@ class DirectoryCouldNotBeCreated(path: String) : Exception("Не получил�
 
 class FileCouldNotBeCreated(fileName: String) : Exception("Не получилось создать файл $fileName")
 
-class CompetitionDataTooFewArgumentsInRow(row: List<String>) :
-    Exception("Файл [CompetitionData] поврежден: Ожидается\n${CompetitionData.inputFormat}\nВ реальности\n$row")
-
 class CompetitionDataInvalidSex(sex: String) : Exception("Некорректный пол $sex, введите М или Ж")
 
 class CompetitionDataInvalidDate(date: String) : Exception("Некорректная дата $date")
 
 class CompetitionDataInvalidSportCategory(sportCategory: String) :
     Exception("Некорректный спортивный разряд: $sportCategory")
+
+class FileCouldNotBeCreated(fileName: String) : Exception("Не получилось создать файл $fileName")
