@@ -23,12 +23,11 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         team.athleteList = processingData(rows)
     }
 
-
     private fun processingData(rows: List<List<String>>): List<Athlete> {
         return rows.subList(1, rows.size).map { processingRow(it) }
     }
 
-    fun processingRow(row: List<String>): Athlete {
+    private fun processingRow(row: List<String>): Athlete {
         val name = Name(row[1], row[0])
         val sex = when (row[2]) {
             "М" -> Sex.MALE

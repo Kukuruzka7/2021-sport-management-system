@@ -14,19 +14,30 @@ class Name(val firstName: String, val lastName: String) {
     val fullName: String = "$firstName $lastName"
 }
 
-class Category(val categoryName: String) {
-}
+class Category(val categoryName: String)
+
+private var LastUseNumber = 1
 
 class Athlete(
     val name: Name,
-    private val sex: Sex,
+    val sex: Sex,
     val birthDate: LocalDate?,
     val sportCategory: Category,
-    private val preferredGroup: GroupType = GroupType(""),
+    private val preferredGroup: Race = Race(""),
     val team: Team
 ) {
-    val number: AthleteNumber = TODO()
-    private val group: Group = TODO()
+    val number: AthleteNumber
+    lateinit var  group: Group
+
+    init{
+        number = numerate()
+    }
+
+
+    private fun numerate(): AthleteNumber {
+        LastUseNumber++
+        return AthleteNumber(LastUseNumber.toString())
+    }
 }
 
 
