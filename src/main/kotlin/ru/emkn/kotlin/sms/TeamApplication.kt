@@ -21,7 +21,6 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         team.athleteList = processingData(rows)
     }
 
-
     private fun processingData(rows: List<List<String>>): List<Athlete> {
         return rows.subList(1, rows.size).map { processingRow(it) }
     }

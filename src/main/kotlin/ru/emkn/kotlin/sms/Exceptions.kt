@@ -1,5 +1,7 @@
 package ru.emkn.kotlin.sms
 
+class WeHaveAProblem(problem: String) : Exception(problem)
+
 class InvalidDateFormat(fileName: String, date: String) : Exception("В файле $fileName некорректный формат даты: $date")
 
 class ApplicationCanNotBeRead(numberOfApplication: Int) :
@@ -33,3 +35,5 @@ class ResultMissesCheckPointName(fileName: String) :
 
 class ResultByCheckpointInvalidRow(fileName: String, line: List<String>) :
     Exception("Файл $fileName содержит некорректную строку. Ожидается \n${InputCheckpointResults.CHECKPOINT_RESULT_FORMAT}\n В реальность\n $line")
+
+class DirectoryCouldNotBeCreated(path: String) : Exception("Не получилось создать директорию $path")
