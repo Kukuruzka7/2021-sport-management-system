@@ -23,16 +23,15 @@ class Athlete(
     val sex: Sex,
     val birthDate: LocalDate?,
     val sportCategory: Category,
-    private val preferredGroup: Race = Race(""),
-    val team: Team
+    private val preferredGroup: GroupName = GroupName(""),
+    val teamName: TeamName,
+    val groupName: GroupName
 ) {
     val number: AthleteNumber
-    lateinit var group: Group
 
     init {
         number = numerate()
     }
-
 
     private fun numerate(): AthleteNumber {
         LastUseNumber++

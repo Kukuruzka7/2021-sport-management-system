@@ -1,8 +1,6 @@
 package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-import java.io.File
-import java.util.*
 
 class CompetitionData(val athletesData: List<List<String>>) {
     fun save(fileName: String) {
@@ -18,6 +16,5 @@ class CompetitionData(val athletesData: List<List<String>>) {
 
     companion object {
         val firstRaw = listOf("Номер", "Имя", "Год рождения", "Разряд", "Предпочитаемая группа", "Группа", "Команда")
-
     }
 }

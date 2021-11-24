@@ -1,7 +1,8 @@
-package ru.emkn.kotlin.sms
+package ru.emkn.kotlin.sms.application
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
+import ru.emkn.kotlin.sms.*
 import java.io.File
 
 class TeamApplication(file: File, val numberOfApplication: Int) {
@@ -18,7 +19,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         checkFormatOfApplication(numberOfApplication, rows)
         teamName = TeamName(rows[0][0])
         team = Team(teamName)
-        team.athleteList = processingData(rows)
+        team.athletes = processingData(rows)
     }
 
     private fun processingData(rows: List<List<String>>): List<Athlete> {
@@ -31,7 +32,14 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
 
         val birthDate = LocalDate(row[Fields.BIRTH_DATE.ordinal].toInt(), 1, 1)
         val sportCategory = Category(row[Fields.SPORT_CATEGORY.ordinal])
-        return Athlete(name, sex, birthDate, sportCategory, team = team)
+        return Athlete(
+            name,
+            sex,
+            birthDate,
+            sportCategory,
+            teamName = teamName,
+            groupName = GroupName("$sex${birthDate.year}")
+        )
     }
 
     private fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
