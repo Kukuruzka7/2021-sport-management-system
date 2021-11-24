@@ -26,26 +26,24 @@ class StartProtocol(listGroup: List<Group>, name: String) {
 }
 
 class GroupStartProtocol(private val group: Group, path: String) {
-    private val groupPath: String = "$path/${group.type.name}.csv"
+    private val groupPath: String = "$path/${group.race.groupName}.csv"
     val toCSV = writeGroupToCSV()
 
     private fun writeGroupToCSV() {
         val startTime = GregorianCalendar()
-        var num = 1
         startTime.set(2021, 12, 1, 12, 0, 0)
         File(groupPath).createNewFile()
         csvWriter().open(groupPath) {
-            writeRow(group.type.name, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
+            writeRow(group.race.groupName, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
             group.athletes.forEach { athlete ->
                 writeRow(
-                    "${group.type.name}-$num",
+                    "${group.race.groupName}-${athlete.number}",
                     athlete.name.firstName,
                     athlete.name.secondName,
                     athlete.birthDate?.year,
                     athlete.sportCategory.categoryName,
                     startTime.timeToString(),
                 )
-                num++ // TODO(Систему с выдачей номеров переделать)
                 startTime.add(GregorianCalendar.MINUTE, 1)
             }
         }

@@ -1,5 +1,7 @@
 package ru.emkn.kotlin.sms
 
+class WeHaveAProblem(problem: String) : Exception(problem)
+
 class InvalidDateFormat(fileName: String, date: String) : Exception("В файле $fileName некорректный формат даты: $date")
 
 class ApplicationCanNotBeRead(numberOfApplication: Int) :
