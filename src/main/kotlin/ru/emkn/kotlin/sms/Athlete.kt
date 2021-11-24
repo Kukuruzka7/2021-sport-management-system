@@ -10,8 +10,8 @@ enum class Sex {
     MALE, FEMALE
 }
 
-class Name(val firstName: String, val secondName: String) {
-    val fullName: String = TODO()
+class Name(val firstName: String, val lastName: String) {
+    val fullName: String = "$firstName $lastName"
 }
 
 class Category(val categoryName: String) {
