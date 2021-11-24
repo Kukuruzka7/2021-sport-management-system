@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
         Name("Сибгатуллин", "Данил"),
         Sex.MALE,
         null,
-        Category("I"),
+        Category("КМС"),
         GroupType("aboba")
     )
     birthDate.set(2004, 3, 24, 0, 0, 0);

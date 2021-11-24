@@ -11,6 +11,7 @@ class StartProtocol(listGroup: List<Group>, name: String) {
 
     init {
         path = "src/main/resources/competitions/$name"
+        // Нам рассказывали, что с фалом могут произойти какие-то беды, поэтому нужно проверять прям на месте
         if (!File(path).exists()) {
             try {
                 File(path).mkdir()
@@ -26,7 +27,7 @@ class StartProtocol(listGroup: List<Group>, name: String) {
 
 class GroupStartProtocol(private val group: Group, path: String) {
     private val groupPath: String = "$path/${group.name.name}.csv"
-    val toCSV: Any = writeGroupToCSV()
+    val toCSV = writeGroupToCSV()
 
     private fun writeGroupToCSV() {
         val startTime = GregorianCalendar()
@@ -34,7 +35,6 @@ class GroupStartProtocol(private val group: Group, path: String) {
         startTime.set(2021, 12, 1, 12, 0, 0)
         File(groupPath).createNewFile()
         csvWriter().open(groupPath) {
-
             writeRow(group.name.name, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
             group.athletes.forEach { athlete ->
                 writeRow(
@@ -43,13 +43,17 @@ class GroupStartProtocol(private val group: Group, path: String) {
                     athlete.name.secondName,
                     athlete.birthDate?.year,
                     athlete.sportCategory.categoryName,
-                    "${startTime.get(11) / 10}${startTime.get(11) % 10}:" +
-                            "${startTime.get(12) / 10}${startTime.get(12) % 10}:" +
-                            "${startTime.get(13) / 10}${startTime.get(13) % 10}",
+                    startTime.timeToString(),
                 )
-                num++
+                num++ // TODO(Систему с выдачей номеров переделать)
                 startTime.add(GregorianCalendar.MINUTE, 1)
             }
         }
+    }
+
+    private fun GregorianCalendar.timeToString(): String {
+        return "${this.get(11) / 10}${this.get(11) % 10}:" +
+                "${this.get(12) / 10}${this.get(12) % 10}:" +
+                "${this.get(13) / 10}${this.get(13) % 10}"
     }
 }
