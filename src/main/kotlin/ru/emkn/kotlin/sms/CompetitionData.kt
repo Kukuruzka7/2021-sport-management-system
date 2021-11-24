@@ -4,8 +4,6 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.io.File
 import java.util.*
 
-class AthleteData
-
 class CompetitionData(val athletesData: List<List<String>>) {
     fun save(fileName: String) {
         try {

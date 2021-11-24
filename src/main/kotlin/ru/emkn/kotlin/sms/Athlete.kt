@@ -27,9 +27,9 @@ class Athlete(
     val team: Team
 ) {
     val number: AthleteNumber
-    lateinit var  group: Group
+    lateinit var group: Group
 
-    init{
+    init {
         number = numerate()
     }
 
