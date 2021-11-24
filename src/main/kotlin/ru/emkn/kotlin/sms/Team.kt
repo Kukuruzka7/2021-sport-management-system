@@ -4,5 +4,5 @@ class TeamName(val name: String) {
 }
 
 class Team(val teamName: TeamName) {
-    lateinit var athleteList: List<Athlete>
+    lateinit var athletes: List<Athlete>
 }
