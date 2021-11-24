@@ -7,7 +7,7 @@ class AthleteNumber(val value: String) {
 }
 
 enum class Sex {
-    MALE, FEMALE
+    MALE, FEMALE, X
 }
 
 class Name(val firstName: String, val lastName: String) {

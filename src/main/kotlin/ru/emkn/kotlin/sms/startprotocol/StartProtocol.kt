@@ -41,7 +41,7 @@ class GroupStartProtocol(private val group: Group, path: String) {
                 writeRow(
                     "${group.race.groupName}-${athlete.number}",
                     athlete.name.firstName,
-                    athlete.name.secondName,
+                    athlete.name.lastName,
                     athlete.birthDate?.year,
                     athlete.sportCategory.categoryName,
                     startTime.timeToString(),

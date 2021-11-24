@@ -90,10 +90,11 @@ class InputCheckpointResults(override val fileName: String) : InputResult {
     }
 
     companion object {
-        val CHECKPOINT_RESULT_FORMAT = listOf("athlete number", "date")
-        val NUMBER_OF_ARGUMENTS_IN_ROW = CHECKPOINT_RESULT_FORMAT.size
-        val ATHLETE_NUM_INDEX_IN_ROW = 0
-        val ATHLETE_TIME_INDEX_IN_ROW = 1
+        val CHECKPOINT_RESULT_FORMAT = mapOf(Fields.ATHLETE_NUMBER to "athlete number", Fields.ATHLETE_TIME to "date")
+
+        enum class Fields {
+            ATHLETE_NUMBER, ATHLETE_TIME
+        }
     }
 
     private fun getCheckPoint(rows: List<List<String>>): CheckPoint {
@@ -104,14 +105,14 @@ class InputCheckpointResults(override val fileName: String) : InputResult {
     }
 
     private fun parseRow(row: List<String>, checkPoint: CheckPoint): CheckPointRes {
-        if (row.size < NUMBER_OF_ARGUMENTS_IN_ROW) {
+        if (row.size < Fields.values().size) {
             throw ResultByCheckpointInvalidRow(fileName, row)
         }
         val time = try {
-            LocalDate.parse(row[ATHLETE_TIME_INDEX_IN_ROW])
+            LocalDate.parse(row[Fields.ATHLETE_TIME.ordinal])
         } catch (_: java.time.format.DateTimeParseException) {
-            throw InvalidDateFormat(fileName, row[ATHLETE_TIME_INDEX_IN_ROW])
+            throw InvalidDateFormat(fileName, row[Fields.ATHLETE_TIME.ordinal])
         }
-        return CheckPointRes(checkPoint, AthleteNumber(row[ATHLETE_NUM_INDEX_IN_ROW]), time)
+        return CheckPointRes(checkPoint, AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal]), time)
     }
 }
