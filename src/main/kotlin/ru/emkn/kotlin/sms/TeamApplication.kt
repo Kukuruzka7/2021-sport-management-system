@@ -14,12 +14,13 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         throw ApplicationCanNotBeRead(numberOfApplication)
     }
     val teamName: TeamName
-    private val team: Team
+    val team: Team
 
     init {
         checkFormatOfApplication(numberOfApplication, rows)
         teamName = TeamName(rows[0][0])
-        team = Team(teamName, processingData(rows))
+        team = Team(teamName)
+        team.athleteList = processingData(rows)
     }
 
 
@@ -27,7 +28,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         return rows.subList(1, rows.size).map { processingRow(it) }
     }
 
-    private fun processingRow(row: List<String>): Athlete {
+    fun processingRow(row: List<String>): Athlete {
         val name = Name(row[1], row[0])
         val sex = when (row[2]) {
             "М" -> Sex.MALE
@@ -35,7 +36,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         }
         val birthDate = LocalDate(row[3].toInt(), 1, 1)
         val sportCategory = Category(row[4])
-        return Athlete(name, sex, birthDate, sportCategory)
+        return Athlete(name, sex, birthDate, sportCategory, team = team)
     }
 
     private fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {

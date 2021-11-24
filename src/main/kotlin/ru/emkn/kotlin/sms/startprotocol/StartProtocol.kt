@@ -26,7 +26,7 @@ class StartProtocol(listGroup: List<Group>, name: String) {
 }
 
 class GroupStartProtocol(private val group: Group, path: String) {
-    private val groupPath: String = "$path/${group.name.name}.csv"
+    private val groupPath: String = "$path/${group.type.name}.csv"
     val toCSV = writeGroupToCSV()
 
     private fun writeGroupToCSV() {
@@ -35,10 +35,10 @@ class GroupStartProtocol(private val group: Group, path: String) {
         startTime.set(2021, 12, 1, 12, 0, 0)
         File(groupPath).createNewFile()
         csvWriter().open(groupPath) {
-            writeRow(group.name.name, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
+            writeRow(group.type.name, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
             group.athletes.forEach { athlete ->
                 writeRow(
-                    "${group.name.name}-$num",
+                    "${group.type.name}-$num",
                     athlete.name.firstName,
                     athlete.name.secondName,
                     athlete.birthDate?.year,

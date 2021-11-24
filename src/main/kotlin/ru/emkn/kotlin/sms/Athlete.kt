@@ -1,9 +1,9 @@
 package ru.emkn.kotlin.sms
 
-import kotlinx.datetime.*
-import java.util.*
+import kotlinx.datetime.LocalDate
 
 class AthleteNumber(val value: String) {
+
 }
 
 enum class Sex {
@@ -11,9 +11,7 @@ enum class Sex {
 }
 
 class Name(val firstName: String, val secondName: String) {
-    override fun toString(): String {
-        TODO()
-    }
+    val fullName: String = TODO()
 }
 
 class Category(val categoryName: String) {
@@ -24,11 +22,11 @@ class Athlete(
     private val sex: Sex,
     val birthDate: LocalDate?,
     val sportCategory: Category,
-    private val preferredGroup: GroupType = GroupType("")
+    private val preferredGroup: GroupType = GroupType(""),
+    val team: Team
 ) {
-//    val team: Team = TODO()
-//    val number: AthleteNumber = TODO()
-//    private val group: Group = TODO() // в какой момент мы им это присваиваем? или может это не должно быть?
+    val number: AthleteNumber = TODO()
+    private val group: Group = TODO()
 }
 
 

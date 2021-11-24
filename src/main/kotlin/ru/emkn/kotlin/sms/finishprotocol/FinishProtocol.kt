@@ -1,4 +1,4 @@
-package ru.emkn.kotlin.sms.resultprotocol
+package ru.emkn.kotlin.sms.finishprotocol
 
 import ru.emkn.kotlin.sms.*
 import java.time.LocalDateTime
@@ -21,7 +21,7 @@ data class AthleteProtocol(
     val finishTime: LocalDateTime
 )
 
-class Protocol(table: Table) {
+class FinishProtocol(table: Table) {
     private val groupProtocol: Map<Group, GroupProtocol> = TODO()
     private val teamProtocols: Map<Team, TeamProtocol> = TODO()
     private val athleteProtocol: Map<Athlete, AthleteProtocol> = TODO()
