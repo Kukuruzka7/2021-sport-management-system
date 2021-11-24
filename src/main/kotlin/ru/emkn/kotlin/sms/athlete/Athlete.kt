@@ -20,11 +20,12 @@ class Name(val firstName: String, val lastName: String) {
 class Athlete(
     val name: Name,
     val sex: Sex,
-    val birthDate: LocalDate,
+    val birthDate: LocalDate?,
     val sportCategory: Category,
+    private val preferredGroup: GroupName = GroupName(""),
     val teamName: TeamName,
-    val number: AthleteNumber,
-    private val preferredGroup: Race = Race("")
+    val groupName: GroupName,
+    val number: AthleteNumber
 ) {
 
     constructor(
@@ -32,9 +33,10 @@ class Athlete(
         _sex: Sex,
         _birthDate: LocalDate,
         _sportCategory: Category,
+        _preferredGroup: GroupName = GroupName("TODO()"),
         _teamName: TeamName,
-        _preferredGroup: Race = Race("")
-    ) : this(_name, _sex, _birthDate, _sportCategory, _teamName, numerate(), _preferredGroup)
+        _groupName: GroupName
+    ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
     lateinit var race: Race
 

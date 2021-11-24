@@ -30,9 +30,10 @@ class CompetitionData(private val athletesData: List<List<String>>) {
             Sex.getSex(it[Fields.SEX.ordinal]),
             LocalDate.parse(it[Fields.BIRTH_DATE.ordinal]),
             Category.getCategory(it[Fields.CATEGORY.ordinal]),
+            GroupName(it[Fields.PREFERRED_GROUP.ordinal]),
             TeamName(it[Fields.TEAM_NAME.ordinal]),
+            GroupName(it[Fields.RACE.ordinal]),
             AthleteNumber(it[Fields.NUMBER.ordinal]),
-            Race(it[Fields.RACE.ordinal])
         )
     }
 

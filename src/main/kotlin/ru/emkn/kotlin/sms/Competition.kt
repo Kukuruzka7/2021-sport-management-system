@@ -19,7 +19,7 @@ class Competition {
 
     constructor(application: Application) {
         teamList = application.teamApplicationsList.map { it.team }
-        athleteList = teamList.flatMap { it.athleteList }
+        athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
         groupList = groupDivision(athleteList)
     }
@@ -36,16 +36,16 @@ class Competition {
     })
 }
 
-    private fun groupDivision(athleteList: List<Athlete>): List<Group> {
-        val groupNameList = athleteList.map { it.groupName }.toSet().toList()
-        val athleteByGroupName = athleteList.groupBy { it.groupName }
-        return groupNameList.map {
-            Group(
-                Race(it),
-                athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
-            )
-        }
+private fun groupDivision(athleteList: List<Athlete>): List<Group> {
+    val groupNameList = athleteList.map { it.groupName }.toSet().toList()
+    val athleteByGroupName = athleteList.groupBy { it.groupName }
+    return groupNameList.map {
+        Group(
+            Race(it),
+            athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
+        )
     }
+}
 
 private fun generateTeamListByAthleteLeast(athList: List<Athlete>): List<Team> {
     val teamMap = athList.groupBy { it.teamName }
