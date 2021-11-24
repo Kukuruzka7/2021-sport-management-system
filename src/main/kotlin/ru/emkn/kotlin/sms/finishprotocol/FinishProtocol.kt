@@ -4,7 +4,7 @@ import ru.emkn.kotlin.sms.*
 import java.time.LocalDateTime
 import java.time.Year
 
-class TeamProtocol() {
+class TeamProtocol {
     val toCSV: Any = TODO()
 }
 
@@ -21,10 +21,10 @@ data class AthleteProtocol(
     val finishTime: LocalDateTime
 )
 
-class FinishProtocol(table: Table) {
-    private val groupProtocol: Map<Group, GroupProtocol> = TODO()
-    private val teamProtocols: Map<Team, TeamProtocol> = TODO()
-    private val athleteProtocol: Map<Athlete, AthleteProtocol> = TODO()
+class FinishProtocol(table: Table, competition: Competition) {
+    private val groupProtocol: Map<Group, GroupProtocol?> = TODO()
+    private val teamProtocols: Map<Team, TeamProtocol?> = TODO()
+    private val athleteProtocol: Map<Athlete, AthleteProtocol?> = TODO()
 
     val csvByTeams = generateCSVbyTeams()
     val csvByGroups = generateCSVbyGroups()
@@ -35,7 +35,13 @@ class FinishProtocol(table: Table) {
     private fun generateOverallCSV(): Any = TODO()
 
     init {
-        table.map.map { it -> }
+        athleteProtocol = competition.athleteList.associateWith { makeIndividualProtocol(it, table[it.number]) }
     }
 
+    private fun makeIndividualProtocol (athlete: Athlete, map: Map<CheckPoint, CheckPointRes>?): AthleteProtocol? {
+        if(map == null) {
+            return null
+        }
+        return null
+    }
 }
