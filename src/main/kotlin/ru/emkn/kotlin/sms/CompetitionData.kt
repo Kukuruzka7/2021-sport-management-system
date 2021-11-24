@@ -1,11 +1,17 @@
 package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import kotlinx.datetime.LocalDate
+import ru.emkn.kotlin.sms.athlete.Category
+import ru.emkn.kotlin.sms.athlete.Sex
 
-class AthleteData
 
-//Номер,Имя,Пол,ГодРождения,Разряд, ПредпочтительнаяГруппа
-class CompetitionData(val athletesData: List<List<String>>) {
+class CompetitionData(private val athletesData: List<List<String>>) {
+
+    init {
+        athletesData.forEach { checkRow(it) }
+    }
+
     fun save(fileName: String) {
         try {
             csvWriter().open(fileName) {
@@ -18,23 +24,54 @@ class CompetitionData(val athletesData: List<List<String>>) {
     }
 
 
-    fun toAthletesList(): List<Athlete> {
-        TODO()
+    fun toAthletesList(): List<Athlete> = athletesData.map {
+        Athlete(
+            Name(it[Fields.NAME.ordinal]),
+            Sex.getSex(it[Fields.SEX.ordinal]),
+            LocalDate.parse(it[Fields.BIRTH_DATE.ordinal]),
+            Category.getCategory(it[Fields.CATEGORY.ordinal]),
+            GroupName(it[Fields.PREFERRED_GROUP.ordinal]),
+            TeamName(it[Fields.TEAM_NAME.ordinal]),
+            GroupName(it[Fields.RACE.ordinal]),
+            AthleteNumber(it[Fields.NUMBER.ordinal]),
+        )
     }
+
+    private fun checkRow(row: List<String>) {
+        if (row.size < Fields.values().size) {
+            throw CompetitionDataTooFewArgumentsInRow(row)
+        }
+        if (Sex.getSex(row[Fields.SEX.ordinal]) == Sex.X) {
+            throw CompetitionDataInvalidSex(row[Fields.SEX.ordinal])
+        }
+        try {
+            LocalDate.parse(row[Fields.BIRTH_DATE.ordinal])
+        } catch (_: java.time.format.DateTimeParseException) {
+            throw CompetitionDataInvalidDate(row[Fields.BIRTH_DATE.ordinal])
+        }
+        if (Category.getCategory(row[Fields.CATEGORY.ordinal]) == Category.X) {
+            throw CompetitionDataInvalidSportCategory(row[Fields.CATEGORY.ordinal])
+        }
+    }
+
 
     companion object {
         enum class Fields {
-            NUMBER, NAME, BIRTH_DATE, SPORT_CATEGORY, TEAM_NAME, RACE, PREFERRED_GROUP,
+            NUMBER, NAME, SEX, BIRTH_DATE, CATEGORY, TEAM_NAME, RACE, PREFERRED_GROUP;
+
         }
 
+        val inputFormat = Fields.values().joinToString { fieldToRussian[it]!! }
+
         val fieldToRussian = mapOf(
-            Fields.NUMBER to "Номер",
-            Fields.NAME to "Имя",
-            Fields.BIRTH_DATE to "Год рождения",
-            Fields.SPORT_CATEGORY to "Разряд",
-            Fields.TEAM_NAME to "Команда",
-            Fields.RACE to "Группа",
-            Fields.PREFERRED_GROUP to "Предпочтительная группа"
+            Fields.NUMBER to "номер",
+            Fields.NAME to "имя",
+            Fields.SEX to "пол",
+            Fields.BIRTH_DATE to "год рождения",
+            Fields.CATEGORY to "разряд",
+            Fields.TEAM_NAME to "команда",
+            Fields.RACE to "группа",
+            Fields.PREFERRED_GROUP to "предпочтительная группа"
         )
     }
 }
