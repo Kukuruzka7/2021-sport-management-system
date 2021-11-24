@@ -6,7 +6,7 @@ import java.io.File
 import java.util.*
 
 class GroupStartProtocol(private val group: Group, path: String) {
-    private val groupPath: String = "$path/${group.type.name}.csv"
+    private val groupPath: String = "$path/${group.race.groupName}.csv"
     val toCSV = writeGroupToCSV()
 
     private fun writeGroupToCSV() {
@@ -16,14 +16,14 @@ class GroupStartProtocol(private val group: Group, path: String) {
 
         File(groupPath).createNewFile()
         csvWriter().open(groupPath) {
-            writeRow(group.type.name, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
+            writeRow(group.race.groupName, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
             group.athletes.forEach { athlete ->
                 writeRow(
                     athlete.number,
                     athlete.name.firstName,
                     athlete.name.lastName,
                     athlete.birthDate?.year,
-                    athlete.sportCategory.categoryName,
+                    athlete.sportCategory.name,
                     startTime.timeToString(),
                 )
                 startTime.add(GregorianCalendar.MINUTE, 1)

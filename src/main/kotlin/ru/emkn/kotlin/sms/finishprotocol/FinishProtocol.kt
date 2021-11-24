@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms.finishprotocol
 
 import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.athlete.Category
 import java.time.LocalDateTime
 import java.time.Year
 
