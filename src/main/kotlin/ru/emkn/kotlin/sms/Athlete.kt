@@ -21,22 +21,27 @@ private var LastUseNumber = 1
 class Athlete(
     val name: Name,
     val sex: Sex,
-    val birthDate: LocalDate?,
+    val birthDate: LocalDate,
     val sportCategory: Category,
-    private val preferredGroup: Race = Race(""),
-    val team: Team
+    val number: AthleteNumber,
+    val teamName: TeamName,
+    var race: Race,
+    private val preferredGroup: Race = Race("")
 ) {
-    val number: AthleteNumber
-    lateinit var  group: Group
 
-    init{
-        number = numerate()
-    }
+    constructor(
+        _name: Name,
+        _sex: Sex,
+        _birthDate: LocalDate,
+        _sportCategory: Category,
+        _teamName: TeamName,
+        _race: Race,
+        _preferredGroup: Race = Race("")
+    ) : this(_name, _sex, _birthDate, _sportCategory, numerate(), _teamName, _race, _preferredGroup)
 
 
-    private fun numerate(): AthleteNumber {
-        LastUseNumber++
-        return AthleteNumber(LastUseNumber.toString())
+    companion object {
+        private fun numerate() = AthleteNumber(LastUseNumber++.toString())
     }
 }
 

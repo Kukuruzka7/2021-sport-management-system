@@ -6,7 +6,5 @@ class Race(val groupName: String) {
     val numberOfCheckPoints: Int = TODO()
 }
 
-class Group(val race: Race) {
-    lateinit var athletes: List<Athlete>
-}
+class Group(val race: Race, var athletes: List<Athlete>)
 

@@ -18,7 +18,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         checkFormatOfApplication(numberOfApplication, rows)
         teamName = TeamName(rows[0][0])
         team = Team(teamName)
-        team.athleteList = processingData(rows)
+        team.athletes = processingData(rows)
     }
 
     private fun processingData(rows: List<List<String>>): List<Athlete> {
