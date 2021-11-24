@@ -30,17 +30,17 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
 
     private fun processingRow(row: List<String>): Athlete {
         val name = Name(firstName = row[Fields.FIRST_NAME.ordinal], lastName = row[Fields.LAST_NAME.ordinal])
-        val sex = getSex(row[Fields.SEX.ordinal])
+        val sex = Sex.getSex(row[Fields.SEX.ordinal])
 
         val birthDate = LocalDate(row[Fields.BIRTH_DATE.ordinal].toInt(), 1, 1)
-        val sportCategory = Category(row[Fields.SPORT_CATEGORY.ordinal])
+        val sportCategory = Category.getCategory(row[Fields.SPORT_CATEGORY.ordinal])
         return Athlete(
             name,
             sex,
             birthDate,
             sportCategory,
-            teamName = teamName,
-            groupName = GroupName("$sex${birthDate.year}")
+            _teamName = teamName,
+            _groupName = GroupName("$sex${birthDate.year}")
         )
     }
 
@@ -57,7 +57,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         if (row.size < Fields.values().size) {
             throw ApplicationHasWrongFormatOnLine(numberOfApplication, row.toString())
         }
-        if (getSex(row[Fields.SEX.ordinal]) == Sex.X) {
+        if (Sex.getSex(row[Fields.SEX.ordinal]) == Sex.X) {
             throw WrongSexInApplicationOnLine(numberOfApplication, row[Fields.SEX.ordinal])
         }
         if (row[Fields.BIRTH_DATE.ordinal].toIntOrNull() == null) {
