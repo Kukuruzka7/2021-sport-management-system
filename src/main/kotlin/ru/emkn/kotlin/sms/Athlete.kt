@@ -3,6 +3,7 @@ package ru.emkn.kotlin.sms
 import kotlinx.datetime.LocalDate
 
 class AthleteNumber(val value: String) {
+
 }
 
 enum class Sex {
@@ -10,9 +11,7 @@ enum class Sex {
 }
 
 class Name(val firstName: String, val secondName: String) {
-    override fun toString(): String {
-        TODO()
-    }
+    val fullName: String = TODO()
 }
 
 class Category(val categoryName: String) {
