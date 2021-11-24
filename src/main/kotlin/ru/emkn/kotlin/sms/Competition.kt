@@ -20,7 +20,7 @@ class Competition {
     }
 
     constructor(data: CompetitionData) {
-
+        //parsing
     }
 
     fun toCompetitionData(): CompetitionData {
