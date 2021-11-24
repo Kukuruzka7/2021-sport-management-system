@@ -1,4 +1,4 @@
-package ru.emkn.kotlin.sms
+package ru.emkn.kotlin.sms.application
 
 import java.io.File
 

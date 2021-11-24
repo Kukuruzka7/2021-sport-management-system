@@ -4,6 +4,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.athlete.Category
 import ru.emkn.kotlin.sms.athlete.Sex
+import ru.emkn.kotlin.sms.*
 import java.io.File
 
 class TeamApplication(file: File, val numberOfApplication: Int) {
@@ -29,11 +30,18 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
 
     private fun processingRow(row: List<String>): Athlete {
         val name = Name(firstName = row[Fields.FIRST_NAME.ordinal], lastName = row[Fields.LAST_NAME.ordinal])
-        val sex = Sex.getSex(row[Fields.SEX.ordinal])
+        val sex = getSex(row[Fields.SEX.ordinal])
 
         val birthDate = LocalDate(row[Fields.BIRTH_DATE.ordinal].toInt(), 1, 1)
-        val sportCategory = Category.getCategory(row[Fields.SPORT_CATEGORY.ordinal])
-        return Athlete(name, sex, birthDate, sportCategory, team.teamName)
+        val sportCategory = Category(row[Fields.SPORT_CATEGORY.ordinal])
+        return Athlete(
+            name,
+            sex,
+            birthDate,
+            sportCategory,
+            teamName = teamName,
+            groupName = GroupName("$sex${birthDate.year}")
+        )
     }
 
     private fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
@@ -49,7 +57,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         if (row.size < Fields.values().size) {
             throw ApplicationHasWrongFormatOnLine(numberOfApplication, row.toString())
         }
-        if (Sex.getSex(row[Fields.SEX.ordinal]) == Sex.X) {
+        if (getSex(row[Fields.SEX.ordinal]) == Sex.X) {
             throw WrongSexInApplicationOnLine(numberOfApplication, row[Fields.SEX.ordinal])
         }
         if (row[Fields.BIRTH_DATE.ordinal].toIntOrNull() == null) {

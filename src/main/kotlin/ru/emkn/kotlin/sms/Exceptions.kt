@@ -3,6 +3,8 @@ package ru.emkn.kotlin.sms
 import ru.emkn.kotlin.sms.input_result.InputAthleteResults
 import ru.emkn.kotlin.sms.input_result.InputCheckpointResults
 
+import ru.emkn.kotlin.sms.application.TeamApplication
+
 class WeHaveAProblem(problem: String) : Exception(problem)
 
 class InvalidDateFormat(fileName: String, date: String) : Exception("В файле $fileName некорректный формат даты: $date")
