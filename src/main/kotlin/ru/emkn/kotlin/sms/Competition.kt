@@ -26,8 +26,8 @@ class Competition {
 
     constructor(data: CompetitionData) {
         athleteList = data.toAthletesList()
-        teamList = generateTeamListByAthleteLeast(athleteList)
-        groupList = generateGroupListByAthleteLeast(athleteList)
+        teamList = generateTeamListByAthleteList(athleteList)
+        groupList = generateGroupListByAthleteList(athleteList)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
     }
 
@@ -47,12 +47,12 @@ private fun groupDivision(athleteList: List<Athlete>): List<Group> {
     }
 }
 
-private fun generateTeamListByAthleteLeast(athList: List<Athlete>): List<Team> {
+private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
     val teamMap = athList.groupBy { it.teamName }
     return teamMap.keys.map { Team(it, teamMap[it]!!) }
 }
 
-private fun generateGroupListByAthleteLeast(athList: List<Athlete>): List<Group> {
+private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
     val groupMap = athList.groupBy { it.race }
     return groupMap.keys.map { Group(it, groupMap[it]!!) }
 }
