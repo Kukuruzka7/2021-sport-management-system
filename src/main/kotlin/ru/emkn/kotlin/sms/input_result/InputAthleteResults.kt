@@ -43,5 +43,4 @@ class InputAthleteResults(override val fileName: String) : InputResult {
             CHECKPOINT_NAME, TIME_ON_CHECKPOINT
         }
     }
-
 }

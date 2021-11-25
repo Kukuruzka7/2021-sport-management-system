@@ -15,7 +15,7 @@ class CompetitionData(private val athletesData: List<List<String>>) {
     fun save(fileName: String) {
         try {
             csvWriter().open(fileName) {
-                writeRow(Fields.values().joinToString { fieldToRussian[it]!! })
+                writeRow(Fields.values().joinToString { it.toRussian() })
                 athletesData.forEach { writeRow(it) }
             }
         } catch (_: Exception) {
@@ -59,19 +59,25 @@ class CompetitionData(private val athletesData: List<List<String>>) {
         enum class Fields {
             NUMBER, NAME, SEX, BIRTH_DATE, CATEGORY, TEAM_NAME, RACE, PREFERRED_GROUP;
 
+            fun toRussian() = fieldToRussian[this]!!
+
+            companion object {
+                private val fieldToRussian = mapOf(
+                    NUMBER to "номер",
+                    NAME to "имя",
+                    SEX to "пол",
+                    BIRTH_DATE to "год рождения",
+                    CATEGORY to "разряд",
+                    TEAM_NAME to "команда",
+                    RACE to "группа",
+                    PREFERRED_GROUP to "предпочтительная группа"
+                )
+            }
+
         }
 
-        val inputFormat = Fields.values().joinToString { fieldToRussian[it]!! }
-
-        val fieldToRussian = mapOf(
-            Fields.NUMBER to "номер",
-            Fields.NAME to "имя",
-            Fields.SEX to "пол",
-            Fields.BIRTH_DATE to "год рождения",
-            Fields.CATEGORY to "разряд",
-            Fields.TEAM_NAME to "команда",
-            Fields.RACE to "группа",
-            Fields.PREFERRED_GROUP to "предпочтительная группа"
-        )
+        val inputFormat = Fields.values().joinToString {
+            it.toRussian()
+        }
     }
 }
