@@ -7,7 +7,7 @@ class InputCompetitionResultByCheckPoints(fileNames: List<String>) : InputCompet
     val resultsOnPoints = fileNames.map { InputCheckpointResults(it) }
     override fun toTable(): Table {
         val listOfCheckPointRes = resultsOnPoints.flatMap { it.resultsOfAthletes.values }
-        return Table(listToMapOfMaps(listOfCheckPointRes))
+        return Table(listToMapOfMaps(listOfCheckPointRes), TODO())
     }
 
     private fun listToMapOfMaps(list: List<CheckPointRes>): Map<AthleteNumber, Map<CheckPoint, CheckPointRes>> =
