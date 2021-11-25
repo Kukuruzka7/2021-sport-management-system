@@ -39,6 +39,6 @@ class InputCheckpointResults(override val fileName: String) : InputResult {
         } catch (_: java.time.format.DateTimeParseException) {
             throw InvalidDateFormat(fileName, row[Fields.ATHLETE_TIME.ordinal])
         }
-        return CheckPointRes(checkPoint, AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal]), time)
+        return CheckPointRes(checkPoint, AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal]), TODO("Переделать формат времени на LocalDateTime"))
     }
 }

@@ -1,11 +1,13 @@
 package ru.emkn.kotlin.sms
 
-import kotlinx.datetime.LocalDate
+import java.time.LocalDateTime
 
-class CheckPoint(val name: String)
+object FinishCheckPoint: CheckPoint("Finish")
 
-class CheckPointRes(val checkPoint: CheckPoint, val athleteNumber: AthleteNumber, val date: LocalDate)
+open class CheckPoint(val name: String)
 
-class Table(val map: Map<AthleteNumber, Map<CheckPoint, CheckPointRes>>) {
+class CheckPointRes(val checkPoint: CheckPoint, val athleteNumber: AthleteNumber, val date: LocalDateTime)
+
+class Table(val map: Map<AthleteNumber, Map<CheckPoint, CheckPointRes>>, val startTime: Map<AthleteNumber, LocalDateTime>) {
     operator fun get(athleteNumber: AthleteNumber) = map[athleteNumber]
 }

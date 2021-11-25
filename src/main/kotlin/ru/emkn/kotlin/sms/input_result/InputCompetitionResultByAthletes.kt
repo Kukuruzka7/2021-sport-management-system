@@ -5,6 +5,6 @@ import ru.emkn.kotlin.sms.Table
 
 class InputCompetitionResultByAthletes(fileNames: List<String>) : InputCompetitionResult {
     val resultsOnPoints = fileNames.map { InputAthleteResults(it) }
-    override fun toTable() = Table(resultsOnPoints.associateBy({ it.number }, { it.resultsOnCheckPoints }))
+    override fun toTable() = Table(resultsOnPoints.associateBy({ it.number }, { it.resultsOnCheckPoints }), TODO())
 
 }

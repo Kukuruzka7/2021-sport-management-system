@@ -20,7 +20,7 @@ class Name(val firstName: String, val lastName: String) {
 class Athlete(
     val name: Name,
     val sex: Sex,
-    val birthDate: LocalDate?,
+    val birthDate: LocalDate,
     val sportCategory: Category,
     private val preferredGroup: GroupName = GroupName(""),
     val teamName: TeamName,

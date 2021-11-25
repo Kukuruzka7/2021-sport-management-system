@@ -31,7 +31,7 @@ class InputAthleteResults(override val fileName: String) : InputResult {
         } catch (_: java.time.format.DateTimeParseException) {
             throw InvalidDateFormat(fileName, row[Fields.TIME_ON_CHECKPOINT.ordinal])
         }
-        return CheckPointRes(CheckPoint(row[Fields.CHECKPOINT_NAME.ordinal]), athleteNumber, time)
+        return CheckPointRes(CheckPoint(row[Fields.CHECKPOINT_NAME.ordinal]), athleteNumber, TODO("Нужен тип LocalDateTime"))
     }
 
 
