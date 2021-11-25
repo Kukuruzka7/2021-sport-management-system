@@ -16,6 +16,17 @@ class Competition {
     val groupList: List<Group>
     val athleteByNumber: Map<AthleteNumber, Athlete>
 
+    companion object {
+        fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
+            val teamMap = athList.groupBy { it.teamName }
+            return teamMap.keys.map { Team(it, teamMap[it]!!) }
+        }
+
+        fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
+            val groupMap = athList.groupBy { it.race }
+            return groupMap.keys.map { Group(it, groupMap[it]!!) }
+        }
+    }
 
     constructor(application: Application) {
         teamList = application.teamApplicationsList.map { it.team }
@@ -45,14 +56,4 @@ private fun groupDivision(athleteList: List<Athlete>): List<Group> {
             athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
         )
     }
-}
-
-private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
-    val teamMap = athList.groupBy { it.teamName }
-    return teamMap.keys.map { Team(it, teamMap[it]!!) }
-}
-
-private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
-    val groupMap = athList.groupBy { it.race }
-    return groupMap.keys.map { Group(it, groupMap[it]!!) }
 }
