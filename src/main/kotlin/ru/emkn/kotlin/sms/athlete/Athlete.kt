@@ -9,12 +9,26 @@ class AthleteNumber(val value: String) {
 }
 
 class Name(val firstName: String, val lastName: String) {
-    //Нужно попарсить, требуется гении regex-а (aka Kukuruzka_7)
-    constructor (_name: String) : this(TODO(), TODO())
+
+    constructor (_name: String) : this(getFirstName(_name), getLastName(_name))
+
 
     val fullName: String = "$firstName $lastName"
 
     override fun toString(): String = fullName
+
+    companion object {
+        private fun getFirstName(name: String): String {
+            return name.split(" ")[0]
+        }
+
+        private fun getLastName(name: String): String {
+            if (name.split(" ").size == 1) {
+                return ""
+            }
+            return name.substringAfter(" ")
+        }
+    }
 }
 
 class Athlete(

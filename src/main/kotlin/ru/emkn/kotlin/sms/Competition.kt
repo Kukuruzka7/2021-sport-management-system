@@ -1,13 +1,25 @@
 package ru.emkn.kotlin.sms
 
+import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.application.Application
 import java.util.Date
 
-enum class SportType {
-    RUNNING
+enum class SportType(val sportType: String) {
+    RUNNING("бег"), ERR("спорт по который мы не поддерживаем");
+
+    companion object {
+        fun getSportTypeFromString(str: String): SportType {
+            for (value in values()) {
+                if (value.sportType == str) {
+                    return value
+                }
+            }
+            return ERR
+        }
+    }
 }
 
-data class MetaInfo(val name: String, val date: Date, val sport: SportType)
+data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
 
 class Competition {
     lateinit var info: MetaInfo
@@ -28,7 +40,8 @@ class Competition {
         }
     }
 
-    constructor(application: Application) {
+    constructor(_info: MetaInfo, application: Application) {
+        info = _info
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
