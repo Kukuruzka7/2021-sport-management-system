@@ -22,7 +22,7 @@ class GroupStartProtocol(private val group: Group, path: String) {
                     athlete.number,
                     athlete.name.firstName,
                     athlete.name.lastName,
-                    athlete.birthDate?.year,
+                    athlete.birthDate.year,
                     athlete.sportCategory.name,
                     startTime.timeToString(),
                 )
