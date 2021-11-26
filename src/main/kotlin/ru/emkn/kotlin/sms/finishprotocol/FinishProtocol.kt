@@ -2,11 +2,10 @@ package ru.emkn.kotlin.sms.finishprotocol
 
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import ru.emkn.kotlin.sms.*
-import ru.emkn.kotlin.sms.athlete.Category
 import java.io.File
 import java.time.LocalDateTime
 
-class TeamProtocol(private val team: Team, val protocol: List<AthleteProtocol>) {
+class TeamProtocol(val team: Team, val protocol: List<AthleteProtocol>) {
     val toCSV: Any = TODO()
 }
 
@@ -55,7 +54,7 @@ class FinishProtocol(private val table: Table, competition: Competition) {
     }
 
     //Делает общие списки групп
-    private val groupProtocol: List<GroupProtocol> =
+    private val groupProtocols: List<GroupProtocol> =
         groups.map { GroupProtocol(it, makeSortedResultsInGroup(it, athleteResult)) }
 
     //Выставляет номера спортсменов в их группе
@@ -66,7 +65,7 @@ class FinishProtocol(private val table: Table, competition: Competition) {
 
     //Объединяет списки по группам в общий список
     private val athleteProtocols: List<AthleteProtocol> =
-        groupProtocol.fold(emptyList()) { initial, it -> initial + it.protocol }
+        groupProtocols.fold(emptyList()) { initial, it -> initial + it.protocol }
 
     //Разделяет общий список на списки по командам
     private val teamProtocols: List<TeamProtocol> =
@@ -80,13 +79,13 @@ class FinishProtocol(private val table: Table, competition: Competition) {
         val dirName = path + "groups/"
         File(dirName).delete()
         createDir(dirName)
-        groupProtocol.forEach { groupProtocol1 ->
-            val group = groupProtocol1.group
+        groupProtocols.forEach { groupProtocol ->
+            val group = groupProtocol.group
             val fileName = """$dirName${group.race.groupName}.csv"""
             File(fileName).createNewFile()
             CsvWriter().open(fileName) {
                 writeRow(group.race.groupName)
-                groupProtocol1.protocol.forEach {
+                groupProtocol.protocol.forEach {
                     writeRow(
                         it.place,
                         it.athlete.number.value,
@@ -123,9 +122,33 @@ class FinishProtocol(private val table: Table, competition: Competition) {
     }
 
 
-}
+    private fun generateCSVbyTeams() {
+        val dirName = path + "teams/"
+        File(dirName).delete()
+        createDir(dirName)
+        teamProtocols.forEach { teamProtocol ->
+            val team = teamProtocol.team
+            val fileName = """$dirName${team.teamName}.csv"""
+            File(fileName).createNewFile()
+            CsvWriter().open(fileName) {
+                writeRow(team.teamName)
+                teamProtocol.protocol.sortedBy { it.athlete.groupName.groupName }.forEach {
+                    writeRow(
+                        it.athlete.groupName.groupName,
+                        it.place,
+                        it.athlete.number.value,
+                        it.athlete.name.lastName,
+                        it.athlete.name.firstName,
+                        it.athlete.birthDate.year,
+                        it.athlete.sportCategory.name,
+                        it.finishTime.toString(),
+                    )
+                }
+            }
+        }
+    }
 
-private fun generateCSVbyTeams(): Any = TODO()
+}
 
 //Функция разности двух LocalDateTime
 operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
