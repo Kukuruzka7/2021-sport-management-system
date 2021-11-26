@@ -1,22 +1,21 @@
 package ru.emkn.kotlin.sms.finishprotocol
 
+import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.athlete.Category
+import java.io.File
 import java.time.LocalDateTime
 
-class TeamProtocol(private val team: Team, val protocol: Map<Athlete, AthleteProtocol?>) {
+class TeamProtocol(private val team: Team, val protocol: List<AthleteProtocol?>) {
     val toCSV: Any = TODO()
 }
 
-class GroupProtocol(private val group: Group, val protocol: Map<Athlete, AthleteProtocol?>) {
+class GroupProtocol(private val group: Group, val protocol: List<AthleteProtocol?>) {
     val toCSV: Any = TODO()
 }
 
 data class AthleteResult(
-    val number: AthleteNumber,
-    val name: Name,
-    val year: Int,
-    val category: Category,
+    val athlete: Athlete,
     val finishTime: LocalDateTime?,
 )
 
@@ -31,20 +30,73 @@ class FinishProtocol(private val table: Table, competition: Competition) {
         const val dir = "src/main/resources/competitions/"
     }
 
-    private val path = dir + competition.info.name
+    private val path = """$dir${competition.info.name}/finishProtocol/"""
 
-    private val athleteResult: Map<Athlete, AthleteResult?> =
-        competition.athleteList.associateWith { makeIndividualResults(it) }
-    private val groupProtocol: Map<Group, GroupProtocol?> = makeSortedResults(athleteResult)
-    private val athleteProtocol: Map<Athlete, AthleteProtocol?> = makeOverallResultsInGroup(groupProtocol)
-    private val teamProtocols: Map<Team, TeamProtocol?> = toTeamProtocol(athleteProtocol)
+    init {
+        if (!File(path).exists()) {
+            try {
+                File(path).mkdir()
+            } catch (_: Exception) {
+                throw DirectoryCouldNotBeCreated(path)
+            }
+        }
+    }
+    private val athletes = competition.athleteList
+    private val groups = competition.groupList
+    private val teams = competition.teamList
+
+    private val athleteResult: Map<Athlete, AthleteResult> =
+        athletes.associateWith { makeIndividualResults(it) }
+    //Делает общие списки групп
+    private val groupProtocol: List<GroupProtocol> =
+        groups.map { GroupProtocol(it, makeSortedResultsInGroup(it, athleteResult)) }
+
+    //Выставляет номера спортсменов в их группе
+    private fun makeSortedResultsInGroup(
+        group: Group,
+        athleteResult: Map<Athlete, AthleteResult?>
+    ): List<AthleteProtocol?> {
+        val sortedList =
+            athleteResult.filter { group.athletes.contains(it.key) }.toList().sortedBy { it.second?.finishTime }
+        return sortedList.map { AthleteProtocol(it.second, sortedList.indexOf(it) + 1) }
+    }
+
+    //Объединяет списки по группам в общий список
+    private val athleteProtocol: List<AthleteProtocol?> =
+        groupProtocol.fold(emptyList()) { initial, it -> initial + it.protocol }
+    //Разделяет общий список на списки по командам
+    private val teamProtocols: Map<Team, TeamProtocol> =
+        teams.associateWith { TeamProtocol(it, athleteProtocol) }
 
     val csvByTeams = generateCSVbyTeams()
     val csvByGroups = generateCSVbyGroups()
     val overallCSV = generateOverallCSV()
 
-    private fun generateOverallCSV(): Any = TODO()
-    private fun generateCSVbyGroups(): Any = TODO()
+    private fun generateCSVbyGroups() {
+        val fileName = path + "groups"
+        File(fileName).delete()
+        File(fileName).mkdir()
+
+    }
+
+    private fun generateOverallCSV() {
+        val fileName = path + "overallCSV"
+        File(fileName).delete()
+        File(fileName).createNewFile()
+//        CsvWriter().open(fileName) {
+//            writeRow("Общие результаты")
+//            //пока без сортировки по номерам, так как номера это стринги и нужно писать компоратор
+//            athleteProtocol.values.sortedBy { it.result?.groupName?.groupName }.forEach {
+//
+//                writeRow(
+//                    it.result?.groupName?.groupName,
+//
+//                    )
+//
+//            }
+//        }
+    }
+
     private fun generateCSVbyTeams(): Any = TODO()
 
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
@@ -54,37 +106,9 @@ class FinishProtocol(private val table: Table, competition: Competition) {
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
         return AthleteResult(
-            athlete.number,
-            athlete.name,
-            athlete.birthDate.year,
-            athlete.sportCategory,
+            athlete,
             finishTime - startTime,
         )
-    }
-
-    //
-    private fun makeSortedResults(athleteResult: Map<Athlete, AthleteResult?>): Map<Group, GroupProtocol?> {
-        val groups = Competition.generateGroupListByAthleteList(athleteResult.keys.toList())
-        return groups.associateWith { GroupProtocol(it, makeSortedResultsInGroup(it, athleteResult)) }
-    }
-
-    private fun makeSortedResultsInGroup(
-        group: Group,
-        athleteResult: Map<Athlete, AthleteResult?>
-    ): Map<Athlete, AthleteProtocol?> {
-        val sortedList =
-            athleteResult.filter { group.athletes.contains(it.key) }.toList().sortedBy { it.second?.finishTime }
-        return sortedList.associate { it.first to AthleteProtocol(it.second, sortedList.indexOf(it) + 1) }
-    }
-
-    private fun makeOverallResultsInGroup(groupProtocol: Map<Group, GroupProtocol?>): Map<Athlete, AthleteProtocol?> {
-        return groupProtocol.values.fold(emptyMap()) { initial, it -> initial + (it?.protocol ?: emptyMap()) }
-    }
-
-
-    private fun toTeamProtocol(athleteProtocol: Map<Athlete, AthleteProtocol?>): Map<Team, TeamProtocol?> {
-        val teams = Competition.generateTeamListByAthleteList(athleteProtocol.keys.toList())
-        return teams.associateWith { TeamProtocol(it, athleteProtocol) }
     }
 }
 
