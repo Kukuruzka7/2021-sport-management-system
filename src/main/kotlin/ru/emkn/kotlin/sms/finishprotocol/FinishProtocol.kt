@@ -6,28 +6,6 @@ import ru.emkn.kotlin.sms.*
 import java.io.File
 import java.time.LocalDateTime
 
-class TeamProtocol(private val team: Team, private val protocol: List<AthleteProtocol>) {
-    fun toCSV(dirName: String) {
-        val fileName = """$dirName${team.teamName}.csv"""
-        File(fileName).createNewFile()
-        CsvWriter().open(fileName) {
-            writeRow(team.teamName)
-            protocol.sortedBy { it.athlete.groupName.groupName }.forEach { writeAthleteProtocol(it) }
-        }
-    }
-}
-
-class GroupProtocol(private val group: Group, val protocol: List<AthleteProtocol>) {
-    fun toCSV(dirName: String) {
-        val fileName = """$dirName${group.race.groupName}.csv"""
-        File(fileName).createNewFile()
-        CsvWriter().open(fileName) {
-            writeRow(group.race.groupName)
-            protocol.forEach { writeAthleteProtocol(it) }
-        }
-    }
-}
-
 data class AthleteResult(
     val athlete: Athlete,
     val finishTime: LocalDateTime?,
@@ -125,9 +103,9 @@ operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
         ?.minusSeconds(start.second.toLong())
 }
 
-private fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
+fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     writeRow(
-        it.athlete.groupName,
+        it.athlete.groupName.toString(),
         it.place,
         it.athlete.number.value,
         it.athlete.name.lastName,
