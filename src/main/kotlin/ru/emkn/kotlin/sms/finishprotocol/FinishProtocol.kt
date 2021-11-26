@@ -39,13 +39,7 @@ class FinishProtocol(private val table: Table, competition: Competition) {
     private val path = """$dir${competition.info.name}/finishProtocol/"""
 
     init {
-        if (!File(path).exists()) {
-            try {
-                File(path).mkdir()
-            } catch (_: Exception) {
-                throw DirectoryCouldNotBeCreated(path)
-            }
-        }
+        createDir(path)
     }
 
     private val athleteResult: List<AthleteResult> =
@@ -85,15 +79,23 @@ class FinishProtocol(private val table: Table, competition: Competition) {
     private fun generateCSVbyGroups() {
         val dirName = path + "groups/"
         File(dirName).delete()
-        File(dirName).mkdir()
+        createDir(dirName)
         groupProtocol.forEach { groupProtocol1 ->
             val group = groupProtocol1.group
-            val fileName = dirName + group.race.groupName
+            val fileName = """$dirName${group.race.groupName}.csv"""
             File(fileName).createNewFile()
             CsvWriter().open(fileName) {
                 writeRow(group.race.groupName)
                 groupProtocol1.protocol.forEach {
-                    writeRow(it.athlete)
+                    writeRow(
+                        it.place,
+                        it.athlete.number.value,
+                        it.athlete.name.lastName,
+                        it.athlete.name.firstName,
+                        it.athlete.birthDate.year,
+                        it.athlete.sportCategory.name,
+                        it.finishTime.toString(),
+                    )
                 }
             }
         }
@@ -106,12 +108,7 @@ class FinishProtocol(private val table: Table, competition: Competition) {
 //        CsvWriter().open(fileName) {
 //            writeRow("Общие результаты")
 //            //пока без сортировки по номерам, так как номера это стринги и нужно писать компоратор
-//            athleteProtocol.values.sortedBy { it.result?.groupName?.groupName }.forEach {
-//
-//                writeRow(
-//                    it.result?.groupName?.groupName,
-//
-//                    )
+//            athleteProtocol.values.sortedBy { it.result.groupName.groupName }.forEach {
 //
 //            }
 //        }
@@ -125,4 +122,14 @@ class FinishProtocol(private val table: Table, competition: Competition) {
 operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
     return this?.minusHours(start.hour.toLong())?.minusMinutes(start.minute.toLong())
         ?.minusSeconds(start.second.toLong())
+}
+
+fun createDir(path: String) {
+    if (!File(path).exists()) {
+        try {
+            File(path).mkdir()
+        } catch (_: Exception) {
+            throw DirectoryCouldNotBeCreated(path)
+        }
+    }
 }
