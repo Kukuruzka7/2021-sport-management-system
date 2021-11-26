@@ -105,18 +105,27 @@ class FinishProtocol(private val table: Table, competition: Competition) {
         val fileName = path + "overallCSV"
         File(fileName).delete()
         File(fileName).createNewFile()
-//        CsvWriter().open(fileName) {
-//            writeRow("Общие результаты")
-//            //пока без сортировки по номерам, так как номера это стринги и нужно писать компоратор
-//            athleteProtocol.values.sortedBy { it.result.groupName.groupName }.forEach {
-//
-//            }
-//        }
+        CsvWriter().open(fileName) {
+            writeRow("Общий протокол")
+            athleteProtocols.sortedBy { it.athlete.groupName.groupName }.forEach {
+                writeRow(
+                    it.athlete.groupName.groupName,
+                    it.place,
+                    it.athlete.number.value,
+                    it.athlete.name.lastName,
+                    it.athlete.name.firstName,
+                    it.athlete.birthDate.year,
+                    it.athlete.sportCategory.name,
+                    it.finishTime.toString(),
+                )
+            }
+        }
     }
 
-    private fun generateCSVbyTeams(): Any = TODO()
 
 }
+
+private fun generateCSVbyTeams(): Any = TODO()
 
 //Функция разности двух LocalDateTime
 operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
