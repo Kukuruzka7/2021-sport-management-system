@@ -27,8 +27,8 @@ class GroupStartProtocol(private val group: Group, path: String) {
                     startTime.toString(),
                 )
                 val instant = startTime.toInstant(timeZone)
-                val instantOneDayLater = instant.plus(1, DateTimeUnit.MINUTE, timeZone)
-                startTime = instantOneDayLater.toLocalDateTime(timeZone)
+                val instantOneMinuteLater = instant.plus(1, DateTimeUnit.MINUTE, timeZone)
+                startTime = instantOneMinuteLater.toLocalDateTime(timeZone)
             }
         }
     }

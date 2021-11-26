@@ -29,12 +29,12 @@ class Competition {
     val athleteByNumber: Map<AthleteNumber, Athlete>
 
     companion object {
-        fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
+        private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
             val teamMap = athList.groupBy { it.teamName }
             return teamMap.keys.map { Team(it, teamMap[it]!!) }
         }
 
-        fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
+        private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
             val groupMap = athList.groupBy { it.race }
             return groupMap.keys.map { Group(it, groupMap[it]!!) }
         }
