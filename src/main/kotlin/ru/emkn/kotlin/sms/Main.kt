@@ -16,7 +16,6 @@ enum class Fields {
 
 fun main(args: Array<String>) {
     //пока написала для случая, когда нам выдают название соревнования, спорт, дату и один файл с названиями файлов в аргументы командной строки
-    println("Введите: название соревнования, спорт, дату и файл с названиями от команд.") //это надо исправить если поменяем формат ввода данных, лень пока переписывать
     if (args.size != Fields.values().size) {
         println("Вы ввели, что-то не то. Попробуйте еще раз.")
         return
@@ -31,8 +30,14 @@ fun main(args: Array<String>) {
     }
     //TODO("проверка на дату")
     val application: Application
+    val teamApplicationNames: List<String>
     try {
-        val teamApplicationNames = File(fileName).readLines()
+        teamApplicationNames = File(fileName).readLines()
+    } catch (e: Exception) {
+        println("Файл $fileName не может быть прочитан.")
+        return
+    }
+    try {
         application = Application(teamApplicationNames.map {
             File(it)
         })
@@ -41,4 +46,5 @@ fun main(args: Array<String>) {
         return
     }
     Competition(MetaInfo(name, date, sportType), application)
+
 }
