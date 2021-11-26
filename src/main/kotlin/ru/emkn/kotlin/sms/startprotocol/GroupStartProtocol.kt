@@ -1,18 +1,18 @@
 package ru.emkn.kotlin.sms.startprotocol
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import kotlinx.datetime.*
+import kotlinx.datetime.TimeZone
 import ru.emkn.kotlin.sms.Group
 import java.io.File
-import java.util.*
 
 class GroupStartProtocol(private val group: Group, path: String) {
     private val groupPath: String = "$path/${group.race.groupName}.csv"
     val toCSV = writeGroupToCSV()
 
     private fun writeGroupToCSV() {
-        // TODO("Стандартная реализация времени")
-        val startTime = GregorianCalendar()
-        startTime.set(2021, 12, 1, 12, 0, 0)
+        val timeZone = TimeZone.of("Europe/Moscow")
+        var startTime = LocalDateTime(2021, 12, 1, 12, 0, 0)
 
         File(groupPath).createNewFile()
         csvWriter().open(groupPath) {
@@ -24,16 +24,13 @@ class GroupStartProtocol(private val group: Group, path: String) {
                     athlete.name.lastName,
                     athlete.birthDate.year,
                     athlete.sportCategory.name,
-                    startTime.timeToString(),
+                    startTime.toString(),
                 )
-                startTime.add(GregorianCalendar.MINUTE, 1)
+                val instant = startTime.toInstant(timeZone)
+                val instantOneDayLater = instant.plus(1, DateTimeUnit.MINUTE, timeZone)
+                startTime = instantOneDayLater.toLocalDateTime(timeZone)
             }
         }
     }
-
-    private fun GregorianCalendar.timeToString(): String {
-        return "${this.get(11) / 10}${this.get(11) % 10}:" +
-                "${this.get(12) / 10}${this.get(12) % 10}:" +
-                "${this.get(13) / 10}${this.get(13) % 10}"
-    }
 }
+
