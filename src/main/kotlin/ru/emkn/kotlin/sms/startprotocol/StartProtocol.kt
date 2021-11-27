@@ -1,12 +1,10 @@
 package ru.emkn.kotlin.sms.startprotocol
 
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import ru.emkn.kotlin.sms.DirectoryCouldNotBeCreated
 import ru.emkn.kotlin.sms.Group
 import java.io.File
-import java.util.*
 
-class StartProtocol(listGroup: List<Group>, name: String) {
+class StartProtocol(groups : List<Group>, competitionName: String) {
     private val generateCSV: List<GroupStartProtocol>
     private val path: String
 
@@ -15,7 +13,7 @@ class StartProtocol(listGroup: List<Group>, name: String) {
     }
 
     init {
-        path = "$dir$name"
+        path = "$dir$competitionName/startProtocol/"
         // Нам рассказывали, что с фалом могут произойти какие-то беды, поэтому нужно проверять прям на месте
         if (!File(path).exists()) {
             try {
@@ -25,7 +23,7 @@ class StartProtocol(listGroup: List<Group>, name: String) {
             }
         }
 
-        generateCSV = listGroup.map { GroupStartProtocol(it, path) }
+        generateCSV = groups.map { GroupStartProtocol(it, path) }
         generateCSV.forEach { it.toCSV }
     }
 }

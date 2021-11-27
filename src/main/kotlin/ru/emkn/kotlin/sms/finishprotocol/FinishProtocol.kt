@@ -2,10 +2,10 @@ package ru.emkn.kotlin.sms.finishprotocol
 
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
+import kotlinx.datetime.*
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.result_data.ResultData
 import java.io.File
-import java.time.LocalDateTime
 
 data class AthleteResult(
     val athlete: Athlete,
@@ -40,11 +40,11 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
         //Время начала и конца путешествия одного чела
-        val startTime = data.startTime[athlete.number]
-        val finishTime = TODO()//data[athlete.number]?.get(TODO())?.date
+        val startTime = data.startTime[athlete.number]?.date
+        val finishTime = data.table[athlete.number]?.last()?.date
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
-        return AthleteResult(athlete, TODO())
+        return AthleteResult(athlete, finishTime - startTime)
     }
 
     //Делает общие списки групп
@@ -100,8 +100,15 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
 //Функция разности двух LocalDateTime
 operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
-    return this?.minusHours(start.hour.toLong())?.minusMinutes(start.minute.toLong())
-        ?.minusSeconds(start.second.toLong())
+    if(this == null) return null
+    return LocalDateTime(
+        2021,
+        12,
+        1,
+        hour = this.hour - start.hour,
+        minute = this.minute - start.minute,
+        second = this.second - start.second
+    )
 }
 
 fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {

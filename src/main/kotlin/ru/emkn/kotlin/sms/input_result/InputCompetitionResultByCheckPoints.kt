@@ -3,13 +3,14 @@ package ru.emkn.kotlin.sms.input_result
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
+import ru.emkn.kotlin.sms.result_data.Table
 
 
 class InputCompetitionResultByCheckPoints(fileNames: List<String>) : InputCompetitionResult() {
     val resultsOnPoints = fileNames.map { InputCheckpointResults(it) }
     override fun toTable(): Table {
         val listOfCheckPointRes = resultsOnPoints.flatMap { it.resultsOfAthletes.values }
-        return Table(listToMapOfMaps(listOfCheckPointRes), TODO())
+        return Table(TODO())
     }
 
     private fun listToMapOfMaps(list: List<CheckpointRes>): Map<AthleteNumber, Map<Checkpoint, CheckpointRes>> =

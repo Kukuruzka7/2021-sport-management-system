@@ -7,7 +7,7 @@ import ru.emkn.kotlin.sms.Group
 import java.io.File
 
 class GroupStartProtocol(private val group: Group, path: String) {
-    private val groupPath: String = "$path/${group.race.groupName}.csv"
+    private val groupPath: String = "$path${group.race.groupName}.csv"
     val toCSV = writeGroupToCSV()
 
     private fun writeGroupToCSV() {
@@ -19,11 +19,11 @@ class GroupStartProtocol(private val group: Group, path: String) {
             writeRow(group.race.groupName, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
             group.athletes.forEach { athlete ->
                 writeRow(
-                    athlete.number,
+                    athlete.number.toString(),
                     athlete.name.firstName,
                     athlete.name.lastName,
                     athlete.birthDate.year,
-                    athlete.sportCategory.name,
+                    athlete.sportCategory.toString(),
                     startTime.toString(),
                 )
                 val instant = startTime.toInstant(timeZone)
