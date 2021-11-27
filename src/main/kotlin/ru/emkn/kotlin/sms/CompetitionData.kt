@@ -2,8 +2,8 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
-import ru.emkn.kotlin.sms.athlete.Category
-import ru.emkn.kotlin.sms.athlete.Sex
+import kotlinx.datetime.LocalDateTime
+import ru.emkn.kotlin.sms.athlete.*
 
 
 class CompetitionData(private val athletesData: List<List<String>>) {
@@ -37,6 +37,11 @@ class CompetitionData(private val athletesData: List<List<String>>) {
         )
     }
 
+    fun getStartTime(): Map<AthleteNumber, LocalDateTime> =
+        athletesData.associateBy(
+            { AthleteNumber(it[Fields.NUMBER.ordinal]) },
+            { LocalDateTime.parse(it[Fields.START_TIME.ordinal]) })
+
     private fun checkRow(row: List<String>) {
         if (row.size < Fields.values().size) {
             throw CompetitionDataTooFewArgumentsInRow(row)
@@ -52,12 +57,18 @@ class CompetitionData(private val athletesData: List<List<String>>) {
         if (Category.getCategory(row[Fields.CATEGORY.ordinal]) == Category.X) {
             throw CompetitionDataInvalidSportCategory(row[Fields.CATEGORY.ordinal])
         }
+        try {
+            LocalDateTime.parse(row[Fields.START_TIME.ordinal])
+        } catch (e: java.time.DateTimeException) {
+            throw e
+        }
+
     }
 
 
     companion object {
         enum class Fields {
-            NUMBER, NAME, SEX, BIRTH_DATE, CATEGORY, TEAM_NAME, RACE, PREFERRED_GROUP;
+            NUMBER, NAME, SEX, BIRTH_DATE, CATEGORY, TEAM_NAME, RACE, PREFERRED_GROUP, START_TIME;
 
             fun toRussian() = fieldToRussian[this]!!
 
@@ -70,11 +81,13 @@ class CompetitionData(private val athletesData: List<List<String>>) {
                     CATEGORY to "разряд",
                     TEAM_NAME to "команда",
                     RACE to "группа",
-                    PREFERRED_GROUP to "предпочтительная группа"
+                    PREFERRED_GROUP to "предпочтительная группа",
+                    START_TIME to "начальное время"
                 )
             }
 
         }
+
         val inputFormat = Fields.values().joinToString {
             it.toRussian()
         }

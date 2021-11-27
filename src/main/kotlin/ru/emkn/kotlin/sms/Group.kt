@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms
 
 import java.io.File
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 class GroupName(val groupName: String) {

@@ -1,24 +1,31 @@
 package ru.emkn.kotlin.sms
 
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import ru.emkn.kotlin.sms.SportType.Companion.getSportTypeFromString
 import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.application.Application
+import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
+import ru.emkn.kotlin.sms.input_result.InputAthleteResults
+import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByAthletes
+import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
+import ru.emkn.kotlin.sms.input_result.InputResult
+import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
 
 
 enum class FieldsStart {
-    NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
+    BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
 }
 
-enum class FieldsFinish {
-    PATH_TO_COMPETITION_DATA
+enum class FieldsFinal {
+    BEHAVIOR, PATH_TO_FILE, NAME
 }
 
 enum class UserBehavior(val behavior: String) {
-    START("старт"), FINISH("финал"), ERR("");
+    START("start"), FINISH_BY_ATHLETES("final_by_athletes"), FINISH_BY_CHECKPOINTS("final_by_checkpoints"), ERR("");
 
     companion object {
         fun getBehavior(behavior: String): UserBehavior {
@@ -32,6 +39,8 @@ enum class UserBehavior(val behavior: String) {
     }
 }
 
+const val dir = "src/main/resources/competitions/"
+
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         println("Вы ничего не ввели. Попробуйте еще раз.")
@@ -39,7 +48,8 @@ fun main(args: Array<String>) {
     }
     when (getBehavior(args[0])) {
         UserBehavior.START -> start(args.slice(1..args.lastIndex))
-        UserBehavior.FINISH -> finish(args.slice(1..args.lastIndex))
+        UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args.slice(1..args.lastIndex))
+        UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args.slice(1..args.lastIndex))
         UserBehavior.ERR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
     }
 }
@@ -81,13 +91,87 @@ fun start(inputData: List<String>) {
         return
     }
     val competition = Competition(MetaInfo(name, date, sportType), application)
-    //возможно дальше что-то не то
-    competition.toCompetitionData().save("TODO()")
-    val startProtocol = StartProtocol(competition.groupList, competition.info.name)
-    println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в папке resources.")
-    //видимо еще хотим вернуть CompetitionData.
+    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData")
+    StartProtocol(competition.groupList, dir + competition.info.name + "/")
+    println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/startProtocol/.")
 }
 
-fun finish(slice: List<String>) {
+fun finishByAthletes(inputData: List<String>) {
+    if (inputData.size != FieldsFinal.values().size) {
+        println("Вы ввели что-то не то. Попробуйте еще раз.")
+        return
+    }
+    val fileName = inputData[FieldsFinal.PATH_TO_FILE.ordinal]
+    val name = inputData[FieldsStart.NAME.ordinal]
+    val data: List<List<String>>
+    val competition: Competition
+    if (!File(dir + name + "/competitionData").exists()) {
+        println("Такого соревнования еще не проводилось. Сначала введите заявки на участие.")
+        return
+    }
+    try {
+        data = csvReader().readAll(File(dir + name + "/competitionData"))
+        competition = Competition(CompetitionData(data))
+    } catch (e: Exception) {
+        println("Произошла ошибка, попробуйте заново загрузить заявки.")
+        return
+    }
+    val fileNames: List<String>
+    try {
+        fileNames = File(fileName).readLines()
+    } catch (e: Exception) {
+        println("Файл $fileName не может быть прочитан.")
+        return
+    }
+    val athletesResults: ResultData
+    try {
+        athletesResults =
+            ResultData(InputCompetitionResultByAthletes(fileNames).toTable(), CompetitionData(data).getStartTime())
+    } catch (e: Exception) {
+        println(e.message)
+        return
+    }
+    FinishProtocol(athletesResults, competition)
+    println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
+}
 
+fun finishByCheckPoints(inputData: List<String>) {
+    if (inputData.size != FieldsFinal.values().size) {
+        println("Вы ввели что-то не то. Попробуйте еще раз.")
+        return
+    }
+    val fileName = inputData[FieldsFinal.PATH_TO_FILE.ordinal]
+    val name = inputData[FieldsStart.NAME.ordinal]
+    val data: List<List<String>>
+    val competition: Competition
+    if (!File(dir + name + "/competitionData").exists()) {
+        println("Такого соревнования еще не проводилось. Сначала введите заявки на участие.")
+        return
+    }
+    try {
+        data = csvReader().readAll(File(dir + name + "/competitionData"))
+        competition = Competition(CompetitionData(data))
+    } catch (e: Exception) {
+        println("Произошла ошибка, попробуйте заново загрузить заявки.")
+        return
+    }
+    val fileNames: List<String>
+    try {
+        fileNames = File(fileName).readLines()
+    } catch (e: Exception) {
+        println("Файл $fileName не может быть прочитан.")
+        return
+    }
+    val athletesResults: ResultData
+    try {
+        athletesResults = ResultData(
+            InputCompetitionResultByCheckPoints(fileNames, competition).toTable(),
+            CompetitionData(data).getStartTime()
+        )
+    } catch (e: Exception) {
+        println(e.message)
+        return
+    }
+    FinishProtocol(athletesResults, competition)
+    println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
 }
