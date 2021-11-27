@@ -3,6 +3,7 @@ package ru.emkn.kotlin.sms.input_result
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
+import ru.emkn.kotlin.sms.result_data.Table
 
 
 class InputCompetitionResultByCheckPoints(val fileNames: List<String>, val competition: Competition) :

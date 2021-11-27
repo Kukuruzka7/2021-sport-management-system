@@ -46,7 +46,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
         //Время начала и конца путешествия одного чела
-        val startTime = data.startTime[athlete.number]?.date
+        val startTime = data.startTime[athlete.number]
         val finishTime = data.table[athlete.number]?.last()?.date
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
