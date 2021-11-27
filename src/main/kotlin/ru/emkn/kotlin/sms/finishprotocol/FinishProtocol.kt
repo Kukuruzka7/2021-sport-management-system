@@ -116,6 +116,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     )
 }
 
+
 fun createDir(path: String) {
     if (!File(path).exists()) {
         try {
