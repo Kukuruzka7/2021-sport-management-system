@@ -7,16 +7,16 @@ import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 enum class SportType(val sportType: String) {
-    RUNNING("бег"), ERR("спорт который мы не поддерживаем");
+    RUNNING("бег"), ERROR("спорт который мы не поддерживаем");
 
     companion object {
-        fun getSportTypeFromString(str: String): SportType {
+        fun getSportType(str: String): SportType {
             for (value in values()) {
                 if (value.sportType == str.lowercase()) {
                     return value
                 }
             }
-            return ERR
+            return ERROR
         }
     }
 }
@@ -59,9 +59,11 @@ class Competition {
 
     fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
 
-    fun toCompetitionData() = CompetitionData(athleteList.map { athlete ->
-        (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
-    })
+    fun toCompetitionData() {
+        CompetitionData(athleteList.map { athlete ->
+            (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
+        })
+    }
 }
 
 private fun groupDivision(athleteList: List<Athlete>, sportType: SportType): List<Group> {

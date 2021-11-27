@@ -85,6 +85,7 @@ class CompetitionData(private val athletesData: List<List<String>>) {
                     PREFERRED_GROUP to "предпочтительная группа",
                     START_TIME to "начальное время"
                 )
+                val athletesValues = values().toList().subList(0, 8)
             }
 
         }

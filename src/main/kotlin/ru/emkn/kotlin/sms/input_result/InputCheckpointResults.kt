@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms.input_result
 
 import kotlinx.datetime.LocalDateTime
+import logger
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
@@ -15,6 +16,7 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
     val checkpoint: Checkpoint = getCheckPoint()
 
     init {
+        logger.trace { "Инит-блок класса InputCheckpointResults(_list.size = ${list.size})" }
         //отбрасываем первый элемент -- там лежит только название чекпоинта
         val athletesResults = list.drop(0)
         //количество полей, которое описывает результаты каждого атлета
@@ -25,6 +27,7 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
         }
         resultsOfAthletes =
             splitByAthletes.map { parseResultOfAthlete(it, checkpoint) }.associateBy { it.athleteNumber }
+        logger.trace { "Инит-блок класса InputCheckpointResults завершен" }
     }
 
     companion object {
@@ -37,14 +40,17 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
     }
 
     private fun getCheckPoint(): Checkpoint {
+        logger.trace { "Вызов getCheckPoint()" }
         if (list.isEmpty()) {
             throw ResultMissesCheckPointName(list)
         }
+        logger.trace { "Завершение getCheckPoint() = ${list[0]}" }
         return Checkpoint(list[0])
     }
 
     //парсит результат конкретного атлета
     private fun parseResultOfAthlete(row: List<String>, _checkpoint: Checkpoint): CheckpointRes {
+        logger.trace { "Вызов parseResultOfAthlete(row.size = ${row.size}, _checkpoint = $_checkpoint" }
         //если данных меньше о прохождении атлета меньше (по количеству), чем ожидаем, мы вылета
         if (row.size < Fields.values().size) {
             throw ResultByCheckpointInvalidRow(row)
@@ -55,6 +61,7 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
         } catch (_: java.time.format.DateTimeParseException) {
             throw InvalidDateFormat(row[Fields.ATHLETE_TIME.ordinal])
         }
+        logger.trace { "Завершение parseResultOfAthlete(..) = CheckpointRes($_checkpoint, ${AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal])}, $time)" }
         return CheckpointRes(_checkpoint, AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal]), time)
     }
 }
