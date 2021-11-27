@@ -4,7 +4,6 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.athlete.Category
 import ru.emkn.kotlin.sms.athlete.Sex
-import ru.emkn.kotlin.sms.*
 import java.io.File
 
 class TeamApplication(file: File, val numberOfApplication: Int) {

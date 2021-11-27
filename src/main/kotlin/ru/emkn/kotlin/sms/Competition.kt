@@ -4,12 +4,12 @@ import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.application.Application
 
 enum class SportType(val sportType: String) {
-    RUNNING("бег"), ERR("спорт по который мы не поддерживаем");
+    RUNNING("бег"), ERR("спорт который мы не поддерживаем");
 
     companion object {
         fun getSportTypeFromString(str: String): SportType {
             for (value in values()) {
-                if (value.sportType == str) {
+                if (value.sportType == str.lowercase()) {
                     return value
                 }
             }
@@ -44,7 +44,7 @@ class Competition {
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
-        groupList = groupDivision(athleteList)
+        groupList = groupDivision(athleteList, _info.sport)
     }
 
     constructor(data: CompetitionData) {
@@ -59,12 +59,12 @@ class Competition {
     })
 }
 
-private fun groupDivision(athleteList: List<Athlete>): List<Group> {
+private fun groupDivision(athleteList: List<Athlete>, sportType: SportType): List<Group> {
     val groupNameList = athleteList.map { it.groupName }.toSet().toList()
     val athleteByGroupName = athleteList.groupBy { it.groupName }
     return groupNameList.map {
         Group(
-            Race(it),
+            Race(it, sportType),
             athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
         )
     }

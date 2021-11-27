@@ -21,8 +21,8 @@ enum class UserBehavior(val behavior: String) {
 
     companion object {
         fun getBehavior(behavior: String): UserBehavior {
-            for (value in UserBehavior.values()) {
-                if (value.behavior == behavior) {
+            for (value in values()) {
+                if (value.behavior == behavior.lowercase()) {
                     return value
                 }
             }
