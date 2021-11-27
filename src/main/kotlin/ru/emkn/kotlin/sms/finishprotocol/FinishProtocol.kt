@@ -4,10 +4,10 @@ import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import kotlinx.datetime.LocalDateTime
 import logger
-import ru.emkn.kotlin.sms.Athlete
 import ru.emkn.kotlin.sms.Competition
 import ru.emkn.kotlin.sms.DirectoryCouldNotBeCreated
 import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.result_data.ResultData
 import java.io.File
 import kotlin.math.max
