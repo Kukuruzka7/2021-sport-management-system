@@ -4,12 +4,13 @@ import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import ru.emkn.kotlin.sms.Group
 import java.io.File
 
-class GroupProtocol(private val group: Group, val protocol: List<AthleteProtocol>) {
+class GroupProtocol(val group: Group, val protocol: List<AthleteProtocol>) {
     fun toCSV(dirName: String) {
         val fileName = """$dirName${group.race.groupName}.csv"""
         File(fileName).createNewFile()
         CsvWriter().open(fileName) {
             writeRow(group.race.groupName)
+            writeInfoRow()
             protocol.forEach { writeAthleteProtocol(it) }
         }
     }
