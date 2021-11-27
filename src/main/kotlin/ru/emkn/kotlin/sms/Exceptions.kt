@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms
 
+import ru.emkn.kotlin.sms.athlete.Name
 import ru.emkn.kotlin.sms.input_result.InputAthleteResults
 import ru.emkn.kotlin.sms.input_result.InputCheckpointResults
 import ru.emkn.kotlin.sms.result_data.Checkpoint

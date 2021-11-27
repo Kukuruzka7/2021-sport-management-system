@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms.input_result
 
 import kotlinx.datetime.LocalDateTime
 import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
 import java.time.LocalTime
