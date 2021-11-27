@@ -102,10 +102,12 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         teams.map { TeamProtocol(it, athleteProtocols) }
 
     private fun generateCSVbyGroups() {
+        logger.info { "Начинаю создавать CSV по группам" }
         val dirName = path + "groups/"
         File(dirName).delete()
         createDir(dirName)
         groupProtocols.forEach { it.toCSV(dirName) }
+        logger.info { "CSV по группам успешно созданы" }
     }
 
     private fun generateOverallCSV() {
@@ -180,11 +182,16 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
 
 fun createDir(path: String) {
     logger.info { "Начинаю создавать директорию $path" }
-    if (!File(path).exists()) {
+    if (!File(path).isFile) {
+        if (File(path).exists()) {
+            logger.info { "По пути $path был файл. Его пришлось удалить!" }
+            File(path).delete()
+        }
         try {
             File(path).mkdir()
         } catch (_: Exception) {
             throw DirectoryCouldNotBeCreated(path)
         }
     }
+    logger.info { "Директория $path успешно создана" }
 }
