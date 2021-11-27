@@ -7,41 +7,46 @@ import ru.emkn.kotlin.sms.result_data.CheckpointRes
 
 
 //информация о прохождении атлетом чекпоинтов, создается по названию файла с цсв-шкой.
-class InputAthleteResults(override val fileName: String) : InputResult {
+class InputAthleteResults(override val list: List<String>) : InputResult() {
     //каждому чекпоинту сопоставляет результат данного атлета на нем
     val resultsOnCheckPoints: List<CheckpointRes>
-    val number: AthleteNumber
+    val number = getAthleteNumber()
 
     init {
-        val rows = getRows() //см. InputResult
-        number = getAthleteNumber(rows) //извлекаем номер
-        val checkPointsResults = rows.drop(0) //надо избавиться от первой строчки, там хранился только номер атлета
+        //отбрасываем первый элемент -- там лежит только название чекпоинта
+        val checkPointsResults = list.drop(0) //надо избавиться от первой строчки, там хранился только номер атлета
+        //количество полей, которое описывает результаты каждого атлета
+        val numOfFields = Fields.values().size
+        //представляем линейный массив в виде прямоугольного, в каждой строке -- информация атлетом
+        val splitByAthletes: List<List<String>> = List(checkPointsResults.size / numOfFields) { i ->
+            checkPointsResults.subList(numOfFields * i, numOfFields * (i + 1))
+        }
         resultsOnCheckPoints =
-            checkPointsResults.map { parseResultOnCheckpoint(it, number) }
+            splitByAthletes.map { parseResultOnCheckpoint(it, number) }
     }
 
     //извлекает номер
-    private fun getAthleteNumber(rows: List<List<String>>): AthleteNumber {
-        if (rows.isEmpty() || rows[0].isEmpty()) { //TODO надо бы от ноликов избавиться
-            throw ResultMissesAthleteNumber(fileName)
+    private fun getAthleteNumber(): AthleteNumber {
+        if (list.isEmpty()) {
+            throw ResultMissesAthleteNumber(list)
         }
-        return AthleteNumber(rows[0][0])
+        return AthleteNumber(list[0])
     }
 
     //парсим результат на конкретном чекпоинте
-    private fun parseResultOnCheckpoint(list: List<String>, athleteNumber: AthleteNumber): CheckpointRes {
+    private fun parseResultOnCheckpoint(row: List<String>, athleteNumber: AthleteNumber): CheckpointRes {
         //если данных меньше о прохождении чекпоинта меньше (по количеству), чем ожидаем, мы вылетаем
-        if (list.size < Fields.values().size) {
-            throw ResultByAthleteInvalidRow(fileName, list)
+        if (row.size < Fields.values().size) {
+            throw ResultByAthleteInvalidRow(row)
         }
         //парсим время прохождения на чекпоинте
         val time = try {
-            LocalDateTime.parse(list[Fields.TIME_ON_CHECKPOINT.ordinal])
+            LocalDateTime.parse(row[Fields.TIME_ON_CHECKPOINT.ordinal])
         } catch (_: java.time.format.DateTimeParseException) {
-            throw InvalidDateFormat(fileName, list[Fields.TIME_ON_CHECKPOINT.ordinal])
+            throw InvalidDateFormat(row[Fields.TIME_ON_CHECKPOINT.ordinal])
         }
         //Fields.CHECKPOINT_NAME.ordinal -- это номер, под которым в list содержится нужная строчка
-        return CheckpointRes(Checkpoint(list[Fields.CHECKPOINT_NAME.ordinal]), athleteNumber, time)
+        return CheckpointRes(Checkpoint(row[Fields.CHECKPOINT_NAME.ordinal]), athleteNumber, time)
     }
 
 

@@ -1,5 +1,3 @@
 import mu.KotlinLogging
 
-class Logger {
-    val logger = KotlinLogging.logger { }
-}
+val logger = KotlinLogging.logger { }

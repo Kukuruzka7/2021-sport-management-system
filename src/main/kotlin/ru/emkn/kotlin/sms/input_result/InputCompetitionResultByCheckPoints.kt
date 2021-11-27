@@ -1,19 +1,23 @@
 package ru.emkn.kotlin.sms.input_result
 
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
 import ru.emkn.kotlin.sms.result_data.Table
+import java.io.File
 
 
-class InputCompetitionResultByCheckPoints(val fileNames: List<String>, val competition: Competition) :
+class InputCompetitionResultByCheckPoints(override val fileName: String, val competition: Competition) :
     InputCompetitionResult() {
+
+    val rows = csvReader().readAll(File(fileName).readText())
 
     //по чекпоинту получаем результат атлетов на этом чекпоинте, достается из competition
     val checkpointMap: Map<Checkpoint, InputCheckpointResults> = buildCheckpointMap()
 
     private fun buildCheckpointMap(): Map<Checkpoint, InputCheckpointResults> {
-        val resultsOnPoints = fileNames.map { InputCheckpointResults(it) } //по названию файла делаем класс
+        val resultsOnPoints = rows.map { InputCheckpointResults(it) } //по названию файла делаем класс
         return resultsOnPoints.associateBy { it.checkpoint } //строим мапу
     }
 

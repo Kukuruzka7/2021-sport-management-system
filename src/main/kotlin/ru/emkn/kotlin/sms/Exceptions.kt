@@ -6,7 +6,10 @@ import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 class WeHaveAProblem(problem: String) : Exception(problem)
 
-class InvalidDateFormat(fileName: String, date: String) : Exception("В файле $fileName некорректный формат даты: $date")
+class InvalidDateFormatInFile(fileName: String, date: String) :
+    Exception("В файле $fileName некорректный формат даты: $date")
+
+class InvalidDateFormat(date: String) : Exception("Некорректный формат даты: $date")
 
 class ApplicationCanNotBeRead(numberOfApplication: Int) :
     Exception("Заявку номер $numberOfApplication невозможно прочитать.")
@@ -28,21 +31,22 @@ class WrongAthleteNameInResults(athleteName: Name) : Exception("Спортсме
 
 class ResultCanNotBeRead(fileName: String) : Exception("Результат в файле $fileName не может быть прочитан")
 
-class ResultMissesAthleteNumber(fileName: String) :
-    Exception("В файле $fileName отсутствует номер спортсмена на первой строке")
+class ResultMissesAthleteNumber(list: List<String>) :
+    Exception("Отсутствует номер спортсмена на первой строке: $list")
 
-class ResultByAthleteInvalidRow(fileName: String, line: List<String>) :
-    Exception("Файл $fileName содержит некорректную строку. Ожидается \n${InputAthleteResults.ATHLETE_RESULT_FORMAT}\n В реальность\n $line")
+class ResultByAthleteInvalidRow(line: List<String>) :
+    Exception("Некорректная информация от прохожднии. Ожидается \n${InputAthleteResults.ATHLETE_RESULT_FORMAT}\n В реальность\n $line")
 
-class ResultMissesCheckPointName(fileName: String) :
-    Exception("В файле $fileName отсутствует название контрольного пункта на первой строке")
+class ResultMissesCheckPointName(list: List<String>) :
+    Exception("В строке $list отсутствует название контрольного пункта на первой строке")
 
-class ResultByCheckpointInvalidRow(fileName: String, line: List<String>) :
-    Exception("Файл $fileName содержит некорректную строку. Ожидается \n${InputCheckpointResults.CHECKPOINT_RESULT_FORMAT}\n В реальность\n $line")
+class ResultByCheckpointInvalidRow(line: List<String>) :
+    Exception("Некорректная строка. Ожидается \n${InputCheckpointResults.CHECKPOINT_RESULT_FORMAT}\n В реальность\n $line")
 
 class DirectoryCouldNotBeCreated(path: String) : Exception("Не получилось создать директорию $path")
 
 class FileCouldNotBeCreated(fileName: String) : Exception("Не получилось создать файл $fileName")
+
 class CompetitionDataTooFewArgumentsInRow(row: List<String>) :
     Exception("Файл [CompetitionData] поврежден: Ожидается\n${CompetitionData.inputFormat}\nВ реальности\n$row")
 
@@ -55,3 +59,4 @@ class CompetitionDataInvalidSportCategory(sportCategory: String) :
 
 class InputCheckpointResultIsAbsent(checkpoint: Checkpoint) :
     Exception("Отсутствует результат на контрольном пункте $checkpoint")
+
