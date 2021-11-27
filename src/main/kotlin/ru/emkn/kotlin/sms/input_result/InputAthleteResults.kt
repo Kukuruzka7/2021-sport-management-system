@@ -4,17 +4,19 @@ import kotlinx.datetime.LocalDateTime
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
+import java.time.LocalTime
 
 
 //информация о прохождении атлетом чекпоинтов, создается по названию файла с цсв-шкой.
-class InputAthleteResults(override val list: List<String>) : InputResult() {
+class InputAthleteResults(_list: List<String>) : InputResult() {
     //каждому чекпоинту сопоставляет результат данного атлета на нем
+    override val list: List<String> = _list.dropLastWhile { it.isEmpty() }
     val resultsOnCheckPoints: List<CheckpointRes>
     val number = getAthleteNumber()
 
     init {
         //отбрасываем первый элемент -- там лежит только название чекпоинта
-        val checkPointsResults = list.drop(0) //надо избавиться от первой строчки, там хранился только номер атлета
+        val checkPointsResults = list.drop(1) //надо избавиться от первой строчки, там хранился только номер атлета
         //количество полей, которое описывает результаты каждого атлета
         val numOfFields = Fields.values().size
         //представляем линейный массив в виде прямоугольного, в каждой строке -- информация атлетом
@@ -41,8 +43,8 @@ class InputAthleteResults(override val list: List<String>) : InputResult() {
         }
         //парсим время прохождения на чекпоинте
         val time = try {
-            LocalDateTime.parse(row[Fields.TIME_ON_CHECKPOINT.ordinal])
-        } catch (_: java.time.format.DateTimeParseException) {
+            LocalTime.parse(row[Fields.TIME_ON_CHECKPOINT.ordinal])
+        } catch (_: Exception) {
             throw InvalidDateFormat(row[Fields.TIME_ON_CHECKPOINT.ordinal])
         }
         //Fields.CHECKPOINT_NAME.ordinal -- это номер, под которым в list содержится нужная строчка

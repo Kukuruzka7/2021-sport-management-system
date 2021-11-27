@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
+import java.time.LocalTime
 
 class InputCheckpointResults(override val list: List<String>) : InputResult() {
     //каждому атлету сопоставляет его результат на данном чекпоинте
@@ -49,7 +50,7 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
         }
         //парсим время прохождения атлета
         val time = try {
-            LocalDateTime.parse(row[Fields.ATHLETE_TIME.ordinal])
+            LocalTime.parse(row[Fields.ATHLETE_TIME.ordinal])
         } catch (_: java.time.format.DateTimeParseException) {
             throw InvalidDateFormat(row[Fields.ATHLETE_TIME.ordinal])
         }
