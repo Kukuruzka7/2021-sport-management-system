@@ -1,6 +1,6 @@
 import kotlin.test.*
 
-internal class StartProtocolTests {
+internal class FinishProtocolTests {
     @Test
     fun test1() {
         assert(true)
