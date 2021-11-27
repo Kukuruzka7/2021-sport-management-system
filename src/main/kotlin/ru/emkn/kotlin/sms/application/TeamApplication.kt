@@ -8,11 +8,12 @@ import ru.emkn.kotlin.sms.athlete.Name
 import ru.emkn.kotlin.sms.athlete.Sex
 import java.io.File
 
-class TeamApplication(file: File, val numberOfApplication: Int) {
+class TeamApplication(file: File, val numberOfApplication: Int, val sportType: SportType) {
 
     private val rows: List<List<String>> = try {
         csvReader().readAll(file)
     } catch (e: Exception) {
+        println(e.message)
         throw ApplicationCanNotBeRead(numberOfApplication)
     }
     val teamName: TeamName
@@ -22,11 +23,11 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         checkFormatOfApplication(numberOfApplication, rows)
         teamName = TeamName(rows[0][0])
         team = Team(teamName, emptyList())
-        team.athletes = processingData(rows)
+        team.athletes = processingData(rows.subList(2, rows.size))
     }
 
     private fun processingData(rows: List<List<String>>): List<Athlete> {
-        return rows.subList(1, rows.size).map { processingRow(it) }
+        return rows.subList(2, rows.size).map { processingRow(it) }
     }
 
     private fun processingRow(row: List<String>): Athlete {
@@ -41,7 +42,8 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
             birthDate,
             sportCategory,
             _teamName = teamName,
-            _groupName = GroupName("$sex${birthDate.year}")
+            _groupName = GroupName("$sex${birthDate.year}"),
+            _sportType = sportType
         )
     }
 
@@ -49,7 +51,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         if (rows.isEmpty()) {
             throw ApplicationHasWrongFormat(numberOfApplication)
         }
-        for (i in 1..rows.lastIndex) {
+        for (i in 2..rows.lastIndex) {
             checkRow(rows[i])
         }
     }

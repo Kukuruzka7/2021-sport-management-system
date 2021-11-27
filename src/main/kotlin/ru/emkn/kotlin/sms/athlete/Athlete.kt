@@ -1,10 +1,7 @@
 package ru.emkn.kotlin.sms.athlete
 
 import kotlinx.datetime.LocalDate
-import ru.emkn.kotlin.sms.CompetitionData
-import ru.emkn.kotlin.sms.GroupName
-import ru.emkn.kotlin.sms.Race
-import ru.emkn.kotlin.sms.TeamName
+import ru.emkn.kotlin.sms.*
 
 class AthleteNumber(val value: String) {
     override fun toString() = value
@@ -41,7 +38,8 @@ class Athlete(
     private val preferredGroup: GroupName = GroupName(""),
     val teamName: TeamName,
     val groupName: GroupName,
-    val number: AthleteNumber
+    val number: AthleteNumber,
+    val sportType: SportType
 ) {
 
     constructor(
@@ -51,10 +49,11 @@ class Athlete(
         _sportCategory: Category,
         _preferredGroup: GroupName = GroupName("TODO()"),
         _teamName: TeamName,
-        _groupName: GroupName
-    ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
+        _groupName: GroupName,
+        _sportType: SportType
+    ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate(), _sportType)
 
-    lateinit var race: Race
+    val race: Race = Race(groupName, sportType)
 
     fun extractFieldToString(field: CompetitionData.Companion.Fields): String = when (field) {
         CompetitionData.Companion.Fields.NUMBER -> number.toString()

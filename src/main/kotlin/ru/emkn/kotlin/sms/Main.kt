@@ -7,10 +7,8 @@ import ru.emkn.kotlin.sms.SportType.Companion.getSportTypeFromString
 import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
-import ru.emkn.kotlin.sms.input_result.InputAthleteResults
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
-import ru.emkn.kotlin.sms.input_result.InputResult
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
@@ -46,14 +44,14 @@ fun main(args: Array<String>) {
         return
     }
     when (getBehavior(args[0])) {
-        UserBehavior.START -> start(args.slice(1..args.lastIndex))
-        UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args.slice(1..args.lastIndex))
-        UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args.slice(1..args.lastIndex))
+        UserBehavior.START -> start(args)
+        UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args)
+        UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args)
         UserBehavior.ERR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
     }
 }
 
-fun start(inputData: List<String>) {
+fun start(inputData: Array<String>) {
     if (inputData.size != FieldsStart.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return
@@ -84,7 +82,7 @@ fun start(inputData: List<String>) {
     try {
         application = Application(teamApplicationNames.map {
             File(it)
-        })
+        }, sportType)
     } catch (e: Exception) {
         println(e.message)
         return
@@ -95,7 +93,7 @@ fun start(inputData: List<String>) {
     println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/startProtocol/.")
 }
 
-fun finishByAthletes(inputData: List<String>) {
+fun finishByAthletes(inputData: Array<String>) {
     if (inputData.size != FieldsFinal.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return
@@ -134,7 +132,7 @@ fun finishByAthletes(inputData: List<String>) {
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
 }
 
-fun finishByCheckPoints(inputData: List<String>) {
+fun finishByCheckPoints(inputData: Array<String>) {
     if (inputData.size != FieldsFinal.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return

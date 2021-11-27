@@ -34,6 +34,7 @@ class CompetitionData(private val athletesData: List<List<String>>) {
             TeamName(it[Fields.TEAM_NAME.ordinal]),
             GroupName(it[Fields.RACE.ordinal]),
             AthleteNumber(it[Fields.NUMBER.ordinal]),
+            SportType.RUNNING
         )
     }
 
