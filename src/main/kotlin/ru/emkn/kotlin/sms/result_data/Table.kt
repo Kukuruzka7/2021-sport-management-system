@@ -1,8 +1,6 @@
-package ru.emkn.kotlin.sms
+package ru.emkn.kotlin.sms.result_data
 
-import ru.emkn.kotlin.sms.result_data.Checkpoint
-import ru.emkn.kotlin.sms.result_data.CheckpointRes
-import java.time.LocalDateTime
+import ru.emkn.kotlin.sms.AthleteNumber
 
 class Table(val map: Map<AthleteNumber, List<CheckpointRes>>) {
     operator fun get(athleteNumber: AthleteNumber) = map[athleteNumber]
