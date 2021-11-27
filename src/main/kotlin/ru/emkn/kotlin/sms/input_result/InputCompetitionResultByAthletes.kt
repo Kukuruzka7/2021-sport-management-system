@@ -1,7 +1,7 @@
 package ru.emkn.kotlin.sms.input_result
 
 import ru.emkn.kotlin.sms.InputCompetitionResult
-import ru.emkn.kotlin.sms.Table
+import ru.emkn.kotlin.sms.result_data.Table
 
 
 //

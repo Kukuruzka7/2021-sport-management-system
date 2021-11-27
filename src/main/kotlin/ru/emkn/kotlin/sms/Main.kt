@@ -81,7 +81,7 @@ fun start(inputData: List<String>) {
     }
     val competition = Competition(MetaInfo(name, date, sportType), application)
     //возможно дальше что-то не то
-    competition.toCompetitionData().save("Todo()")
+    competition.toCompetitionData().save("TODO()")
     val startProtocol = StartProtocol(competition.groupList, competition.info.name)
     println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в папке resources.")
     //видимо еще хотим вернуть CompetitionData.
