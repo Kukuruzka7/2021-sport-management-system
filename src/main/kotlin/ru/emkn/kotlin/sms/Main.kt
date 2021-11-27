@@ -22,13 +22,19 @@ fun main(args: Array<String>) {
     }
     val name = args[Fields.NAME.ordinal]
     val sportType: SportType = getSportTypeFromString(args[Fields.SPORT_TYPE.ordinal])
-    val date: LocalDate = args[Fields.DATE.ordinal].toLocalDate()
+    val dateString = args[Fields.DATE.ordinal]
     val fileName = args[Fields.FILE_NAME_OF_APPLICATION.ordinal]
     if (sportType == SportType.ERR) {
         println("Спорт ${args[Fields.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return
     }
-    //TODO("проверка на дату")
+    val date: LocalDate
+    try {
+        date = dateString.toLocalDate()
+    } catch (e: Exception) {
+        println("Дата состязания $dateString не корректна.")
+        return
+    }
     val application: Application
     val teamApplicationNames: List<String>
     try {
