@@ -59,8 +59,8 @@ class Competition {
 
     fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
 
-    fun toCompetitionData() {
-        CompetitionData(athleteList.map { athlete ->
+    fun toCompetitionData(): CompetitionData {
+        return CompetitionData(athleteList.map { athlete ->
             (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
         })
     }

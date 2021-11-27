@@ -3,7 +3,7 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
-import ru.emkn.kotlin.sms.SportType.Companion.getSportTypeFromString
+import ru.emkn.kotlin.sms.SportType.Companion.getSportType
 import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
@@ -12,6 +12,7 @@ import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.input_result.InputResult
 import ru.emkn.kotlin.sms.result_data.ResultData
+import ru.emkn.kotlin.sms.CompetitionData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
 
@@ -60,10 +61,10 @@ fun start(inputData: List<String>) {
         return
     }
     val name = inputData[FieldsStart.NAME.ordinal]
-    val sportType: SportType = getSportTypeFromString(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    val sportType: SportType = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
-    if (sportType == SportType.ERR) {
+    if (sportType == SportType.ERROR) {
         println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return
     }
@@ -126,7 +127,7 @@ fun finishByAthletes(inputData: List<String>) {
     val athletesResults: ResultData
     try {
         athletesResults =
-            ResultData(InputCompetitionResultByAthletes(fileNames).toTable(), CompetitionData(data).getStartTime())
+            ResultData(InputCompetitionResultByAthletes(fileNames[0]).toTable(), CompetitionData(data).getStartTime())
     } catch (e: Exception) {
         println(e.message)
         return
@@ -165,7 +166,7 @@ fun finishByCheckPoints(inputData: List<String>) {
     val athletesResults: ResultData
     try {
         athletesResults = ResultData(
-            InputCompetitionResultByCheckPoints(fileNames, competition).toTable(),
+            InputCompetitionResultByCheckPoints(fileNames[0], competition).toTable(),
             CompetitionData(data).getStartTime()
         )
     } catch (e: Exception) {

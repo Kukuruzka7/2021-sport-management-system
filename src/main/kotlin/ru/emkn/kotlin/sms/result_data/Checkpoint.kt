@@ -2,7 +2,7 @@ package ru.emkn.kotlin.sms.result_data
 
 
 import kotlinx.datetime.LocalDateTime
-import ru.emkn.kotlin.sms.AthleteNumber
+import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import java.time.LocalTime
 
 

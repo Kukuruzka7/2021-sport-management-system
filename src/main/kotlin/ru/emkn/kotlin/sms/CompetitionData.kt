@@ -3,8 +3,8 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import ru.emkn.kotlin.sms.athlete.Category
-import ru.emkn.kotlin.sms.athlete.Sex
+import ru.emkn.kotlin.sms.athlete.*
+import java.time.LocalTime
 
 
 class CompetitionData(private val athletesData: List<List<String>>) {
@@ -38,10 +38,10 @@ class CompetitionData(private val athletesData: List<List<String>>) {
         )
     }
 
-    fun getStartTime(): Map<AthleteNumber, LocalDateTime> =
+    fun getStartTime(): Map<AthleteNumber, LocalTime> =
         athletesData.associateBy(
             { AthleteNumber(it[Fields.NUMBER.ordinal]) },
-            { LocalDateTime.parse(it[Fields.START_TIME.ordinal]) })
+            { LocalTime.parse(it[Fields.START_TIME.ordinal]) })
 
     private fun checkRow(row: List<String>) {
         if (row.size < Fields.values().size) {
