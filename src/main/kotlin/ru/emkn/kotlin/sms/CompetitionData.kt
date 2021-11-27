@@ -75,7 +75,6 @@ class CompetitionData(private val athletesData: List<List<String>>) {
             }
 
         }
-
         val inputFormat = Fields.values().joinToString {
             it.toRussian()
         }
