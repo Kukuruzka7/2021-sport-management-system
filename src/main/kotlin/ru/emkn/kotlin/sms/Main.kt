@@ -15,6 +15,7 @@ import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
 
+
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
 }
