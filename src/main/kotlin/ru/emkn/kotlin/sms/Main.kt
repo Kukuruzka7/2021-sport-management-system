@@ -8,6 +8,7 @@ import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
 
+
 enum class FieldsStart {
     NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
 }
