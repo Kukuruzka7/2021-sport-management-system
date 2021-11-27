@@ -52,6 +52,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     private val athleteResult: List<AthleteResult> =
         athletes.map { makeIndividualResults(it) }
 
+    //Сделать индивидуальные результаты
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
         //Время начала и конца путешествия одного чела
         val startTime = data.startTime[athlete.number]
@@ -67,6 +68,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Выставляет номера спортсменов в их группе
     private fun makeSortedResultsInGroup(group: Group, athleteResult: List<AthleteResult>): List<AthleteProtocol> {
+        logger.info { "Начинаю сортировать CSV по группам" }
         val listWithoutDisqualified =
             athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime != null }
         val listDisqualified = athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime == null }
@@ -84,6 +86,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         }
     }
 
+    //Посчитать очки за забег
     private fun calculatePoints(finishTime: LocalDateTime?, bestTime: LocalDateTime): Double {
         return if (finishTime == null) {
             0.0
@@ -101,6 +104,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     private val teamProtocols: List<TeamProtocol> =
         teams.map { TeamProtocol(it, athleteProtocols) }
 
+    //Создаёт csv по группам
     private fun generateCSVbyGroups() {
         logger.info { "Начинаю создавать CSV по группам" }
         val dirName = path + "groups/"
@@ -110,7 +114,9 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         logger.info { "CSV по группам успешно созданы" }
     }
 
+    //Создаёт общее csv
     private fun generateOverallCSV() {
+        logger.info { "Начинаю создавать общее CSV" }
         val fileName = path + "overallCSV"
         File(fileName).delete()
         File(fileName).createNewFile()
@@ -122,18 +128,21 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
                 groupProtocol.protocol.forEach { writeAthleteProtocol(it) }
             }
         }
+        logger.info { "Общее CSV успешно создано" }
     }
 
-
+    //Создаёт csv по командам
     private fun generateCSVbyTeams() {
+        logger.info { "Начинаю создавать CSV по командам" }
         val dirName = path + "teams/"
         File(dirName).delete()
         createDir(dirName)
         teamProtocols.forEach { it.toCSV(dirName) }
+        logger.info { "CSV по командам успешно созданы" }
     }
-
 }
 
+//Количество секунд от начала дня
 fun LocalDateTime.toInt(): Int = this.hour * 3600 + this.minute * 60 + this.second
 
 //Функция разности двух LocalDateTime
@@ -149,6 +158,7 @@ operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
     )
 }
 
+//Печатает стартовую строчку
 fun ICsvFileWriter.writeInfoRow() {
     writeRow(
         "№ п/п",
@@ -164,6 +174,7 @@ fun ICsvFileWriter.writeInfoRow() {
     )
 }
 
+//Печатает строчку с данными об атлете
 fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     writeRow(
         it.num,
@@ -179,7 +190,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     )
 }
 
-
+//Функция создания директории
 fun createDir(path: String) {
     logger.info { "Начинаю создавать директорию $path" }
     if (!File(path).isFile) {
