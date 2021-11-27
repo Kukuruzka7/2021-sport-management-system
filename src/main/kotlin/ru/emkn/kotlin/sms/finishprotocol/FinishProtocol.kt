@@ -10,18 +10,19 @@ import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.result_data.ResultData
 import java.io.File
+import java.time.LocalTime
 import kotlin.math.max
 
 data class AthleteResult(
     val athlete: Athlete,
-    val finishTime: LocalDateTime?,
+    val finishTime: LocalTime?,
 )
 
 data class AthleteProtocol(
     val athlete: Athlete,
-    val finishTime: LocalDateTime?,
+    val finishTime: LocalTime?,
     val num: Int,
-    val lag: LocalDateTime?,
+    val lag: LocalTime?,
     val points: Double,
 ) {
     val place = if (finishTime != null) num else null
@@ -71,7 +72,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
             athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime != null }
         val listDisqualified = athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime == null }
         val sortedList = listWithoutDisqualified.sortedBy { it.finishTime } + listDisqualified
-        val bestTime = listWithoutDisqualified.first().finishTime ?: LocalDateTime(2021, 12, 1, 0, 0, 0)
+        val bestTime = listWithoutDisqualified.first().finishTime ?: LocalTime.of(0, 0, 0)
         return sortedList.map {
             val points = calculatePoints(it.finishTime, bestTime)
             AthleteProtocol(
@@ -84,7 +85,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         }
     }
 
-    private fun calculatePoints(finishTime: LocalDateTime?, bestTime: LocalDateTime): Double {
+    private fun calculatePoints(finishTime: LocalTime?, bestTime: LocalTime): Double {
         return if (finishTime == null) {
             0.0
         } else max(
@@ -134,19 +135,12 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
 }
 
-fun LocalDateTime.toInt(): Int = this.hour * 3600 + this.minute * 60 + this.second
+fun LocalTime.toInt(): Int = this.hour * 3600 + this.minute * 60 + this.second
 
-//Функция разности двух LocalDateTime
-operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
+//Функция разности двух LocalTime
+operator fun LocalTime?.minus(start: LocalTime): LocalTime? {
     if (this == null) return null
-    return LocalDateTime(
-        2021,
-        12,
-        1,
-        hour = this.hour - start.hour,
-        minute = this.minute - start.minute,
-        second = this.second - start.second
-    )
+    return LocalTime.of(this.hour - start.hour, this.minute - start.minute, this.second - start.second)
 }
 
 fun ICsvFileWriter.writeInfoRow() {

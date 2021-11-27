@@ -8,6 +8,12 @@ import ru.emkn.kotlin.sms.TeamName
 
 class AthleteNumber(val value: String) {
     override fun toString() = value
+    override fun equals(other: Any?): Boolean {
+        if (other !is AthleteNumber) {
+            return false
+        }
+        return value == other.value
+    }
 }
 
 class Name(val firstName: String, val lastName: String) {
