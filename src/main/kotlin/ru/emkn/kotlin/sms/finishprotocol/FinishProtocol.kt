@@ -3,6 +3,7 @@ package ru.emkn.kotlin.sms.finishprotocol
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.result_data.ResultData
 import java.io.File
 import java.time.LocalDateTime
 
@@ -17,7 +18,7 @@ data class AthleteProtocol(
     val place: Int
 )
 
-class FinishProtocol(private val table: Table, competition: Competition) {
+class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Скачиваем нужные данные из competition
     private val athletes = competition.athleteList
@@ -39,8 +40,8 @@ class FinishProtocol(private val table: Table, competition: Competition) {
 
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
         //Время начала и конца путешествия одного чела
-        val startTime = table.startTime[athlete.number]
-        val finishTime = table[athlete.number]?.get(TODO())?.date
+        val startTime = data.startTime[athlete.number]
+        val finishTime = TODO()//data[athlete.number]?.get(TODO())?.date
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
         return AthleteResult(athlete, TODO())
