@@ -13,8 +13,9 @@ class GroupStartProtocol(private val group: Group, path: String) {
     private fun writeGroupToCSV() {
         val timeZone = TimeZone.of("Europe/Moscow")
         var startTime = LocalDateTime(2021, 12, 1, 12, 0, 0)
-
-        File(groupPath).createNewFile()
+        if(!File(groupPath).isFile) {
+            File(groupPath).createNewFile()
+        }
         csvWriter().open(groupPath) {
             writeRow(group.race.groupName, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
             group.athletes.forEach { athlete ->

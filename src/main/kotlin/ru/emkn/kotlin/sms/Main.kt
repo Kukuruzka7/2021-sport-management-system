@@ -38,6 +38,8 @@ enum class UserBehavior(val behavior: String) {
 
 const val dir = "src/main/resources/competitions/"
 
+var sport = SportType.ERR
+
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         println("Вы ничего не ввели. Попробуйте еще раз.")
@@ -57,10 +59,10 @@ fun start(inputData: Array<String>) {
         return
     }
     val name = inputData[FieldsStart.NAME.ordinal]
-    val sportType: SportType = getSportTypeFromString(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    sport = getSportTypeFromString(inputData[FieldsStart.SPORT_TYPE.ordinal])
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
-    if (sportType == SportType.ERR) {
+    if (sport == SportType.ERR) {
         println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return
     }
@@ -82,14 +84,14 @@ fun start(inputData: Array<String>) {
     try {
         application = Application(teamApplicationNames.map {
             File(it)
-        }, sportType)
+        })
     } catch (e: Exception) {
         println(e.message)
         return
     }
-    val competition = Competition(MetaInfo(name, date, sportType), application)
-    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData")
+    val competition = Competition(MetaInfo(name, date, sport), application)
     StartProtocol(competition.groupList, dir + competition.info.name + "/")
+    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData")
     println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/startProtocol/.")
 }
 

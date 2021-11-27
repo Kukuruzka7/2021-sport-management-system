@@ -8,7 +8,7 @@ import ru.emkn.kotlin.sms.athlete.Name
 import ru.emkn.kotlin.sms.athlete.Sex
 import java.io.File
 
-class TeamApplication(file: File, val numberOfApplication: Int, val sportType: SportType) {
+class TeamApplication(file: File, val numberOfApplication: Int) {
 
     private val rows: List<List<String>> = try {
         csvReader().readAll(file)
@@ -43,7 +43,6 @@ class TeamApplication(file: File, val numberOfApplication: Int, val sportType: S
             sportCategory,
             _teamName = teamName,
             _groupName = GroupName("$sex${birthDate.year}"),
-            _sportType = sportType
         )
     }
 

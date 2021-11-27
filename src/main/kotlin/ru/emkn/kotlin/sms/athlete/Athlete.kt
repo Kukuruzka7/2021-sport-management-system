@@ -38,8 +38,7 @@ class Athlete(
     private val preferredGroup: GroupName = GroupName(""),
     val teamName: TeamName,
     val groupName: GroupName,
-    val number: AthleteNumber,
-    val sportType: SportType
+    val number: AthleteNumber
 ) {
 
     constructor(
@@ -49,11 +48,10 @@ class Athlete(
         _sportCategory: Category,
         _preferredGroup: GroupName = GroupName("TODO()"),
         _teamName: TeamName,
-        _groupName: GroupName,
-        _sportType: SportType
-    ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate(), _sportType)
+        _groupName: GroupName
+    ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
-    val race: Race = Race(groupName, sportType)
+    val race = Race(groupName)
 
     fun extractFieldToString(field: CompetitionData.Companion.Fields): String = when (field) {
         CompetitionData.Companion.Fields.NUMBER -> number.toString()

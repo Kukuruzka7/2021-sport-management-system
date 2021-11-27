@@ -47,7 +47,7 @@ class Competition {
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
-        groupList = groupDivision(athleteList, _info.sport)
+        groupList = groupDivision(athleteList)
     }
 
     constructor(data: CompetitionData) {
@@ -60,16 +60,16 @@ class Competition {
     fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
 
     fun toCompetitionData() = CompetitionData(athleteList.map { athlete ->
-        (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
+        (CompetitionData.Companion.Fields.athletesValues.map { athlete.extractFieldToString(it) })
     })
 }
 
-private fun groupDivision(athleteList: List<Athlete>, sportType: SportType): List<Group> {
+private fun groupDivision(athleteList: List<Athlete>): List<Group> {
     val groupNameList = athleteList.map { it.groupName }.toSet().toList()
     val athleteByGroupName = athleteList.groupBy { it.groupName }
     return groupNameList.map {
         Group(
-            Race(it, sportType),
+            Race(it),
             athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
         )
     }
