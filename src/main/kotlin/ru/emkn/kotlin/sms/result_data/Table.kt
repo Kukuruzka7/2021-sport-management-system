@@ -1,6 +1,6 @@
 package ru.emkn.kotlin.sms.result_data
 
-import ru.emkn.kotlin.sms.AthleteNumber
+import ru.emkn.kotlin.sms.athlete.AthleteNumber
 
 class Table(_map: Map<AthleteNumber, List<CheckpointRes>?>) {
     val map: Map<AthleteNumber, List<CheckpointRes>?>

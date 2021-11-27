@@ -3,8 +3,7 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import ru.emkn.kotlin.sms.athlete.Category
-import ru.emkn.kotlin.sms.athlete.Sex
+import ru.emkn.kotlin.sms.athlete.*
 
 
 class CompetitionData(private val athletesData: List<List<String>>) {

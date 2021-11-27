@@ -2,6 +2,8 @@ package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.application.Application
+import ru.emkn.kotlin.sms.athlete.Athlete
+import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 enum class SportType(val sportType: String) {

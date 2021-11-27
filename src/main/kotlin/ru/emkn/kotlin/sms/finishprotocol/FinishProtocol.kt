@@ -4,6 +4,7 @@ import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import kotlinx.datetime.*
 import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.result_data.ResultData
 import java.io.File
 
