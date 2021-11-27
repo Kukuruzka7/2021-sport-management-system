@@ -23,9 +23,9 @@ class Race(val groupName: GroupName, sportType: SportType) {
     companion object {
         const val dir = "src/main/resources/races/"
         val classesBySportType =
-            SportType.values().map { it to csvReader().readAll(File(dir + it.toString() + "/classes.csv")) }.toMap()
+            SportType.values().associateWith { csvReader().readAll(File("$dir$it/classes.csv")) }
         val coursesBySportType =
-            SportType.values().map { it to csvReader().readAll(File(dir + it.toString() + "/courses.csv")) }.toMap()
+            SportType.values().associateWith { csvReader().readAll(File("$dir$it/courses.csv")) }
     }
 }
 

@@ -10,6 +10,7 @@ class TeamProtocol(private val team: Team, private val protocol: List<AthletePro
         File(fileName).createNewFile()
         CsvWriter().open(fileName) {
             writeRow(team.teamName)
+            writeInfoRow()
             protocol.sortedBy { it.athlete.groupName.groupName }.forEach { writeAthleteProtocol(it) }
         }
     }

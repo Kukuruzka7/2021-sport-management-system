@@ -2,10 +2,10 @@ package ru.emkn.kotlin.sms.finishprotocol
 
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
+import kotlinx.datetime.*
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.result_data.ResultData
 import java.io.File
-import java.time.LocalDateTime
 
 data class AthleteResult(
     val athlete: Athlete,
@@ -15,8 +15,11 @@ data class AthleteResult(
 data class AthleteProtocol(
     val athlete: Athlete,
     val finishTime: LocalDateTime?,
-    val place: Int
-)
+    val num: Int,
+    val lag: LocalDateTime?,
+) {
+    val place = if (finishTime != null) num else null
+}
 
 class FinishProtocol(private val data: ResultData, competition: Competition) {
 
@@ -33,6 +36,9 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     init {
         createDir(path)
+        generateCSVbyGroups()
+        generateOverallCSV()
+        generateCSVbyTeams()
     }
 
     private val athleteResult: List<AthleteResult> =
@@ -40,11 +46,11 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
         //Время начала и конца путешествия одного чела
-        val startTime = data.startTime[athlete.number]
-        val finishTime = TODO()//data[athlete.number]?.get(TODO())?.date
+        val startTime = data.startTime[athlete.number]?.date
+        val finishTime = data.table[athlete.number]?.last()?.date
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
-        return AthleteResult(athlete, TODO())
+        return AthleteResult(athlete, finishTime - startTime)
     }
 
     //Делает общие списки групп
@@ -53,8 +59,19 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Выставляет номера спортсменов в их группе
     private fun makeSortedResultsInGroup(group: Group, athleteResult: List<AthleteResult>): List<AthleteProtocol> {
-        val sortedList = athleteResult.filter { group.athletes.contains(it.athlete) }.sortedBy { it.finishTime }
-        return sortedList.map { AthleteProtocol(it.athlete, it.finishTime, sortedList.indexOf(it) + 1) }
+        val listWithoutDisqualified =
+            athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime != null }
+        val listDisqualified = athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime == null }
+        val sortedList = listWithoutDisqualified.sortedBy { it.finishTime } + listDisqualified
+        val bestTime = listWithoutDisqualified.first().finishTime ?: LocalDateTime(2021, 12, 1, 0, 0, 0)
+        return sortedList.map {
+            AthleteProtocol(
+                it.athlete,
+                it.finishTime,
+                sortedList.indexOf(it) + 1,
+                it.finishTime - bestTime
+            )
+        }
     }
 
     //Объединяет списки по группам в общий список
@@ -64,10 +81,6 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     //Разделяет общий список на списки по командам
     private val teamProtocols: List<TeamProtocol> =
         teams.map { TeamProtocol(it, athleteProtocols) }
-
-    val csvByTeams = generateCSVbyTeams()
-    val csvByGroups = generateCSVbyGroups()
-    val overallCSV = generateOverallCSV()
 
     private fun generateCSVbyGroups() {
         val dirName = path + "groups/"
@@ -82,8 +95,10 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         File(fileName).createNewFile()
         CsvWriter().open(fileName) {
             writeRow("Общий протокол")
-            athleteProtocols.sortedBy { it.athlete.groupName.groupName }.forEach {
-                writeAthleteProtocol(it)
+            groupProtocols.forEach { groupProtocol ->
+                writeRow(groupProtocol.group.race.groupName)
+                writeInfoRow()
+                groupProtocol.protocol.forEach { writeAthleteProtocol(it) }
             }
         }
     }
@@ -100,20 +115,43 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
 //Функция разности двух LocalDateTime
 operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
-    return this?.minusHours(start.hour.toLong())?.minusMinutes(start.minute.toLong())
-        ?.minusSeconds(start.second.toLong())
+    if (this == null) return null
+    return LocalDateTime(
+        2021,
+        12,
+        1,
+        hour = this.hour - start.hour,
+        minute = this.minute - start.minute,
+        second = this.second - start.second
+    )
+}
+
+fun ICsvFileWriter.writeInfoRow() {
+    writeRow(
+        "№ п/п",
+        "Номер",
+        "Фамилия",
+        "Имя",
+        "Г.р.",
+        "Разр.",
+        "Команда",
+        "Результат",
+        "Место",
+        "Отставание"
+    )
 }
 
 fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     writeRow(
-        it.athlete.groupName.toString(),
-        it.place,
+        it.num,
         it.athlete.number.value,
         it.athlete.name.lastName,
         it.athlete.name.firstName,
         it.athlete.birthDate.year,
         it.athlete.sportCategory.toString(),
-        it.finishTime.toString(),
+        it.athlete.teamName.toString(),
+        it.finishTime?.toString() ?: "снят",
+        it.place,
     )
 }
 
