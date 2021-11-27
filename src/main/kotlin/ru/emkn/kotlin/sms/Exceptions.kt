@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms
 
 import ru.emkn.kotlin.sms.input_result.InputAthleteResults
 import ru.emkn.kotlin.sms.input_result.InputCheckpointResults
+import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 class WeHaveAProblem(problem: String) : Exception(problem)
 
@@ -51,3 +52,6 @@ class CompetitionDataInvalidDate(date: String) : Exception("Некорректн
 
 class CompetitionDataInvalidSportCategory(sportCategory: String) :
     Exception("Некорректный спортивный разряд: $sportCategory")
+
+class InputCheckpointResultIsAbsent(checkpoint: Checkpoint) :
+    Exception("Отсутствует результат на контрольном пункте $checkpoint")

@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.application.Application
+import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 enum class SportType(val sportType: String) {
     RUNNING("бег"), ERR("спорт который мы не поддерживаем");
@@ -53,6 +54,8 @@ class Competition {
         groupList = generateGroupListByAthleteList(athleteList)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
     }
+
+    fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
 
     fun toCompetitionData() = CompetitionData(athleteList.map { athlete ->
         (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })

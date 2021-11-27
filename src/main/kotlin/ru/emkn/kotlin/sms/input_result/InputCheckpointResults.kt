@@ -48,7 +48,7 @@ class InputCheckpointResults(override val fileName: String) : InputResult {
         } catch (_: java.time.format.DateTimeParseException) {
             throw InvalidDateFormat(fileName, list[Fields.ATHLETE_TIME.ordinal])
         }
-        TODO("попарсить locadaytime")
+        //TODO("попарсить locadaytime")
         return CheckpointRes(_checkpoint, AthleteNumber(list[Fields.ATHLETE_NUMBER.ordinal]), time)
     }
 }

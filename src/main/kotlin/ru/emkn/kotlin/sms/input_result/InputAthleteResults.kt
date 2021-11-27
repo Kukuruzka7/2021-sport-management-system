@@ -9,7 +9,7 @@ import ru.emkn.kotlin.sms.result_data.CheckpointRes
 //информация о прохождении атлетом чекпоинтов, создается по названию файла с цсв-шкой.
 class InputAthleteResults(override val fileName: String) : InputResult {
     //каждому чекпоинту сопоставляет результат данного атлета на нем
-    val resultsOnCheckPoints: Map<Checkpoint, CheckpointRes>
+    val resultsOnCheckPoints: List<CheckpointRes>
     val number: AthleteNumber
 
     init {
@@ -17,7 +17,7 @@ class InputAthleteResults(override val fileName: String) : InputResult {
         number = getAthleteNumber(rows) //извлекаем номер
         val checkPointsResults = rows.drop(0) //надо избавиться от первой строчки, там хранился только номер атлета
         resultsOnCheckPoints =
-            checkPointsResults.map { parseResultOnCheckpoint(it, number) }.associateBy({ it.checkpoint }, { it })
+            checkPointsResults.map { parseResultOnCheckpoint(it, number) }
     }
 
     //извлекает номер
