@@ -2,7 +2,6 @@ package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.application.Application
-import java.util.Date
 
 enum class SportType(val sportType: String) {
     RUNNING("бег"), ERR("спорт по который мы не поддерживаем");

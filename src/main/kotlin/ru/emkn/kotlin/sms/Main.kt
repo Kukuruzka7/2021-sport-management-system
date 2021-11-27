@@ -3,29 +3,57 @@ package ru.emkn.kotlin.sms
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import ru.emkn.kotlin.sms.SportType.Companion.getSportTypeFromString
+import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.application.Application
+import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
 
-
-val INPUT_DATA_FORMAT =
-    listOf("name", "sportType", "date", "fileNameOfApplication")
-
-enum class Fields {
+enum class FieldsStart {
     NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
 }
 
+enum class FieldsFinish {
+    PATH_TO_COMPETITION_DATA
+}
+
+enum class UserBehavior(val behavior: String) {
+    START("старт"), FINISH("финал"), ERR("");
+
+    companion object {
+        fun getBehavior(behavior: String): UserBehavior {
+            for (value in UserBehavior.values()) {
+                if (value.behavior == behavior) {
+                    return value
+                }
+            }
+            return ERR
+        }
+    }
+}
+
 fun main(args: Array<String>) {
-    //пока написала для случая, когда нам выдают название соревнования, спорт, дату и один файл с названиями файлов в аргументы командной строки
-    if (args.size != Fields.values().size) {
-        println("Вы ввели, что-то не то. Попробуйте еще раз.")
+    if (args.isEmpty()) {
+        println("Вы ничего не ввели. Попробуйте еще раз.")
         return
     }
-    val name = args[Fields.NAME.ordinal]
-    val sportType: SportType = getSportTypeFromString(args[Fields.SPORT_TYPE.ordinal])
-    val dateString = args[Fields.DATE.ordinal]
-    val fileName = args[Fields.FILE_NAME_OF_APPLICATION.ordinal]
+    when (getBehavior(args[0])) {
+        UserBehavior.START -> start(args.slice(1..args.lastIndex))
+        UserBehavior.FINISH -> finish(args.slice(1..args.lastIndex))
+        UserBehavior.ERR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
+    }
+}
+
+fun start(inputData: List<String>) {
+    if (inputData.size != FieldsStart.values().size) {
+        println("Вы ввели что-то не то. Попробуйте еще раз.")
+        return
+    }
+    val name = inputData[FieldsStart.NAME.ordinal]
+    val sportType: SportType = getSportTypeFromString(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    val dateString = inputData[FieldsStart.DATE.ordinal]
+    val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
     if (sportType == SportType.ERR) {
-        println("Спорт ${args[Fields.SPORT_TYPE.ordinal]} наша система не поддерживает.")
+        println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return
     }
     val date: LocalDate
@@ -51,6 +79,14 @@ fun main(args: Array<String>) {
         println(e.message)
         return
     }
-    Competition(MetaInfo(name, date, sportType), application)
+    val competition = Competition(MetaInfo(name, date, sportType), application)
+    //возможно дальше что-то не то
+    competition.toCompetitionData().save("Todo()")
+    val startProtocol = StartProtocol(competition.groupList, competition.info.name)
+    println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в папке resources.")
+    //видимо еще хотим вернуть CompetitionData.
+}
+
+fun finish(slice: List<String>) {
 
 }
