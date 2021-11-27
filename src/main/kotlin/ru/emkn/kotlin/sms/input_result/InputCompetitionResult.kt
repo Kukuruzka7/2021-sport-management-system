@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms
 
-interface InputCompetitionResult {
-    fun toTable(): Table
+//Абстракция, промежуточный шаг между csv-файлом и Table
+abstract class InputCompetitionResult {
+    abstract fun toTable(): Table
 }
 

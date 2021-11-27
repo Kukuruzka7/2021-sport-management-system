@@ -40,10 +40,10 @@ class FinishProtocol(private val table: Table, competition: Competition) {
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
         //Время начала и конца путешествия одного чела
         val startTime = table.startTime[athlete.number]
-        val finishTime = table[athlete.number]?.get(FinishCheckPoint)?.date
+        val finishTime = table[athlete.number]?.get(TODO())?.date
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
-        return AthleteResult(athlete, finishTime - startTime)
+        return AthleteResult(athlete, TODO())
     }
 
     //Делает общие списки групп
@@ -115,6 +115,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
         it.finishTime.toString(),
     )
 }
+
 
 fun createDir(path: String) {
     if (!File(path).exists()) {
