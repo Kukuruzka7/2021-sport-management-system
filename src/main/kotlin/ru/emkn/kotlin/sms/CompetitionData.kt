@@ -4,6 +4,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import ru.emkn.kotlin.sms.athlete.*
+import java.time.LocalTime
 
 
 class CompetitionData(private val athletesData: List<List<String>>) {
@@ -37,10 +38,10 @@ class CompetitionData(private val athletesData: List<List<String>>) {
         )
     }
 
-    fun getStartTime(): Map<AthleteNumber, LocalDateTime> =
+    fun getStartTime(): Map<AthleteNumber, LocalTime> =
         athletesData.associateBy(
             { AthleteNumber(it[Fields.NUMBER.ordinal]) },
-            { LocalDateTime.parse(it[Fields.START_TIME.ordinal]) })
+            { LocalTime.parse(it[Fields.START_TIME.ordinal]) })
 
     private fun checkRow(row: List<String>) {
         if (row.size < Fields.values().size) {
@@ -84,6 +85,7 @@ class CompetitionData(private val athletesData: List<List<String>>) {
                     PREFERRED_GROUP to "предпочтительная группа",
                     START_TIME to "начальное время"
                 )
+                val athletesValues = values().toList().subList(0, 8)
             }
 
         }

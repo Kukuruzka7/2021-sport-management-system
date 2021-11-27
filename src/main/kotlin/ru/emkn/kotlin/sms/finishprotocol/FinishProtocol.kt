@@ -10,18 +10,19 @@ import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.result_data.ResultData
 import java.io.File
+import java.time.LocalTime
 import kotlin.math.max
 
 data class AthleteResult(
     val athlete: Athlete,
-    val finishTime: LocalDateTime?,
+    val finishTime: LocalTime?,
 )
 
 data class AthleteProtocol(
     val athlete: Athlete,
-    val finishTime: LocalDateTime?,
+    val finishTime: LocalTime?,
     val num: Int,
-    val lag: LocalDateTime?,
+    val lag: LocalTime?,
     val points: Double,
 ) {
     val place = if (finishTime != null) num else null
@@ -73,7 +74,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
             athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime != null }
         val listDisqualified = athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime == null }
         val sortedList = listWithoutDisqualified.sortedBy { it.finishTime } + listDisqualified
-        val bestTime = listWithoutDisqualified.first().finishTime ?: LocalDateTime(2021, 12, 1, 0, 0, 0)
+        val bestTime = listWithoutDisqualified.first().finishTime ?: LocalTime.of(0, 0, 0)
         return sortedList.map {
             val points = calculatePoints(it.finishTime, bestTime)
             AthleteProtocol(
@@ -86,8 +87,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         }
     }
 
-    //Посчитать очки за забег
-    private fun calculatePoints(finishTime: LocalDateTime?, bestTime: LocalDateTime): Double {
+    private fun calculatePoints(finishTime: LocalTime?, bestTime: LocalTime): Double {
         return if (finishTime == null) {
             0.0
         } else max(
@@ -104,7 +104,6 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     private val teamProtocols: List<TeamProtocol> =
         teams.map { TeamProtocol(it, athleteProtocols) }
 
-    //Создаёт csv по группам
     private fun generateCSVbyGroups() {
         logger.info { "Начинаю создавать CSV по группам" }
         val dirName = path + "groups/"
@@ -114,9 +113,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         logger.info { "CSV по группам успешно созданы" }
     }
 
-    //Создаёт общее csv
     private fun generateOverallCSV() {
-        logger.info { "Начинаю создавать общее CSV" }
         val fileName = path + "overallCSV"
         File(fileName).delete()
         File(fileName).createNewFile()
@@ -128,37 +125,26 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
                 groupProtocol.protocol.forEach { writeAthleteProtocol(it) }
             }
         }
-        logger.info { "Общее CSV успешно создано" }
     }
 
-    //Создаёт csv по командам
+
     private fun generateCSVbyTeams() {
-        logger.info { "Начинаю создавать CSV по командам" }
         val dirName = path + "teams/"
         File(dirName).delete()
         createDir(dirName)
         teamProtocols.forEach { it.toCSV(dirName) }
-        logger.info { "CSV по командам успешно созданы" }
     }
+
 }
 
-//Количество секунд от начала дня
-fun LocalDateTime.toInt(): Int = this.hour * 3600 + this.minute * 60 + this.second
+fun LocalTime.toInt(): Int = this.hour * 3600 + this.minute * 60 + this.second
 
-//Функция разности двух LocalDateTime
-operator fun LocalDateTime?.minus(start: LocalDateTime): LocalDateTime? {
+//Функция разности двух LocalTime
+operator fun LocalTime?.minus(start: LocalTime): LocalTime? {
     if (this == null) return null
-    return LocalDateTime(
-        2021,
-        12,
-        1,
-        hour = this.hour - start.hour,
-        minute = this.minute - start.minute,
-        second = this.second - start.second
-    )
+    return LocalTime.of(this.hour - start.hour, this.minute - start.minute, this.second - start.second)
 }
 
-//Печатает стартовую строчку
 fun ICsvFileWriter.writeInfoRow() {
     writeRow(
         "№ п/п",
@@ -174,7 +160,6 @@ fun ICsvFileWriter.writeInfoRow() {
     )
 }
 
-//Печатает строчку с данными об атлете
 fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     writeRow(
         it.num,
@@ -190,7 +175,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     )
 }
 
-//Функция создания директории
+
 fun createDir(path: String) {
     logger.info { "Начинаю создавать директорию $path" }
     if (!File(path).isFile) {
