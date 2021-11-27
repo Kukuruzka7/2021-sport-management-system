@@ -2,7 +2,9 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
+import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.athlete.Category
+import ru.emkn.kotlin.sms.athlete.Name
 import ru.emkn.kotlin.sms.athlete.Sex
 import java.io.File
 
