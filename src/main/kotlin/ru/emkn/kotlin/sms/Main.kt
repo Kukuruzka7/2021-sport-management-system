@@ -65,7 +65,7 @@ fun start(inputData: Array<String>) {
     val application: Application = getApplication(teamApplicationNames) ?: return
     val competition = Competition(MetaInfo(name, date, sport), application)
     StartProtocol(competition.groupList, dir + competition.info.name + "/")
-    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData.csv")
+    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData.csv", TODO())
     println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/startProtocol/.")
 }
 
@@ -160,7 +160,7 @@ private fun resultDataByCheckPoints(fileName: String, data: List<List<String>>, 
 
 private fun getCompetition(data: List<List<String>>): Competition? {
     try {
-        return Competition(CompetitionData(data))
+        return Competition(CompetitionData(data, TODO()))
     } catch (e: Exception) {
         println(e.message)
         return null
