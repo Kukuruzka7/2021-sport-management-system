@@ -8,7 +8,7 @@ import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 
 class Competition {
-    lateinit var info: MetaInfo
+    val info: MetaInfo
     val teamList: List<Team>
     val athleteList: List<Athlete>
     val groupList: List<Group>
@@ -42,6 +42,7 @@ class Competition {
     }
 
     constructor(_info: MetaInfo, application: Application) {
+        logger.info { "Вызов конструктора Competition(data)" }
         info = _info
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
@@ -52,6 +53,7 @@ class Competition {
 
     constructor(data: CompetitionData) {
         logger.info { "Вызов конструктора Competition(data)" }
+        info = MetaInfo(data.metaInfo)
         athleteList = data.toAthletesList()
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList)
