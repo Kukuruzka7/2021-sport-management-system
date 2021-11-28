@@ -24,8 +24,8 @@ class Competition {
 
         private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
             logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size})" }
-            val groupMap = athList.groupBy { it.race }
-            return groupMap.keys.map { Group(it, groupMap[it]!!) }
+            val groupMap = athList.groupBy { it.race.groupName.value }
+            return groupMap.keys.map { Group(Race(GroupName(it)), groupMap[it]!!) }
         }
 
         private fun groupDivision(athleteList: List<Athlete>): List<Group> {

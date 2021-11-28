@@ -12,7 +12,6 @@ class GroupName(val value: String) {
 
 class Race(val groupName: GroupName) {
     val checkPoints = getCheckPoints(groupName.value)
-    override fun toString() = groupName.toString()
 
     private fun getCheckPoints(groupName: String): List<Checkpoint> {
         logger.trace { "Вызов getCheckPoints()" }
@@ -23,6 +22,16 @@ class Race(val groupName: GroupName) {
         require(courseList != null)
         return courseList.subList(1, courseList.lastIndex).filter { it != "" }.map { Checkpoint(it) }
     }
+
+    override fun toString() = groupName.toString()
+
+    override operator fun equals(other: Any?): Boolean {
+        if (other !is Race) {
+            return false
+        }
+        return groupName.value == other.groupName.value
+    }
+
 
     companion object {
         const val dir = "src/main/resources/races/"

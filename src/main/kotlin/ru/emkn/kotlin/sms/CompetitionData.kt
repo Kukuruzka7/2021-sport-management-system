@@ -9,8 +9,7 @@ import java.io.File
 import java.time.LocalTime
 
 
-class CompetitionData(_athletesData: List<List<String>>, val metaInfo: List<String>) {
-    val athletesData = _athletesData.drop(1)
+class CompetitionData(val athletesData: List<List<String>>, val metaInfo: List<String>) {
 
     init {
         logger.trace { "Создание экземпляра класса CompetitionData" }
@@ -21,7 +20,6 @@ class CompetitionData(_athletesData: List<List<String>>, val metaInfo: List<Stri
         logger.info { "Сохранение Competition в файл $athletesFileName" }
         try {
             csvWriter().open(athletesFileName) {
-                writeRow(Fields.values().map { it.toRussian() })
                 athletesData.forEach { writeRow(it) }
             }
         } catch (_: Exception) {
