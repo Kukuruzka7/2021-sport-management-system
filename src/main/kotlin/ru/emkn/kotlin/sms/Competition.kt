@@ -63,7 +63,7 @@ class Competition {
         logger.info { "Вызов функции toCompetitionData()" }
         return CompetitionData(athleteList.map { athlete ->
             (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
-        })
+        }, info.toStringList())
     }
 
     fun getCheckPoint(groupName: GroupName): List<Checkpoint> {

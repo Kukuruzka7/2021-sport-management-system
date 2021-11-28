@@ -52,5 +52,4 @@ data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
     }
 }
 
-fun saveMetaInfo(metaInfo: MetaInfo, fileName: String) =
-    CsvWriter().writeAll(listOf(metaInfo.toStringList()), File(fileName))
+
