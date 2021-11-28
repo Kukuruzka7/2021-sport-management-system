@@ -51,9 +51,9 @@ class Competition {
         checkPointsByGroupName = groupList.associateBy({ it.race.groupName.value }, { it.race.checkPoints })
     }
 
-    constructor(_info: MetaInfo, data: CompetitionData) {
+    constructor(data: CompetitionData) {
         logger.info { "Вызов конструктора Competition(data)" }
-        info = _info
+        info = MetaInfo(data.metaInfo)
         athleteList = data.toAthletesList()
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList)
