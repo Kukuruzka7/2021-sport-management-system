@@ -8,6 +8,7 @@ class StartProtocol(groups: List<Group>, competitionPath: String) {
     private val path = "${competitionPath}startProtocol/"
 
     init {
+        createDir(competitionPath)
         createDir(path)
         generateCSV = groups.map { GroupStartProtocol(it, path) }
         generateCSV.forEach { it.toCSV }

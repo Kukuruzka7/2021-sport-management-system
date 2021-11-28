@@ -1,7 +1,6 @@
 package ru.emkn.kotlin.sms.startprotocol
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-import kotlinx.datetime.TimeZone
 import ru.emkn.kotlin.sms.Group
 import java.io.File
 import java.time.LocalTime as LocalTime
@@ -22,9 +21,11 @@ class GroupStartProtocol(private val group: Group, path: String) {
                     athlete.name.lastName,
                     athlete.birthDate.year,
                     athlete.sportCategory.toString(),
-                    startTime.toString(),
+                    startTime.toString(withSecond = true),
                 )
             }
         }
     }
 }
+fun LocalTime.toString(withSecond : Boolean): String =
+    this.toString() + if(withSecond) ":${this.second / 10}${this.second % 10}" else ""
