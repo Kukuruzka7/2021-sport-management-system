@@ -1,7 +1,9 @@
+import ru.emkn.kotlin.sms.finishprotocol.minus
+import ru.emkn.kotlin.sms.finishprotocol.toInt
+import ru.emkn.kotlin.sms.startprotocol.toStringWithSeconds
 import java.time.LocalTime
-import kotlin.test.*
-import ru.emkn.kotlin.sms.finishprotocol.*
-import ru.emkn.kotlin.sms.startprotocol.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class LocalTimeTests {
 

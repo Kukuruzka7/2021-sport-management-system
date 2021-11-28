@@ -1,15 +1,19 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import kotlinx.datetime.LocalDate
-import ru.emkn.kotlin.sms.*
-import ru.emkn.kotlin.sms.athlete.*
-import ru.emkn.kotlin.sms.finishprotocol.*
+import ru.emkn.kotlin.sms.Competition
+import ru.emkn.kotlin.sms.CompetitionData
+import ru.emkn.kotlin.sms.SportType
+import ru.emkn.kotlin.sms.athlete.AthleteNumber
+import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
+import ru.emkn.kotlin.sms.finishprotocol.createDir
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.result_data.Table
+import ru.emkn.kotlin.sms.sport
 import java.io.File
 import java.time.LocalTime
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class FinishProtocolTests {
 
@@ -103,11 +107,10 @@ internal class FinishProtocolTests {
                 listOf("1", "1", "Данил", "Сибгатуллин", "2002", "IIIю", "Б05", "00:01:00", "1", "")
             )
         )
-        File("src/main/resources/competitions/123/finishProtocol/overallCSV.csv").delete()
-        File("src/main/resources/competitions/123/finishProtocol/groups/").delete()
-        File("src/main/resources/competitions/123/finishProtocol/teams/").delete()
-        File("src/main/resources/competitions/123/finishProtocol/").delete()
-        File("src/main/resources/competitions/123/finishProtocol/").delete()
-        File("src/main/resources/competitions/123/").delete()
+        assert(File("src/main/resources/competitions/123/finishProtocol/overallCSV.csv").delete())
+        assert(File("src/main/resources/competitions/123/finishProtocol/groups/").delete())
+        assert(File("src/main/resources/competitions/123/finishProtocol/teams/").delete())
+        assert(File("src/main/resources/competitions/123/finishProtocol/").delete())
+        assert(File("src/main/resources/competitions/123/").delete())
     }
 }
