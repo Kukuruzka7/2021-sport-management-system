@@ -23,7 +23,7 @@ enum class FieldsFinal {
 }
 
 enum class UserBehavior(val behavior: String) {
-    START("start"), FINISH_BY_ATHLETES("final_by_athletes"), FINISH_BY_CHECKPOINTS("final_by_checkpoints"), ERR("");
+    START("start"), FINISH_BY_ATHLETES("final_by_athletes"), FINISH_BY_CHECKPOINTS("final_by_checkpoints"), ERROR("");
 
     companion object {
         fun getBehavior(behavior: String): UserBehavior {
@@ -32,7 +32,7 @@ enum class UserBehavior(val behavior: String) {
                     return value
                 }
             }
-            return ERR
+            return ERROR
         }
     }
 }
@@ -50,7 +50,7 @@ fun main(args: Array<String>) {
         UserBehavior.START -> start(args)
         UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args)
         UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args)
-        UserBehavior.ERR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
+        UserBehavior.ERROR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
     }
 }
 

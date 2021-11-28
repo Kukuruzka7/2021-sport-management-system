@@ -23,23 +23,22 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
     val team: Team
 
     init {
-        logger.trace { "Инит-блок класса TeamApplication(file = ${file.name})" }
+        logger.trace { "Создание экземпляра класса TeamApplication(file = ${file.name})" }
         checkFormatOfApplication(numberOfApplication, rows)
         teamName = TeamName(rows[0][0])
         team = Team(teamName, emptyList())
         team.athletes = processingData(rows.subList(2, rows.size))
-        logger.trace { "Инит-блок класса TeamApplication завершен" }
     }
 
     //обработка строк
     private fun processingData(rows: List<List<String>>): List<Athlete> {
-        logger.trace { "Вызов processingData($rows)" }
+        logger.trace { "Вызов processingData(rows)" }
         return rows.map { processingRow(it) }
     }
 
     //обработка отдельной строки
     private fun processingRow(row: List<String>): Athlete {
-        logger.trace { "Вызов processingRow(${row})" }
+        logger.trace { "Вызов processingRow(row.size = ${row.size})" }
         val name = Name(firstName = row[Fields.FIRST_NAME.ordinal], lastName = row[Fields.LAST_NAME.ordinal])
         val sex = Sex.getSex(row[Fields.SEX.ordinal])
 
