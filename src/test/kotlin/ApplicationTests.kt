@@ -1,15 +1,10 @@
 import org.junit.Test
 import ru.emkn.kotlin.sms.SportType
-import ru.emkn.kotlin.sms.TeamName
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.application.TeamApplication
-import ru.emkn.kotlin.sms.finishprotocol.minus
 import ru.emkn.kotlin.sms.sport
-import ru.emkn.kotlin.sms.startprotocol.toStringWithSeconds
 import java.io.File
-import java.time.LocalTime
 import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
 
 internal class ApplicationTests {
 
