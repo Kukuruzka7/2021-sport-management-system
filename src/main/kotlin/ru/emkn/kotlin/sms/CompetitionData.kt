@@ -7,7 +7,8 @@ import ru.emkn.kotlin.sms.athlete.*
 import java.time.LocalTime
 
 
-class CompetitionData(private val athletesData: List<List<String>>) {
+class CompetitionData(private val _athletesData: List<List<String>>) {
+    val athletesData = _athletesData.drop(1)
 
     init {
         athletesData.forEach { checkRow(it) }
@@ -16,7 +17,7 @@ class CompetitionData(private val athletesData: List<List<String>>) {
     fun save(fileName: String) {
         try {
             csvWriter().open(fileName) {
-                writeRow(Fields.values().joinToString { it.toRussian() })
+                writeRow(Fields.values().map { it.toRussian() })
                 athletesData.forEach { writeRow(it) }
             }
         } catch (_: Exception) {
@@ -59,7 +60,7 @@ class CompetitionData(private val athletesData: List<List<String>>) {
             throw CompetitionDataInvalidSportCategory(row[Fields.CATEGORY.ordinal])
         }
         try {
-            LocalDateTime.parse(row[Fields.START_TIME.ordinal])
+            LocalTime.parse(row[Fields.START_TIME.ordinal])
         } catch (e: java.time.DateTimeException) {
             throw e
         }
