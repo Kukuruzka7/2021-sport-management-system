@@ -87,7 +87,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
                 it.athlete,
                 it.finishTime,
                 sortedList.indexOf(it) + 1,
-                if(it.finishTime - bestTime != LocalTime.of(0,0,0)) (it.finishTime - bestTime) else null,
+                if (it.finishTime - bestTime != LocalTime.of(0, 0, 0)) (it.finishTime - bestTime) else null,
                 points
             )
         }
@@ -108,7 +108,11 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Разделяет общий список на списки по командам
     private val teamProtocols: List<TeamProtocol> =
-        teams.map { team -> TeamProtocol(team, athleteProtocols.filter { it.athlete.teamName.name == team.teamName.name }) }
+        teams.map { team ->
+            TeamProtocol(
+                team,
+                athleteProtocols.filter { it.athlete.teamName.name == team.teamName.name })
+        }
 
     private fun generateCSVbyGroups() {
         logger.trace { "Начинаю создавать CSV по группам" }
@@ -160,12 +164,12 @@ operator fun LocalTime?.minus(subtrahend: LocalTime): LocalTime? {
     if (this == null) return null
     val thisTime = this.toInt()
     val subtrahendTime = subtrahend.toInt()
-    val difference =  thisTime - subtrahendTime + 24 * 60 * 60
+    val difference = thisTime - subtrahendTime + 24 * 60 * 60
     return LocalTime.of((difference / 3600) % 24, (difference % 3600) / 60, difference % 60)
 }
 
 fun LocalTime.toStringWithoutHours(): String {
-    val hours = if(this.hour == 0) "" else "${this.hour}:"
+    val hours = if (this.hour == 0) "" else "${this.hour}:"
     return "${hours}${this.minute / 10}${this.minute % 10}:${this.second / 10}${this.second % 10}"
 }
 
@@ -197,7 +201,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
         it.athlete.teamName.toString(),
         it.finishTime?.toStringWithSeconds() ?: "снят",
         it.place,
-        if(it.lag == null) null else "+" + it.lag.toStringWithoutHours(),
+        if (it.lag == null) null else "+" + it.lag.toStringWithoutHours(),
     )
 }
 
