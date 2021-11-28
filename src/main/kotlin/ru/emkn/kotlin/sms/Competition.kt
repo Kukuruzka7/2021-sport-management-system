@@ -10,7 +10,7 @@ enum class SportType(val sportType: String) {
     RUNNING("running"), ERR("sport is not supported");
 
     companion object {
-        fun getSportTypeFromString(str: String): SportType {
+        fun getSportType(str: String): SportType {
             for (value in values()) {
                 if (value.sportType == str.lowercase()) {
                     return value
@@ -62,6 +62,7 @@ class Competition {
     fun toCompetitionData() = CompetitionData(athleteList.map { athlete ->
         (CompetitionData.Companion.Fields.athletesValues.map { athlete.extractFieldToString(it) })
     })
+
 }
 
 private fun groupDivision(athleteList: List<Athlete>): List<Group> {

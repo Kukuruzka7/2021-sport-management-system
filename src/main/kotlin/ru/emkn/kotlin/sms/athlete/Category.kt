@@ -24,7 +24,7 @@ enum class Category {
             CANDIDATE to "КМС", MASTER to "МС", INTERNATIONAL_MASTER to "ММС",
             X to "эксепшн кидать или это unexpected behaviour у toString будет? прив как дела"
         )
-
+        //дает разряд по строке
         fun getCategory(str: String): Category {
             if (categoryMap.containsKey(str)) {
                 return categoryMap[str]!!

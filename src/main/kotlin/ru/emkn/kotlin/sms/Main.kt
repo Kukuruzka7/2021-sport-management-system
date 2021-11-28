@@ -3,15 +3,17 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
-import ru.emkn.kotlin.sms.SportType.Companion.getSportTypeFromString
+import ru.emkn.kotlin.sms.SportType.Companion.getSportType
 import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.result_data.ResultData
+import ru.emkn.kotlin.sms.CompetitionData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
+
 
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
@@ -125,7 +127,7 @@ fun finishByAthletes(inputData: Array<String>) {
     val athletesResults: ResultData
     try {
         athletesResults =
-            ResultData(InputCompetitionResultByAthletes(fileNames).toTable(), CompetitionData(data).getStartTime())
+            ResultData(InputCompetitionResultByAthletes(fileNames[0]).toTable(), CompetitionData(data).getStartTime())
     } catch (e: Exception) {
         println(e.message)
         return
@@ -164,7 +166,7 @@ fun finishByCheckPoints(inputData: Array<String>) {
     val athletesResults: ResultData
     try {
         athletesResults = ResultData(
-            InputCompetitionResultByCheckPoints(fileNames, competition).toTable(),
+            InputCompetitionResultByCheckPoints(fileNames[0], competition).toTable(),
             CompetitionData(data).getStartTime()
         )
     } catch (e: Exception) {

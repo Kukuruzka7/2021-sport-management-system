@@ -1,24 +1,33 @@
 package ru.emkn.kotlin.sms.input_result
 
 import kotlinx.datetime.LocalDateTime
+import logger
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
+import java.time.LocalTime
 
-class InputCheckpointResults(override val fileName: String) : InputResult {
+class InputCheckpointResults(override val list: List<String>) : InputResult() {
     //каждому атлету сопоставляет его результат на данном чекпоинте
     val resultsOfAthletes: Map<AthleteNumber, CheckpointRes>
 
-    //этот тот чувак, о котором собственно идет речь
-    val checkpoint: Checkpoint
+    //этот тот чекпоинт, о котором собственно идет речь
+    val checkpoint: Checkpoint = getCheckPoint()
 
     init {
-        val rows = getRows()
-        val athletesResults = rows.drop(0)
-        checkpoint = getCheckPoint(athletesResults)
+        logger.trace { "Инит-блок класса InputCheckpointResults(_list.size = ${list.size})" }
+        //отбрасываем первый элемент -- там лежит только название чекпоинта
+        val athletesResults = list.drop(0)
+        //количество полей, которое описывает результаты каждого атлета
+        val numOfFields = Fields.values().size
+        //представляем линейный массив в виде прямоугольного, в каждой строке -- информация атлетом
+        val splitByAthletes: List<List<String>> = List(athletesResults.size / numOfFields) { i ->
+            athletesResults.subList(numOfFields * i, numOfFields * (i + 1))
+        }
         resultsOfAthletes =
-            athletesResults.map { parseResultOfAthlete(it, checkpoint) }.associateBy({ it.athleteNumber }, { it })
+            splitByAthletes.map { parseResultOfAthlete(it, checkpoint) }.associateBy { it.athleteNumber }
+        logger.trace { "Инит-блок класса InputCheckpointResults завершен" }
     }
 
     companion object {
@@ -30,26 +39,29 @@ class InputCheckpointResults(override val fileName: String) : InputResult {
         }
     }
 
-    private fun getCheckPoint(rows: List<List<String>>): Checkpoint {
-        if (rows.isEmpty() || rows[0].isEmpty()) {
-            throw ResultMissesCheckPointName(fileName)
+    private fun getCheckPoint(): Checkpoint {
+        logger.trace { "Вызов getCheckPoint()" }
+        if (list.isEmpty()) {
+            throw ResultMissesCheckPointName(list)
         }
-        return Checkpoint(rows[0][0])
+        logger.trace { "Завершение getCheckPoint() = ${list[0]}" }
+        return Checkpoint(list[0])
     }
 
     //парсит результат конкретного атлета
-    private fun parseResultOfAthlete(list: List<String>, _checkpoint: Checkpoint): CheckpointRes {
+    private fun parseResultOfAthlete(row: List<String>, _checkpoint: Checkpoint): CheckpointRes {
+        logger.trace { "Вызов parseResultOfAthlete(row.size = ${row.size}, _checkpoint = $_checkpoint" }
         //если данных меньше о прохождении атлета меньше (по количеству), чем ожидаем, мы вылета
-        if (list.size < Fields.values().size) {
-            throw ResultByCheckpointInvalidRow(fileName, list)
+        if (row.size < Fields.values().size) {
+            throw ResultByCheckpointInvalidRow(row)
         }
         //парсим время прохождения атлета
         val time = try {
-            LocalDateTime.parse(list[Fields.ATHLETE_TIME.ordinal])
+            LocalTime.parse(row[Fields.ATHLETE_TIME.ordinal])
         } catch (_: java.time.format.DateTimeParseException) {
-            throw InvalidDateFormat(fileName, list[Fields.ATHLETE_TIME.ordinal])
+            throw InvalidDateFormat(row[Fields.ATHLETE_TIME.ordinal])
         }
-        //TODO("попарсить locadaytime")
-        return CheckpointRes(_checkpoint, AthleteNumber(list[Fields.ATHLETE_NUMBER.ordinal]), time)
+        logger.trace { "Завершение parseResultOfAthlete(..) = CheckpointRes($_checkpoint, ${AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal])}, $time)" }
+        return CheckpointRes(_checkpoint, AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal]), time)
     }
 }
