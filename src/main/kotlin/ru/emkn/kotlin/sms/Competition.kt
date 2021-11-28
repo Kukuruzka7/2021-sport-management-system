@@ -66,9 +66,9 @@ class Competition {
         checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
     }
 
-    fun toCompetitionData() {
+    fun toCompetitionData(): CompetitionData {
         logger.info { "Вызов функции toCompetitionData()" }
-        CompetitionData(athleteList.map { athlete ->
+        return CompetitionData(athleteList.map { athlete ->
             (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
         })
     }
