@@ -1,8 +1,6 @@
 package ru.emkn.kotlin.sms.input_result
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import logger
-import ru.emkn.kotlin.sms.InputCompetitionResult
 import ru.emkn.kotlin.sms.result_data.Table
 import java.io.File
 

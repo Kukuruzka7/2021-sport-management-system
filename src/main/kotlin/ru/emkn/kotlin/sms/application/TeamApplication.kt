@@ -1,4 +1,4 @@
-package ru.emkn.kotlin.sms
+package ru.emkn.kotlin.sms.application
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
@@ -8,6 +8,7 @@ import ru.emkn.kotlin.sms.athlete.Name
 import ru.emkn.kotlin.sms.athlete.Sex
 import java.io.File
 import logger
+import ru.emkn.kotlin.sms.*
 
 //по данным из заявки получение данных об атлетах
 class TeamApplication(file: File, val numberOfApplication: Int) {
