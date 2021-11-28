@@ -8,7 +8,7 @@ import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 
 class Competition {
-    lateinit var info: MetaInfo
+    val info: MetaInfo
     val teamList: List<Team>
     val athleteList: List<Athlete>
     val groupList: List<Group>
@@ -17,13 +17,13 @@ class Competition {
 
     companion object {
         private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
-            logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size}" }
+            logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size})" }
             val teamMap = athList.groupBy { it.teamName }
             return teamMap.keys.map { Team(it, teamMap[it]!!) }
         }
 
         private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
-            logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size}" }
+            logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size})" }
             val groupMap = athList.groupBy { it.race }
             return groupMap.keys.map { Group(it, groupMap[it]!!) }
         }
@@ -42,6 +42,7 @@ class Competition {
     }
 
     constructor(_info: MetaInfo, application: Application) {
+        logger.info { "Вызов конструктора Competition(data)" }
         info = _info
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
@@ -52,6 +53,7 @@ class Competition {
 
     constructor(data: CompetitionData) {
         logger.info { "Вызов конструктора Competition(data)" }
+        info = MetaInfo(data.metaInfo)
         athleteList = data.toAthletesList()
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList)
@@ -63,7 +65,7 @@ class Competition {
         logger.info { "Вызов функции toCompetitionData()" }
         return CompetitionData(athleteList.map { athlete ->
             (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
-        })
+        }, info.toStringList())
     }
 
     fun getCheckPoint(groupName: GroupName): List<Checkpoint> {

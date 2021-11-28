@@ -1,14 +1,15 @@
 package ru.emkn.kotlin.sms
 
+import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import logger
 import ru.emkn.kotlin.sms.athlete.*
+import java.io.File
 import java.time.LocalTime
 
 
-class CompetitionData(private val _athletesData: List<List<String>>) {
+class CompetitionData(_athletesData: List<List<String>>, val metaInfo: List<String>) {
     val athletesData = _athletesData.drop(1)
 
     init {
@@ -16,18 +17,23 @@ class CompetitionData(private val _athletesData: List<List<String>>) {
         athletesData.forEach { checkRow(it) }
     }
 
-    fun save(fileName: String) {
-        logger.info { "Сохранение Competition в файл $fileName" }
+    fun save(athletesFileName: String, metaInfoFileName: String) {
+        logger.info { "Сохранение Competition в файл $athletesFileName" }
         try {
-            csvWriter().open(fileName) {
+            csvWriter().open(athletesFileName) {
                 writeRow(Fields.values().map { it.toRussian() })
                 athletesData.forEach { writeRow(it) }
             }
         } catch (_: Exception) {
-            logger.error { FileCouldNotBeCreated(fileName) }
-            throw FileCouldNotBeCreated(fileName)
+            logger.error { FileCouldNotBeCreated(athletesFileName) }
+            throw FileCouldNotBeCreated(athletesFileName)
         }
+        saveMetaInfo(metaInfoFileName)
     }
+
+
+    fun saveMetaInfo(fileName: String) =
+        CsvWriter().writeAll(listOf(metaInfo), File(fileName))
 
 
     fun toAthletesList(): List<Athlete> = athletesData.map {
