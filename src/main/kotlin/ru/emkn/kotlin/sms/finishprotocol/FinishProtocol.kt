@@ -2,7 +2,6 @@ package ru.emkn.kotlin.sms.finishprotocol
 
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
-import kotlinx.datetime.LocalDateTime
 import logger
 import ru.emkn.kotlin.sms.Competition
 import ru.emkn.kotlin.sms.DirectoryCouldNotBeCreated
@@ -53,6 +52,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     private val athleteResult: List<AthleteResult> =
         athletes.map { makeIndividualResults(it) }
 
+    //Сделать индивидуальные результаты
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
         //Время начала и конца путешествия одного чела
         val startTime = data.startTime[athlete.number]
@@ -68,6 +68,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Выставляет номера спортсменов в их группе
     private fun makeSortedResultsInGroup(group: Group, athleteResult: List<AthleteResult>): List<AthleteProtocol> {
+        logger.info { "Начинаю сортировать CSV по группам" }
         val listWithoutDisqualified =
             athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime != null }
         val listDisqualified = athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime == null }
