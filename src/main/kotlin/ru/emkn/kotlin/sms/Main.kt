@@ -61,7 +61,7 @@ fun start(inputData: Array<String>) {
         return
     }
     val name = inputData[FieldsStart.NAME.ordinal]
-    sport = getSportTypeFromString(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
     if (sport == SportType.ERR) {
