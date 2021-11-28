@@ -23,7 +23,7 @@ class TeamProtocol(private val team: Team, private val protocol: List<AthletePro
             writeRow(team.teamName)
             writeInfoRow()
             //Пишем собственно результаты атлетов
-            protocol.sortedBy { it.athlete.groupName.groupName }.forEach { writeAthleteProtocol(it) }
+            protocol.sortedBy { it.athlete.groupName.value }.forEach { writeAthleteProtocol(it) }
         }
     }
 }

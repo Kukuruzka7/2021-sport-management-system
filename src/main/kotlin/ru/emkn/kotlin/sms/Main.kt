@@ -13,7 +13,6 @@ import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
 
-
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
 }
@@ -39,7 +38,7 @@ enum class UserBehavior(val behavior: String) {
 
 const val dir = "src/main/resources/competitions/"
 
-var sport = SportType.ERROR
+var sport = SportType.X
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -71,29 +70,13 @@ fun start(inputData: Array<String>) {
 }
 
 fun finishByAthletes(inputData: Array<String>) {
-    if (inputData.size != FieldsFinish.values().size) {
-        println("Вы ввели что-то не то. Попробуйте еще раз.")
-        return
-    }
+    if (checkForEmptyInput(inputData)) return
     val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
     val name = inputData[FieldsFinish.NAME.ordinal]
-    val data: List<List<String>>
-    val competition: Competition
-    if (!File(dir + name + "/competitionData.csv").exists()) {
-        println("Такого соревнования еще не проводилось. Сначала введите заявки на участие.")
-        return
-    }
-        data = csvReader().readAll(File(dir + name + "/competitionData.csv"))
-        competition = Competition(CompetitionData(data))
-    
-    val athletesResults: ResultData
-    try {
-        athletesResults =
-            ResultData(InputCompetitionResultByAthletes(fileName).toTable(), CompetitionData(data).getStartTime())
-    } catch (e: Exception) {
-        println(e.message)
-        return
-    }
+    if (checkCompetitionExist(name)) return
+    val data: List<List<String>> = getData(name) ?: return
+    val competition: Competition = getCompetition(data) ?: return
+    val athletesResults: ResultData = resultDataByAthlete(fileName, data) ?: return
     FinishProtocol(athletesResults, competition)
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
 }
@@ -140,7 +123,7 @@ private fun getDate(dateString: String): LocalDate? {
 }
 
 private fun checkSportType(inputData: Array<String>): Boolean {
-    if (sport == SportType.ERROR) {
+    if (sport == SportType.X) {
         println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return true
     }
@@ -157,23 +140,22 @@ private fun checkForEmptyInput(inputData: Array<String>): Boolean {
 
 private fun resultDataByAthlete(fileName: String, data: List<List<String>>): ResultData? {
     try {
-        return ResultData(InputCompetitionResultByAthletes(fileName).toTable(), CompetitionData(data).getStartTime())
+        //return ResultData(InputCompetitionResultByAthletes(fileName).toTable(), CompetitionData(data).getStartTime(), )
     } catch (e: Exception) {
         println(e.message)
         return null
     }
+    return null
 }
 
 private fun resultDataByCheckPoints(fileName: String, data: List<List<String>>, competition: Competition): ResultData? {
     try {
-        return ResultData(
-            InputCompetitionResultByCheckPoints(fileName, competition).toTable(),
-            CompetitionData(data).getStartTime()
-        )
+        //return ResultData( InputCompetitionResultByCheckPoints(fileName, competition).toTable(), CompetitionData(data).getStartTime() )
     } catch (e: Exception) {
         println(e.message)
         return null
     }
+    return null
 }
 
 private fun getCompetition(data: List<List<String>>): Competition? {
