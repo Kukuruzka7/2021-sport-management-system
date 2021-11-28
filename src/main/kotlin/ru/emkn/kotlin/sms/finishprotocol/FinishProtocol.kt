@@ -87,7 +87,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
                 it.athlete,
                 it.finishTime,
                 sortedList.indexOf(it) + 1,
-                it.finishTime - bestTime,
+                if(it.finishTime - bestTime != LocalTime.of(0,0,0)) (it.finishTime - bestTime) else null,
                 points
             )
         }
@@ -108,14 +108,13 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Разделяет общий список на списки по командам
     private val teamProtocols: List<TeamProtocol> =
-        teams.map { TeamProtocol(it, athleteProtocols) }
+        teams.map { team -> TeamProtocol(team, athleteProtocols.filter { it.athlete.teamName.name == team.teamName.name }) }
 
     private fun generateCSVbyGroups() {
         logger.trace { "Начинаю создавать CSV по группам" }
         val dirName = path + "groups/"
         createDir(dirName)
         groupProtocols.forEach { it.toCSV(dirName) }
-        logger.trace { "CSV по группам успешно созданы" }
     }
 
     private fun generateOverallCSV() {
@@ -126,9 +125,9 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         }
         File(fileName).createNewFile()
         CsvWriter().open(fileName) {
-            writeRow("Общий протокол")
+            writeRow("Общий протокол", "", "", "", "", "", "", "", "", "")
             groupProtocols.forEach { groupProtocol ->
-                writeRow(listOf(groupProtocol.group.race.groupName, "", "", "", "", "", "", "", "", ""))
+                writeRow(groupProtocol.group.race.groupName, "", "", "", "", "", "", "", "", "")
                 writeInfoRow()
                 groupProtocol.protocol.forEach { writeAthleteProtocol(it) }
             }
@@ -165,6 +164,11 @@ operator fun LocalTime?.minus(subtrahend: LocalTime): LocalTime? {
     return LocalTime.of((difference / 3600) % 24, (difference % 3600) / 60, difference % 60)
 }
 
+fun LocalTime.toStringWithoutHours(): String {
+    val hours = if(this.hour == 0) "" else "${this.hour}:"
+    return "${hours}${this.minute / 10}${this.minute % 10}:${this.second / 10}${this.second % 10}"
+}
+
 //Запись информации о таблице
 fun ICsvFileWriter.writeInfoRow() {
     writeRow(
@@ -193,7 +197,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
         it.athlete.teamName.toString(),
         it.finishTime?.toStringWithSeconds() ?: "снят",
         it.place,
-        it.lag,
+        if(it.lag == null) null else "+" + it.lag.toStringWithoutHours(),
     )
 }
 

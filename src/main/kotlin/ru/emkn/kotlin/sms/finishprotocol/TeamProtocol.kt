@@ -20,7 +20,7 @@ class TeamProtocol(private val team: Team, private val protocol: List<AthletePro
         //Заполняем файл с командным протоколом
         CsvWriter().open(fileName) {
             //Пишем названием команды и первую строчку ("№ п/п", "Номер",  "Фамилия" и т.д.)
-            writeRow(listOf(team.teamName,"","","","","","","","",""))
+            writeRow(team.teamName,"","","","","","","","","")
             writeInfoRow()
             //Пишем собственно результаты атлетов
             protocol.sortedBy { it.athlete.groupName.value }.forEach { writeAthleteProtocol(it) }
