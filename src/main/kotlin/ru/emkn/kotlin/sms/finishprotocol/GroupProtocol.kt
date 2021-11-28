@@ -20,7 +20,7 @@ class GroupProtocol(val group: Group, val protocol: List<AthleteProtocol>) {
         //Заполняем файл
         CsvWriter().open(fileName) {
             //Пишем названием команды и первую строчку ("№ п/п", "Номер",  "Фамилия" и т.д.)
-            writeRow(group.race.groupName)
+            writeRow(listOf(group.race.groupName,"","","","","","","","",""))
             writeInfoRow()
             protocol.forEach { writeAthleteProtocol(it) }
         }

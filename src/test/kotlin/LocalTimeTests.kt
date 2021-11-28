@@ -29,4 +29,11 @@ internal class LocalTimeTests {
         assertEquals(time2.toStringWithSeconds(), "06:54:32")
         assertEquals(time3.toStringWithSeconds(), "23:59:59")
     }
+    @Test
+    fun testToInt() {
+        assertEquals(time0.toInt(), 0)
+        assertEquals(time1.toInt(), 5025)
+        assertEquals(time2.toInt(), 24872)
+        assertEquals(time3.toInt(), 86399)
+    }
 }

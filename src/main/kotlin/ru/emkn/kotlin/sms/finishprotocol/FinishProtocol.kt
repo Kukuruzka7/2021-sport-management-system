@@ -8,6 +8,7 @@ import ru.emkn.kotlin.sms.DirectoryCouldNotBeCreated
 import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.result_data.ResultData
+import ru.emkn.kotlin.sms.startprotocol.toStringWithSeconds
 import java.io.File
 import java.time.LocalTime
 import kotlin.math.max
@@ -41,14 +42,6 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     //Путь к папке с финальными протоколами
     private val path = """$dir${competition.info.name}/finishProtocol/"""
 
-    init {
-        logger.trace { "Создан объект класса FinishProtocol" }
-        createDir(path)
-        generateCSVbyGroups()
-        generateOverallCSV()
-        generateCSVbyTeams()
-        logger.trace { "Сгенерированы все возможные итоговые csv протоколы" }
-    }
 
     //Переменная, хранящая список результатов атлетов
     private val athleteResults: List<AthleteResult> =
@@ -75,6 +68,17 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         val listWithoutDisqualified =
             athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime != null }
         val listDisqualified = athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime == null }
+        if (listWithoutDisqualified.isEmpty()) {
+            return listDisqualified.map {
+                AthleteProtocol(
+                    it.athlete,
+                    it.finishTime,
+                    listDisqualified.indexOf(it) + 1,
+                    null,
+                    0.0
+                )
+            }
+        }
         val sortedList = listWithoutDisqualified.sortedBy { it.finishTime } + listDisqualified
         val bestTime = listWithoutDisqualified.first().finishTime ?: LocalTime.of(0, 0, 0)
         return sortedList.map {
@@ -109,7 +113,6 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     private fun generateCSVbyGroups() {
         logger.trace { "Начинаю создавать CSV по группам" }
         val dirName = path + "groups/"
-        File(dirName).delete()
         createDir(dirName)
         groupProtocols.forEach { it.toCSV(dirName) }
         logger.trace { "CSV по группам успешно созданы" }
@@ -117,13 +120,15 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     private fun generateOverallCSV() {
         logger.trace { "Делаю общий CSV" }
-        val fileName = path + "overallCSV"
-        File(fileName).delete()
+        val fileName = path + "overallCSV.csv"
+        if (File(fileName).exists()) {
+            File(fileName).delete()
+        }
         File(fileName).createNewFile()
         CsvWriter().open(fileName) {
             writeRow("Общий протокол")
             groupProtocols.forEach { groupProtocol ->
-                writeRow(groupProtocol.group.race.groupName)
+                writeRow(listOf(groupProtocol.group.race.groupName, "", "", "", "", "", "", "", "", ""))
                 writeInfoRow()
                 groupProtocol.protocol.forEach { writeAthleteProtocol(it) }
             }
@@ -134,11 +139,18 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     private fun generateCSVbyTeams() {
         logger.trace { "Делаю CSV по командам" }
         val dirName = path + "teams/"
-        File(dirName).delete()
         createDir(dirName)
         teamProtocols.forEach { it.toCSV(dirName) }
     }
 
+    init {
+        logger.trace { "Создан объект класса FinishProtocol" }
+        createDir(path)
+        generateCSVbyGroups()
+        generateOverallCSV()
+        generateCSVbyTeams()
+        logger.trace { "Сгенерированы все возможные итоговые csv протоколы" }
+    }
 }
 
 //Переделывает localTime в количество секунд
@@ -179,7 +191,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
         it.athlete.birthDate.year,
         it.athlete.sportCategory.toString(),
         it.athlete.teamName.toString(),
-        it.finishTime?.toString() ?: "снят",
+        it.finishTime?.toStringWithSeconds() ?: "снят",
         it.place,
         it.lag,
     )
