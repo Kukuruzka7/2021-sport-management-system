@@ -29,8 +29,10 @@ class Competition {
     val athleteList: List<Athlete>
     val groupList: List<Group>
     val athleteByNumber: Map<AthleteNumber, Athlete>
+    val checkPointsByGroupName: Map<String, List<Checkpoint>>
 
     companion object {
+
         private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
             val teamMap = athList.groupBy { it.teamName }
             return teamMap.keys.map { Team(it, teamMap[it]!!) }
@@ -48,6 +50,7 @@ class Competition {
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
         groupList = groupDivision(athleteList)
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
     }
 
     constructor(data: CompetitionData) {
@@ -55,14 +58,18 @@ class Competition {
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
     }
 
-    fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
-
     fun toCompetitionData() = CompetitionData(athleteList.map { athlete ->
-        (CompetitionData.Companion.Fields.athletesValues.map { athlete.extractFieldToString(it) })
+        (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
     })
 
+    fun getCheckPoint(groupName: GroupName): List<Checkpoint> {
+        val result = checkPointsByGroupName[groupName.groupName]
+        require(result != null)
+        return result
+    }
 }
 
 private fun groupDivision(athleteList: List<Athlete>): List<Group> {
