@@ -27,7 +27,6 @@ class InputAthleteResults(_list: List<String>) : InputResult() {
         }
         resultsOnCheckPoints =
             splitByAthletes.map { parseResultOnCheckpoint(it, number) }
-        logger.trace { "Инит-блок класса InputAthleteResults завершен" }
     }
 
     //извлекает номер
@@ -37,7 +36,6 @@ class InputAthleteResults(_list: List<String>) : InputResult() {
             logger.error { ResultMissesAthleteNumber(list) }
             throw ResultMissesAthleteNumber(list)
         }
-        logger.trace { "Завершение AthleteNumber()=${list[0]}" }
         return AthleteNumber(list[0])
     }
 
@@ -56,7 +54,6 @@ class InputAthleteResults(_list: List<String>) : InputResult() {
             logger.error { InvalidDateFormat(row[Fields.TIME_ON_CHECKPOINT.ordinal]) }
             throw InvalidDateFormat(row[Fields.TIME_ON_CHECKPOINT.ordinal])
         }
-        logger.trace { "Завершение parseResultOnCheckpoint(..) = CheckpointRes(Checkpoint(${row[Fields.CHECKPOINT_NAME.ordinal]}, $athleteNumber, $time))" }
         //Fields.CHECKPOINT_NAME.ordinal -- это номер, под которым в list содержится нужная строчка
         return CheckpointRes(Checkpoint(row[Fields.CHECKPOINT_NAME.ordinal]), athleteNumber, time)
     }

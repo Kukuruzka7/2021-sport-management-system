@@ -67,6 +67,8 @@ class Athlete(
     val race = Race(groupName)
     lateinit var startTime: LocalTime
 
+    override fun toString(): String = "[$name, $number, §$groupName]"
+
     fun extractFieldToString(field: CompetitionData.Companion.Fields): String = when (field) {
         CompetitionData.Companion.Fields.NUMBER -> number.toString()
         CompetitionData.Companion.Fields.NAME -> name.toString()

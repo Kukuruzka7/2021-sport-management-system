@@ -19,6 +19,7 @@ class InputCompetitionResultByCheckPoints(override val fileName: String, val com
     val checkpointMap: Map<Checkpoint, InputCheckpointResults> = buildCheckpointMap()
 
     private fun buildCheckpointMap(): Map<Checkpoint, InputCheckpointResults> {
+        logger.trace { "Вызов buildCheckpointMap()" }
         val resultsOnPoints = rows.map { InputCheckpointResults(it) } //по названию файла делаем класс
         return resultsOnPoints.associateBy { it.checkpoint } //строим мапу
     }
@@ -33,6 +34,7 @@ class InputCompetitionResultByCheckPoints(override val fileName: String, val com
 
     //возвращает список результатов на чекпоинтах у данного атлета, и null, если атлет не прошел какой-то чекпоинт
     private fun getCheckpointResList(athlete: Athlete): List<CheckpointRes>? {
+        logger.trace { "Вызов getCheckpointResList(athlete = ${athlete})" }
         checkIfAllCheckpointArePresent(athlete)
         val checkpoints = getCheckpoints(athlete) //список чекпоинта данного молодого человека
         //если результата атлета на каком-то из чекпоинтов нет, возвращаем null
@@ -55,6 +57,5 @@ class InputCompetitionResultByCheckPoints(override val fileName: String, val com
                 throw  InputCheckpointResultIsAbsent(checkpoint)
             }
         }
-        logger.trace { "Завершение checkIfAllCheckpointArePresent(..)" }
     }
 }
