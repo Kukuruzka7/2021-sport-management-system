@@ -18,6 +18,7 @@ class GroupStartProtocol(private val group: Group, path: String) {
         }
         csvWriter().open(groupPath) {
             writeRow(group.race.groupName, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
+            println(group.athletes.size)
             group.athletes.forEach { athlete ->
                 writeRow(
                     athlete.number.toString(),

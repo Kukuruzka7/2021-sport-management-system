@@ -27,7 +27,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
     }
 
     private fun processingData(rows: List<List<String>>): List<Athlete> {
-        return rows.subList(2, rows.size).map { processingRow(it) }
+        return rows.map { processingRow(it) }
     }
 
     private fun processingRow(row: List<String>): Athlete {

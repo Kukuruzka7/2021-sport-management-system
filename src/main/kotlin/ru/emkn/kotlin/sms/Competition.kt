@@ -65,11 +65,11 @@ class Competition {
 }
 
 private fun groupDivision(athleteList: List<Athlete>): List<Group> {
-    val groupNameList = athleteList.map { it.groupName }.toSet().toList()
-    val athleteByGroupName = athleteList.groupBy { it.groupName }
+    val groupNameList = athleteList.map { it.groupName.groupName }.toSet().toList()
+    val athleteByGroupName = athleteList.groupBy { it.groupName.groupName }
     return groupNameList.map {
         Group(
-            Race(it),
+            Race(GroupName(it)),
             athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
         )
     }
