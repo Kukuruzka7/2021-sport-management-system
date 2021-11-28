@@ -41,12 +41,12 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
     private val path = """$dir${competition.info.name}/finishProtocol/"""
 
     init {
-        logger.info { "Создан объект класса FinishProtocol" }
+        logger.trace { "Создан объект класса FinishProtocol" }
         createDir(path)
         generateCSVbyGroups()
         generateOverallCSV()
         generateCSVbyTeams()
-        logger.info { "Сгенерированы все возможные итоговые csv протоколы" }
+        logger.trace { "Сгенерированы все возможные итоговые csv протоколы" }
     }
 
     private val athleteResult: List<AthleteResult> =
@@ -54,6 +54,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Сделать индивидуальные результаты
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
+        logger.trace { "Делаю индивидуальные результаты для ${athlete.number.value}" }
         //Время начала и конца путешествия одного чела
         val startTime = data.startTime[athlete.number]
         val finishTime = data.table[athlete.number]?.last()?.date
@@ -68,7 +69,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Выставляет номера спортсменов в их группе
     private fun makeSortedResultsInGroup(group: Group, athleteResult: List<AthleteResult>): List<AthleteProtocol> {
-        logger.info { "Начинаю сортировать CSV по группам" }
+        logger.trace { "Начинаю сортировать CSV по группам" }
         val listWithoutDisqualified =
             athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime != null }
         val listDisqualified = athleteResult.filter { group.athletes.contains(it.athlete) && it.finishTime == null }
@@ -104,15 +105,16 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         teams.map { TeamProtocol(it, athleteProtocols) }
 
     private fun generateCSVbyGroups() {
-        logger.info { "Начинаю создавать CSV по группам" }
+        logger.trace { "Начинаю создавать CSV по группам" }
         val dirName = path + "groups/"
         File(dirName).delete()
         createDir(dirName)
         groupProtocols.forEach { it.toCSV(dirName) }
-        logger.info { "CSV по группам успешно созданы" }
+        logger.trace { "CSV по группам успешно созданы" }
     }
 
     private fun generateOverallCSV() {
+        logger.trace { "Делаю общий CSV" }
         val fileName = path + "overallCSV"
         File(fileName).delete()
         File(fileName).createNewFile()
@@ -126,8 +128,9 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         }
     }
 
-
+    //Генерирует протокол по командам
     private fun generateCSVbyTeams() {
+        logger.trace { "Делаю CSV по командам" }
         val dirName = path + "teams/"
         File(dirName).delete()
         createDir(dirName)
@@ -136,14 +139,19 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
 }
 
+//Переделывает localTime в количество секунд
 fun LocalTime.toInt(): Int = this.hour * 3600 + this.minute * 60 + this.second
 
 //Функция разности двух LocalTime
-operator fun LocalTime?.minus(start: LocalTime): LocalTime? {
+operator fun LocalTime?.minus(subtrahend: LocalTime): LocalTime? {
     if (this == null) return null
-    return LocalTime.of(this.hour - start.hour, this.minute - start.minute, this.second - start.second)
+    val thisTime = this.toInt()
+    val subtrahendTime = subtrahend.toInt()
+    val difference =  thisTime - subtrahendTime + 24 * 60 * 60
+    return LocalTime.of((difference / 3600) % 24, (difference % 3600) / 60, difference % 60)
 }
 
+//Запись информации о таблице
 fun ICsvFileWriter.writeInfoRow() {
     writeRow(
         "№ п/п",
@@ -159,6 +167,7 @@ fun ICsvFileWriter.writeInfoRow() {
     )
 }
 
+//Записывает строчку по AthleteProtocol
 fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     writeRow(
         it.num,
@@ -174,12 +183,12 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
     )
 }
 
-
+//Создать директорию
 fun createDir(path: String) {
-    logger.info { "Начинаю создавать директорию $path" }
+    logger.trace { "Начинаю создавать директорию $path" }
     if (!File(path).isFile) {
         if (File(path).exists()) {
-            logger.info { "По пути $path был файл. Его пришлось удалить!" }
+            logger.trace { "По пути $path был файл. Его пришлось удалить!" }
             File(path).delete()
         }
         try {
@@ -188,5 +197,5 @@ fun createDir(path: String) {
             throw DirectoryCouldNotBeCreated(path)
         }
     }
-    logger.info { "Директория $path успешно создана" }
+    logger.trace { "Директория $path успешно создана" }
 }
