@@ -14,19 +14,20 @@ class GroupStartProtocol(private val group: Group, path: String) {
         csvWriter().open(groupPath) {
             writeRow(group.race.groupName, "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
             group.athletes.forEach { athlete ->
-                val startTime = LocalTime.of( 12, 0, 0).plusMinutes(athlete.number.value.toLongOrNull() ?: 0)
+                val startTime = LocalTime.of(12, 0, 0).plusMinutes(athlete.number.value.toLongOrNull() ?: 0)
                 writeRow(
                     athlete.number.toString(),
                     athlete.name.firstName,
                     athlete.name.lastName,
                     athlete.birthDate.year,
                     athlete.sportCategory.toString(),
-                    startTime.toString(withSecond = true),
+                    startTime.toStringWithSeconds(),
                 )
                 athlete.startTime = startTime
             }
         }
     }
 }
-fun LocalTime.toString(withSecond : Boolean): String =
-    this.toString() + if(withSecond) ":${this.second / 10}${this.second % 10}" else ""
+
+fun LocalTime.toStringWithSeconds(): String =
+    "${this.hour / 10}${this.hour % 10}:${this.minute / 10}${this.minute % 10}:${this.second / 10}${this.second % 10}"
