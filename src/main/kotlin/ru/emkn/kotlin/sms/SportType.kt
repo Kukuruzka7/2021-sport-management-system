@@ -13,7 +13,7 @@ enum class SportType() {
                 private val sportTypeMap = setOf("бег", "running").associateWith { RUNNING }.toMutableMap()
             .apply { putAll(setOf("плавание", "бультых", "swimming").associateWith { SWIMMING }) }.toMap()
 
-            fun getSportType(value: String) = sportTypeMap[value] ?: X
+            fun getSportType(value: String) = sportTypeMap[value.lowercase()] ?: X
 
     }
 }

@@ -12,7 +12,6 @@ import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
-import java.util.*
 
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
@@ -55,7 +54,7 @@ fun main(args: Array<String>) {
 }
 
 fun start(inputData: Array<String>) {
-    if (checkForEmptyInput(inputData)) return
+    if (checkForEmptyInputStart(inputData)) return
     val name = inputData[FieldsStart.NAME.ordinal]
     sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
     val dateString = inputData[FieldsStart.DATE.ordinal]
@@ -74,27 +73,29 @@ fun start(inputData: Array<String>) {
 }
 
 fun finishByAthletes(inputData: Array<String>) {
-    if (checkForEmptyInput(inputData)) return
+    if (checkForEmptyInputFinish(inputData)) return
     val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
     val name = inputData[FieldsFinish.NAME.ordinal]
     if (checkCompetitionExist(name)) return
     val data: List<List<String>> = getData(name) ?: return
-    val info: List<List<String>> = getMetaInfo(name) ?: return
-    val competition: Competition = getCompetition(data, info[0]) ?: return
-    val athletesResults: ResultData = resultDataByAthlete(fileName, data, info[0]) ?: return
+    val info: MetaInfo = getMetaInfo(name) ?: return
+    sport = info.sport
+    val competition: Competition = getCompetition(data, info) ?: return
+    val athletesResults: ResultData = resultDataByAthlete(fileName, data, info) ?: return
     FinishProtocol(athletesResults, competition)
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
 }
 
 fun finishByCheckPoints(inputData: Array<String>) {
-    if (checkForEmptyInput(inputData)) return
+    if (checkForEmptyInputFinish(inputData)) return
     val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
     val name = inputData[FieldsFinish.NAME.ordinal]
     if (checkCompetitionExist(name)) return
     val data: List<List<String>> = getData(name) ?: return
-    val info: List<List<String>> = getMetaInfo(name) ?: return
-    val competition: Competition = getCompetition(data, info[0]) ?: return
-    val athletesResults: ResultData = resultDataByCheckPoints(fileName, data, competition, info[0]) ?: return
+    val info: MetaInfo = getMetaInfo(name) ?: return
+    sport = info.sport
+    val competition: Competition = getCompetition(data, info) ?: return
+    val athletesResults: ResultData = resultDataByCheckPoints(fileName, data, competition, info) ?: return
     FinishProtocol(athletesResults, competition)
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
 }
@@ -136,7 +137,7 @@ private fun checkSportType(inputData: Array<String>): Boolean {
     return false
 }
 
-private fun checkForEmptyInput(inputData: Array<String>): Boolean {
+private fun checkForEmptyInputStart(inputData: Array<String>): Boolean {
     if (inputData.size != FieldsStart.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return true
@@ -144,11 +145,19 @@ private fun checkForEmptyInput(inputData: Array<String>): Boolean {
     return false
 }
 
-private fun resultDataByAthlete(fileName: String, data: List<List<String>>, info: List<String>): ResultData? {
+private fun checkForEmptyInputFinish(inputData: Array<String>): Boolean {
+    if (inputData.size != FieldsFinish.values().size) {
+        println("Вы ввели что-то не то. Попробуйте еще раз.")
+        return true
+    }
+    return false
+}
+
+private fun resultDataByAthlete(fileName: String, data: List<List<String>>, info: MetaInfo): ResultData? {
     try {
         return ResultData(
             InputCompetitionResultByAthletes(fileName).toTable(),
-            CompetitionData(data, info).getStartTime()
+            CompetitionData(data, info.toStringList()).getStartTime()
         )
     } catch (e: Exception) {
         println(e.message)
@@ -160,12 +169,12 @@ private fun resultDataByCheckPoints(
     fileName: String,
     data: List<List<String>>,
     competition: Competition,
-    info: List<String>
+    info: MetaInfo
 ): ResultData? {
     try {
         return ResultData(
             InputCompetitionResultByCheckPoints(fileName, competition).toTable(),
-            CompetitionData(data, info).getStartTime()
+            CompetitionData(data, info.toStringList()).getStartTime()
         )
     } catch (e: Exception) {
         println(e.message)
@@ -173,9 +182,9 @@ private fun resultDataByCheckPoints(
     }
 }
 
-private fun getCompetition(data: List<List<String>>, info: List<String>): Competition? {
+private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competition? {
     try {
-        return Competition(CompetitionData(data, info))
+        return Competition(CompetitionData(data, info.toStringList()))
     } catch (e: Exception) {
         println(e.message)
         return null
@@ -191,13 +200,11 @@ private fun getData(name: String): List<List<String>>? {
     }
 }
 
-private fun getMetaInfo(name: String): List<List<String>>? {
-    try {
-        return csvReader().readAll(File(dir + name + "/competitionInfo.csv"))
-    } catch (e: Exception) {
-        println("Что-то пошло не так, попробуйте ввести заявки заново.")
-        return null
-    }
+private fun getMetaInfo(name: String): MetaInfo? = try {
+    MetaInfo(csvReader().readAll(File(dir + name + "/competitionInfo.csv"))[0])
+} catch (e: Exception) {
+    println("Что-то пошло не так, попробуйте ввести заявки заново.")
+    null
 }
 
 private fun checkCompetitionExist(name: String): Boolean {
