@@ -7,24 +7,6 @@ import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 
-enum class SportType(val sportType: String) {
-    RUNNING("running"), ERROR("sport is not supported");
-
-    companion object {
-        fun getSportType(str: String): SportType {
-            for (value in values()) {
-                if (value.sportType == str.lowercase()) {
-                    return value
-                }
-            }
-            return ERROR
-        }
-    }
-}
-
-data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType) {
-    override fun toString() = "[$name, $date $sport]"
-}
 
 class Competition {
     lateinit var info: MetaInfo
@@ -45,6 +27,18 @@ class Competition {
             logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size}" }
             val groupMap = athList.groupBy { it.race }
             return groupMap.keys.map { Group(it, groupMap[it]!!) }
+        }
+
+        private fun groupDivision(athleteList: List<Athlete>): List<Group> {
+            logger.trace { "Вызов функции groupDivision(athleteList.size = ${athleteList.size})" }
+            val groupNameList = athleteList.map { it.groupName.groupName }.toSet().toList()
+            val athleteByGroupName = athleteList.groupBy { it.groupName.groupName }
+            return groupNameList.map {
+                Group(
+                    Race(GroupName(it)),
+                    athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
+                )
+            }
         }
     }
 
@@ -77,17 +71,5 @@ class Competition {
         val result = checkPointsByGroupName[groupName.groupName]
         require(result != null)
         return result
-    }
-}
-
-private fun groupDivision(athleteList: List<Athlete>): List<Group> {
-    logger.trace { "Вызов функции groupDivision(athleteList.size = ${athleteList.size})" }
-    val groupNameList = athleteList.map { it.groupName.groupName }.toSet().toList()
-    val athleteByGroupName = athleteList.groupBy { it.groupName.groupName }
-    return groupNameList.map {
-        Group(
-            Race(GroupName(it)),
-            athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
-        )
     }
 }
