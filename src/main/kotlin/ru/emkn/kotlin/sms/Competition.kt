@@ -7,7 +7,7 @@ import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 enum class SportType(val sportType: String) {
-    RUNNING("running"), ERR("sport is not supported");
+    RUNNING("running"), ERROR("sport is not supported");
 
     companion object {
         fun getSportType(str: String): SportType {
@@ -16,7 +16,7 @@ enum class SportType(val sportType: String) {
                     return value
                 }
             }
-            return ERR
+            return ERROR
         }
     }
 }
