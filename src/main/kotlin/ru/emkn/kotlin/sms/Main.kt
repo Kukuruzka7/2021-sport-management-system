@@ -7,10 +7,8 @@ import ru.emkn.kotlin.sms.SportType.Companion.getSportType
 import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
-import ru.emkn.kotlin.sms.input_result.InputAthleteResults
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
-import ru.emkn.kotlin.sms.input_result.InputResult
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.CompetitionData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
@@ -42,29 +40,31 @@ enum class UserBehavior(val behavior: String) {
 
 const val dir = "src/main/resources/competitions/"
 
+var sport = SportType.ERR
+
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         println("Вы ничего не ввели. Попробуйте еще раз.")
         return
     }
     when (getBehavior(args[0])) {
-        UserBehavior.START -> start(args.slice(1..args.lastIndex))
-        UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args.slice(1..args.lastIndex))
-        UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args.slice(1..args.lastIndex))
+        UserBehavior.START -> start(args)
+        UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args)
+        UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args)
         UserBehavior.ERR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
     }
 }
 
-fun start(inputData: List<String>) {
+fun start(inputData: Array<String>) {
     if (inputData.size != FieldsStart.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return
     }
     val name = inputData[FieldsStart.NAME.ordinal]
-    val sportType: SportType = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
-    if (sportType == SportType.ERROR) {
+    if (sport == SportType.ERR) {
         println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return
     }
@@ -91,13 +91,13 @@ fun start(inputData: List<String>) {
         println(e.message)
         return
     }
-    val competition = Competition(MetaInfo(name, date, sportType), application)
-    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData")
+    val competition = Competition(MetaInfo(name, date, sport), application)
     StartProtocol(competition.groupList, dir + competition.info.name + "/")
+    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData")
     println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/startProtocol/.")
 }
 
-fun finishByAthletes(inputData: List<String>) {
+fun finishByAthletes(inputData: Array<String>) {
     if (inputData.size != FieldsFinal.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return
@@ -136,7 +136,7 @@ fun finishByAthletes(inputData: List<String>) {
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
 }
 
-fun finishByCheckPoints(inputData: List<String>) {
+fun finishByCheckPoints(inputData: Array<String>) {
     if (inputData.size != FieldsFinal.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return
