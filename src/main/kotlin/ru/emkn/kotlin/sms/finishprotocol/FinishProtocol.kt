@@ -2,7 +2,6 @@ package ru.emkn.kotlin.sms.finishprotocol
 
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
-import kotlinx.datetime.LocalDateTime
 import logger
 import ru.emkn.kotlin.sms.Competition
 import ru.emkn.kotlin.sms.DirectoryCouldNotBeCreated
