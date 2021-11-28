@@ -32,6 +32,7 @@ class Competition {
     val athleteList: List<Athlete>
     val groupList: List<Group>
     val athleteByNumber: Map<AthleteNumber, Athlete>
+    val checkPointsByGroupName: Map<String, List<Checkpoint>>
 
     companion object {
         private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
@@ -48,12 +49,12 @@ class Competition {
     }
 
     constructor(_info: MetaInfo, application: Application) {
-        logger.info { "Вызов конструктора Competition(_info = ${_info}, application)" }
         info = _info
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
         groupList = groupDivision(athleteList)
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
     }
 
     constructor(data: CompetitionData) {
@@ -62,9 +63,8 @@ class Competition {
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
     }
-
-    fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
 
     fun toCompetitionData() {
         logger.info { "Вызов функции toCompetitionData()" }
@@ -73,6 +73,11 @@ class Competition {
         })
     }
 
+    fun getCheckPoint(groupName: GroupName): List<Checkpoint> {
+        val result = checkPointsByGroupName[groupName.groupName]
+        require(result != null)
+        return result
+    }
 }
 
 private fun groupDivision(athleteList: List<Athlete>): List<Group> {

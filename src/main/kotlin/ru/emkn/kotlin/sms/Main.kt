@@ -18,12 +18,12 @@ enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
 }
 
-enum class FieldsFinal {
+enum class FieldsFinish {
     BEHAVIOR, PATH_TO_FILE, NAME
 }
 
 enum class UserBehavior(val behavior: String) {
-    START("start"), FINISH_BY_ATHLETES("final_by_athletes"), FINISH_BY_CHECKPOINTS("final_by_checkpoints"), ERROR("");
+    START("start"), FINISH_BY_ATHLETES("finish_by_athletes"), FINISH_BY_CHECKPOINTS("finish_by_checkpoints"), ERROR("");
 
     companion object {
         fun getBehavior(behavior: String): UserBehavior {
@@ -92,41 +92,30 @@ fun start(inputData: Array<String>) {
     }
     val competition = Competition(MetaInfo(name, date, sport), application)
     StartProtocol(competition.groupList, dir + competition.info.name + "/")
-    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData")
+    competition.toCompetitionData().save(dir + competition.info.name + "/competitionData.csv")
     println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/startProtocol/.")
 }
 
 fun finishByAthletes(inputData: Array<String>) {
-    if (inputData.size != FieldsFinal.values().size) {
+    if (inputData.size != FieldsFinish.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return
     }
-    val fileName = inputData[FieldsFinal.PATH_TO_FILE.ordinal]
-    val name = inputData[FieldsStart.NAME.ordinal]
+    val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
+    val name = inputData[FieldsFinish.NAME.ordinal]
     val data: List<List<String>>
     val competition: Competition
-    if (!File(dir + name + "/competitionData").exists()) {
+    if (!File(dir + name + "/competitionData.csv").exists()) {
         println("Такого соревнования еще не проводилось. Сначала введите заявки на участие.")
         return
     }
-    try {
-        data = csvReader().readAll(File(dir + name + "/competitionData"))
+        data = csvReader().readAll(File(dir + name + "/competitionData.csv"))
         competition = Competition(CompetitionData(data))
-    } catch (e: Exception) {
-        println("Произошла ошибка, попробуйте заново загрузить заявки.")
-        return
-    }
-    val fileNames: List<String>
-    try {
-        fileNames = File(fileName).readLines()
-    } catch (e: Exception) {
-        println("Файл $fileName не может быть прочитан.")
-        return
-    }
+    
     val athletesResults: ResultData
     try {
         athletesResults =
-            ResultData(InputCompetitionResultByAthletes(fileNames[0]).toTable(), CompetitionData(data).getStartTime())
+            ResultData(InputCompetitionResultByAthletes(fileName).toTable(), CompetitionData(data).getStartTime())
     } catch (e: Exception) {
         println(e.message)
         return
@@ -136,11 +125,11 @@ fun finishByAthletes(inputData: Array<String>) {
 }
 
 fun finishByCheckPoints(inputData: Array<String>) {
-    if (inputData.size != FieldsFinal.values().size) {
+    if (inputData.size != FieldsFinish.values().size) {
         println("Вы ввели что-то не то. Попробуйте еще раз.")
         return
     }
-    val fileName = inputData[FieldsFinal.PATH_TO_FILE.ordinal]
+    val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
     val name = inputData[FieldsStart.NAME.ordinal]
     val data: List<List<String>>
     val competition: Competition
@@ -149,23 +138,16 @@ fun finishByCheckPoints(inputData: Array<String>) {
         return
     }
     try {
-        data = csvReader().readAll(File(dir + name + "/competitionData"))
+        data = csvReader().readAll(File(dir + name + "/competitionData.csv"))
         competition = Competition(CompetitionData(data))
     } catch (e: Exception) {
         println("Произошла ошибка, попробуйте заново загрузить заявки.")
         return
     }
-    val fileNames: List<String>
-    try {
-        fileNames = File(fileName).readLines()
-    } catch (e: Exception) {
-        println("Файл $fileName не может быть прочитан.")
-        return
-    }
     val athletesResults: ResultData
     try {
         athletesResults = ResultData(
-            InputCompetitionResultByCheckPoints(fileNames[0], competition).toTable(),
+            InputCompetitionResultByCheckPoints(fileName, competition).toTable(),
             CompetitionData(data).getStartTime()
         )
     } catch (e: Exception) {

@@ -8,7 +8,8 @@ import ru.emkn.kotlin.sms.athlete.*
 import java.time.LocalTime
 
 
-class CompetitionData(private val athletesData: List<List<String>>) {
+class CompetitionData(private val _athletesData: List<List<String>>) {
+    val athletesData = _athletesData.drop(1)
 
     init {
         logger.trace { "Создание экземпляра класса CompetitionData" }
@@ -19,7 +20,7 @@ class CompetitionData(private val athletesData: List<List<String>>) {
         logger.info { "Сохранение Competition в файл $fileName" }
         try {
             csvWriter().open(fileName) {
-                writeRow(Fields.values().joinToString { it.toRussian() })
+                writeRow(Fields.values().map { it.toRussian() })
                 athletesData.forEach { writeRow(it) }
             }
         } catch (_: Exception) {

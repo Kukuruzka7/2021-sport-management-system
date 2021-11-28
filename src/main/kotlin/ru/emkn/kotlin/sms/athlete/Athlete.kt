@@ -64,7 +64,7 @@ class Athlete(
         _groupName: GroupName
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
-    val race: Race = Race(groupName)
+    val race = Race(groupName)
     lateinit var startTime: LocalTime
 
     override fun toString(): String = "[$name, $number, §$groupName]"
