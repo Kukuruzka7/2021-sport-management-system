@@ -18,14 +18,14 @@ class Competition {
     companion object {
         private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
             logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size})" }
-            val teamMap = athList.groupBy { it.teamName }
-            return teamMap.keys.map { Team(it, teamMap[it]!!) }
+            val teamMap = athList.groupBy { it.teamName.name }
+            return teamMap.map { Team(TeamName(it.key), it.value) }
         }
 
         private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
             logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size})" }
             val groupMap = athList.groupBy { it.race.groupName.value }
-            return groupMap.keys.map { Group(Race(GroupName(it)), groupMap[it]!!) }
+            return groupMap.map { Group(Race(GroupName(it.key)), it.value) }
         }
 
         private fun groupDivision(athleteList: List<Athlete>): List<Group> {
