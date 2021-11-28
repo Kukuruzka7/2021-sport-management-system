@@ -39,7 +39,7 @@ enum class UserBehavior(val behavior: String) {
 
 const val dir = "src/main/resources/competitions/"
 
-var sport = SportType.ERROR
+var sport = SportType.X
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -63,7 +63,7 @@ fun start(inputData: Array<String>) {
     sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
-    if (sport == SportType.ERROR) {
+    if (sport == SportType.X) {
         println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return
     }
