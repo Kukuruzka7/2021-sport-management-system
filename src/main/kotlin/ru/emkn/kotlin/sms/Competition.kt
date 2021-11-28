@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.LocalDate
+import logger
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
@@ -21,7 +22,9 @@ enum class SportType(val sportType: String) {
     }
 }
 
-data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
+data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType) {
+    override fun toString() = "[$name, $date $sport]"
+}
 
 class Competition {
     lateinit var info: MetaInfo
@@ -29,14 +32,17 @@ class Competition {
     val athleteList: List<Athlete>
     val groupList: List<Group>
     val athleteByNumber: Map<AthleteNumber, Athlete>
+    val checkPointsByGroupName: Map<String, List<Checkpoint>>
 
     companion object {
         private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
+            logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size}" }
             val teamMap = athList.groupBy { it.teamName }
             return teamMap.keys.map { Team(it, teamMap[it]!!) }
         }
 
         private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
+            logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size}" }
             val groupMap = athList.groupBy { it.race }
             return groupMap.keys.map { Group(it, groupMap[it]!!) }
         }
@@ -48,24 +54,34 @@ class Competition {
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
         groupList = groupDivision(athleteList)
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
     }
 
     constructor(data: CompetitionData) {
+        logger.info { "Вызов конструктора Competition(data)" }
         athleteList = data.toAthletesList()
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
     }
 
-    fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
+    fun toCompetitionData(): CompetitionData {
+        logger.info { "Вызов функции toCompetitionData()" }
+        return CompetitionData(athleteList.map { athlete ->
+            (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
+        })
+    }
 
-    fun toCompetitionData() = CompetitionData(athleteList.map { athlete ->
-        (CompetitionData.Companion.Fields.athletesValues.map { athlete.extractFieldToString(it) })
-    })
-
+    fun getCheckPoint(groupName: GroupName): List<Checkpoint> {
+        val result = checkPointsByGroupName[groupName.groupName]
+        require(result != null)
+        return result
+    }
 }
 
 private fun groupDivision(athleteList: List<Athlete>): List<Group> {
+    logger.trace { "Вызов функции groupDivision(athleteList.size = ${athleteList.size})" }
     val groupNameList = athleteList.map { it.groupName.groupName }.toSet().toList()
     val athleteByGroupName = athleteList.groupBy { it.groupName.groupName }
     return groupNameList.map {

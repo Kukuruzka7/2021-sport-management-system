@@ -27,7 +27,6 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
         }
         resultsOfAthletes =
             splitByAthletes.map { parseResultOfAthlete(it, checkpoint) }.associateBy { it.athleteNumber }
-        logger.trace { "Инит-блок класса InputCheckpointResults завершен" }
     }
 
     companion object {
@@ -44,7 +43,6 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
         if (list.isEmpty()) {
             throw ResultMissesCheckPointName(list)
         }
-        logger.trace { "Завершение getCheckPoint() = ${list[0]}" }
         return Checkpoint(list[0])
     }
 
@@ -61,7 +59,6 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
         } catch (_: java.time.format.DateTimeParseException) {
             throw InvalidDateFormat(row[Fields.ATHLETE_TIME.ordinal])
         }
-        logger.trace { "Завершение parseResultOfAthlete(..) = CheckpointRes($_checkpoint, ${AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal])}, $time)" }
         return CheckpointRes(_checkpoint, AthleteNumber(row[Fields.ATHLETE_NUMBER.ordinal]), time)
     }
 }

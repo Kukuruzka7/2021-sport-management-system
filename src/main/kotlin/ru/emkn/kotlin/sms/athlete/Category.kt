@@ -15,7 +15,7 @@ enum class Category {
             .apply { putAll(setOf("I", "1", "1 взрослый", "first").associateWith { III_JUNIOR }) }
             .apply { putAll(setOf("КМС", "кандидат в мастера спорта", "candidate").associateWith { CANDIDATE }) }
             .apply { putAll(setOf("МС", "мастера спорт", "master").associateWith { MASTER }) }
-            .apply { putAll(setOf("МС", "международный мастер").associateWith { INTERNATIONAL_MASTER }) }.toMap()
+            .apply { putAll(setOf("ММС", "международный мастер").associateWith { INTERNATIONAL_MASTER }) }.toMap()
 
 
         private val toRussian = mapOf(
