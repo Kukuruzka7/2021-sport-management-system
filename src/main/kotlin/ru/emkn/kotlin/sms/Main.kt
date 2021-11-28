@@ -13,6 +13,7 @@ import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
+import kotlin.math.log
 
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
@@ -42,63 +43,114 @@ const val dir = "src/main/resources/competitions/"
 var sport = SportType.X
 
 fun main(args: Array<String>) {
-    if (args.isEmpty()) {
-        println("Вы ничего не ввели. Попробуйте еще раз.")
-        return
-    }
+    logger.info { "Начало работы программы." }
+    if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
         UserBehavior.START -> start(args)
         UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args)
         UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args)
         UserBehavior.ERROR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
     }
+    logger.info { "Завершение работы программы." }
+}
+
+private fun checkEmptyInput(args: Array<String>): Boolean {
+    if (args.isEmpty()) {
+        println("Вы ничего не ввели. Попробуйте еще раз.")
+        return true
+    }
+    return false
 }
 
 fun start(inputData: Array<String>) {
+    logger.info { "Вызов функции start. Обработка входных данных." }
     if (checkForEmptyInputStart(inputData)) return
     val name = inputData[FieldsStart.NAME.ordinal]
     sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    if (checkSportType(inputData)) return
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
-    if (checkSportType(inputData)) return
     val date: LocalDate = getDate(dateString) ?: return
+    logger.info { "Обработка путей к заявкам." }
     val teamApplicationNames: List<String> = getTeamApplicationNames(fileName) ?: return
+    logger.info { "Создание Application." }
     val application: Application = getApplication(teamApplicationNames) ?: return
+    logger.info { "Application создан." }
+    logger.info { "Создание Competition." }
     val competition = Competition(MetaInfo(name, date, sport), application)
-    StartProtocol(competition.groupList, dir + competition.info.name + "/")
+    logger.info { "Competition создан." }
+    logger.info { "Создание StartProtocol." }
+    try {
+        StartProtocol(competition.groupList, dir + competition.info.name + "/")
+    }catch (e: Exception){
+        println(e.message)
+        return
+    }
+    logger.info { "StartProtocol создан." }
+    logger.info { "Сохранение Competition" }
     competition.toCompetitionData().save(
         dir + competition.info.name + "/competitionData.csv",
         dir + competition.info.name + "/competitionInfo.csv"
     )
+    logger.info { "Competition успешно сохранен." }
     println("Стартовые протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/startProtocol/.")
+    logger.info { "Завершение start." }
 }
 
 fun finishByAthletes(inputData: Array<String>) {
+    logger.info { "Вызов функции finishByAthletes. Обработка входных данных." }
     if (checkForEmptyInputFinish(inputData)) return
     val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
     val name = inputData[FieldsFinish.NAME.ordinal]
+    logger.info { "Проверка на существование соревнования." }
     if (checkCompetitionExist(name)) return
+    logger.info { "Получение результатов атлетов." }
     val data: List<List<String>> = getData(name) ?: return
+    logger.info { "Результаты атлетов получены." }
     val info: MetaInfo = getMetaInfo(name) ?: return
     sport = info.sport
+    logger.info { "Создание Competition." }
     val competition: Competition = getCompetition(data, info) ?: return
+    logger.info { "Competition создан." }
     val athletesResults: ResultData = resultDataByAthlete(fileName, data, info) ?: return
-    FinishProtocol(athletesResults, competition)
+    logger.info { "Создание FinishProtocol." }
+    try {
+        FinishProtocol(athletesResults, competition)
+    }catch (e: Exception){
+        println(e.message)
+        return
+    }
+    logger.info { "FinishProtocol успешно сохранен." }
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
+    logger.info { "Завершение finishByAthletes" }
 }
 
 fun finishByCheckPoints(inputData: Array<String>) {
+    logger.info { "Вызов функции finishByCheckPoints. Обработка входных данных." }
     if (checkForEmptyInputFinish(inputData)) return
     val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
     val name = inputData[FieldsFinish.NAME.ordinal]
+    logger.info { "Проверка на существование соревнования." }
     if (checkCompetitionExist(name)) return
+    logger.info { "Получение результатов по контрольным точкам." }
     val data: List<List<String>> = getData(name) ?: return
+    logger.info { "Результаты получены." }
     val info: MetaInfo = getMetaInfo(name) ?: return
     sport = info.sport
+    logger.info { "Создание Competition." }
     val competition: Competition = getCompetition(data, info) ?: return
+    logger.info { "Competition создан." }
     val athletesResults: ResultData = resultDataByCheckPoints(fileName, data, competition, info) ?: return
-    FinishProtocol(athletesResults, competition)
+    logger.info { "Создание FinishProtocol." }
+    try {
+        FinishProtocol(athletesResults, competition)
+    }catch (e: Exception){
+        println(e.message)
+        return
+    }
+    logger.info { "FinishProtocol успешно сохранен." }
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
+    logger.info { "Завершение finishByCheckPoints." }
 }
 
 private fun getApplication(teamApplicationNames: List<String>): Application? {
