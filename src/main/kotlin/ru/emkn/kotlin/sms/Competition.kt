@@ -1,6 +1,5 @@
 package ru.emkn.kotlin.sms
 
-import kotlinx.datetime.LocalDate
 import logger
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.athlete.Athlete
@@ -31,8 +30,8 @@ class Competition {
 
         private fun groupDivision(athleteList: List<Athlete>): List<Group> {
             logger.trace { "Вызов функции groupDivision(athleteList.size = ${athleteList.size})" }
-            val groupNameList = athleteList.map { it.groupName.groupName }.toSet().toList()
-            val athleteByGroupName = athleteList.groupBy { it.groupName.groupName }
+            val groupNameList = athleteList.map { it.groupName.value }.toSet().toList()
+            val athleteByGroupName = athleteList.groupBy { it.groupName.value }
             return groupNameList.map {
                 Group(
                     Race(GroupName(it)),
@@ -48,7 +47,7 @@ class Competition {
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
         groupList = groupDivision(athleteList)
-        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.value }, { it.race.checkPoints })
     }
 
     constructor(data: CompetitionData) {
@@ -57,7 +56,7 @@ class Competition {
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
-        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.groupName }, { it.race.checkPoints })
+        checkPointsByGroupName = groupList.associateBy({ it.race.groupName.value }, { it.race.checkPoints })
     }
 
     fun toCompetitionData(): CompetitionData {
@@ -68,7 +67,7 @@ class Competition {
     }
 
     fun getCheckPoint(groupName: GroupName): List<Checkpoint> {
-        val result = checkPointsByGroupName[groupName.groupName]
+        val result = checkPointsByGroupName[groupName.value]
         require(result != null)
         return result
     }

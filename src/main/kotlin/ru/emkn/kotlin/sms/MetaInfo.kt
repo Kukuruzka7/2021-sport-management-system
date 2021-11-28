@@ -1,6 +1,9 @@
 package ru.emkn.kotlin.sms
 
+import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
+import java.io.File
 
 data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType) {
     override fun toString() = "[$name, $date, $sport]"
@@ -47,6 +50,7 @@ data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
             NAME, DATE, SPORT_TYPE
         }
     }
-
-
 }
+
+fun saveMetaInfo(metaInfo: MetaInfo, fileName: String) =
+    CsvWriter().writeAll(listOf(metaInfo.toStringList()), File(fileName))
