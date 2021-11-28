@@ -1,7 +1,11 @@
 package ru.emkn.kotlin.sms.athlete
 
 import kotlinx.datetime.LocalDate
-import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.CompetitionData
+import ru.emkn.kotlin.sms.GroupName
+import ru.emkn.kotlin.sms.Race
+import ru.emkn.kotlin.sms.TeamName
+import java.time.LocalTime
 
 class AthleteNumber(val value: String) {
     override fun toString() = value
@@ -57,7 +61,8 @@ class Athlete(
         _groupName: GroupName
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
-    val race = Race(groupName)
+    lateinit var race: Race
+    lateinit var startTime: LocalTime
 
     fun extractFieldToString(field: CompetitionData.Companion.Fields): String = when (field) {
         CompetitionData.Companion.Fields.NUMBER -> number.toString()
@@ -68,7 +73,7 @@ class Athlete(
         CompetitionData.Companion.Fields.TEAM_NAME -> teamName.toString()
         CompetitionData.Companion.Fields.RACE -> race.toString()
         CompetitionData.Companion.Fields.PREFERRED_GROUP -> preferredGroup.toString()
-        CompetitionData.Companion.Fields.START_TIME -> throw Exception("Это поле извлечь нельзя")
+        CompetitionData.Companion.Fields.START_TIME -> startTime.toString()
     }
 
     companion object {
