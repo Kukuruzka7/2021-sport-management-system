@@ -38,6 +38,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         const val dir = "src/main/resources/competitions/"
     }
 
+    //Путь к папке с финальными протоколами
     private val path = """$dir${competition.info.name}/finishProtocol/"""
 
     init {
@@ -49,7 +50,8 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         logger.trace { "Сгенерированы все возможные итоговые csv протоколы" }
     }
 
-    private val athleteResult: List<AthleteResult> =
+    //Переменная, хранящая список результатов атлетов
+    private val athleteResults: List<AthleteResult> =
         athletes.map { makeIndividualResults(it) }
 
     //Сделать индивидуальные результаты
@@ -65,7 +67,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Делает общие списки групп
     private val groupProtocols: List<GroupProtocol> =
-        groups.map { GroupProtocol(it, makeSortedResultsInGroup(it, athleteResult)) }
+        groups.map { GroupProtocol(it, makeSortedResultsInGroup(it, athleteResults)) }
 
     //Выставляет номера спортсменов в их группе
     private fun makeSortedResultsInGroup(group: Group, athleteResult: List<AthleteResult>): List<AthleteProtocol> {
