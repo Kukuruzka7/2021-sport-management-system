@@ -7,7 +7,7 @@ import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
 
 enum class SportType(val sportType: String) {
-    RUNNING("бег"), ERROR("спорт который мы не поддерживаем");
+    RUNNING("running"), ERR("sport is not supported");
 
     companion object {
         fun getSportType(str: String): SportType {
@@ -16,7 +16,7 @@ enum class SportType(val sportType: String) {
                     return value
                 }
             }
-            return ERROR
+            return ERR
         }
     }
 }
@@ -47,7 +47,7 @@ class Competition {
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
-        groupList = groupDivision(athleteList, _info.sport)
+        groupList = groupDivision(athleteList)
     }
 
     constructor(data: CompetitionData) {
@@ -59,19 +59,18 @@ class Competition {
 
     fun getCheckPoint(groupName: GroupName): List<Checkpoint> = TODO()
 
-    fun toCompetitionData(): CompetitionData {
-        return CompetitionData(athleteList.map { athlete ->
-            (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
-        })
-    }
+    fun toCompetitionData() = CompetitionData(athleteList.map { athlete ->
+        (CompetitionData.Companion.Fields.athletesValues.map { athlete.extractFieldToString(it) })
+    })
+
 }
 
-private fun groupDivision(athleteList: List<Athlete>, sportType: SportType): List<Group> {
-    val groupNameList = athleteList.map { it.groupName }.toSet().toList()
-    val athleteByGroupName = athleteList.groupBy { it.groupName }
+private fun groupDivision(athleteList: List<Athlete>): List<Group> {
+    val groupNameList = athleteList.map { it.groupName.groupName }.toSet().toList()
+    val athleteByGroupName = athleteList.groupBy { it.groupName.groupName }
     return groupNameList.map {
         Group(
-            Race(it, sportType),
+            Race(GroupName(it)),
             athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
         )
     }
