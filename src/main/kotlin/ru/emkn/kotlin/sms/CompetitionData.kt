@@ -28,12 +28,12 @@ class CompetitionData(_athletesData: List<List<String>>, val metaInfo: List<Stri
             logger.error { FileCouldNotBeCreated(athletesFileName) }
             throw FileCouldNotBeCreated(athletesFileName)
         }
-        saveMetaInfo(metaInfo, metaInfoFileName)
+        saveMetaInfo(metaInfoFileName)
     }
 
 
-    fun saveMetaInfo(meta: List<String>, fileName: String) =
-        CsvWriter().writeAll(listOf(meta), File(fileName))
+    fun saveMetaInfo(fileName: String) =
+        CsvWriter().writeAll(listOf(metaInfo), File(fileName))
 
 
     fun toAthletesList(): List<Athlete> = athletesData.map {
