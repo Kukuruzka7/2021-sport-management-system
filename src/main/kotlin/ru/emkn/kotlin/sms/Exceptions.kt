@@ -61,3 +61,8 @@ class CompetitionDataInvalidSportCategory(sportCategory: String) :
 class InputCheckpointResultIsAbsent(checkpoint: Checkpoint) :
     Exception("Отсутствует результат на контрольном пункте $checkpoint")
 
+class MetaInfoTooFewArguments(actual: Int) :
+    Exception("Слишком мало аргументов для создания MetaInfo: ожидалось ${MetaInfo.Companion.Fields.values().size}, на самом деле $actual")
+
+class InvalidSportType(sportType: String) : Exception("Некорректный вид спорта $sportType")
+

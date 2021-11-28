@@ -71,13 +71,29 @@ fun start(inputData: Array<String>) {
 }
 
 fun finishByAthletes(inputData: Array<String>) {
-    if (checkForEmptyInput(inputData)) return
+    if (inputData.size != FieldsFinish.values().size) {
+        println("Вы ввели что-то не то. Попробуйте еще раз.")
+        return
+    }
     val fileName = inputData[FieldsFinish.PATH_TO_FILE.ordinal]
     val name = inputData[FieldsFinish.NAME.ordinal]
-    if (checkCompetitionExist(name)) return
-    val data: List<List<String>> = getData(name) ?: return
-    val competition: Competition = getCompetition(data) ?: return
-    val athletesResults: ResultData = resultDataByAthlete(fileName, data) ?: return
+    val data: List<List<String>>
+    val competition: Competition
+    if (!File(dir + name + "/competitionData.csv").exists()) {
+        println("Такого соревнования еще не проводилось. Сначала введите заявки на участие.")
+        return
+    }
+        data = csvReader().readAll(File(dir + name + "/competitionData.csv"))
+        competition = Competition(CompetitionData(data))
+    
+    val athletesResults: ResultData
+    try {
+        athletesResults =
+            ResultData(InputCompetitionResultByAthletes(fileName).toTable(), CompetitionData(data).getStartTime())
+    } catch (e: Exception) {
+        println(e.message)
+        return
+    }
     FinishProtocol(athletesResults, competition)
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
 }
