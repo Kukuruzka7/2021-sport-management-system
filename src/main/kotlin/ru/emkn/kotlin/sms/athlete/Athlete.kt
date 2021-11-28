@@ -15,12 +15,15 @@ class AthleteNumber(val value: String) {
         }
         return value == other.value
     }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 }
 
 class Name(val firstName: String, val lastName: String) {
 
     constructor (_name: String) : this(getFirstName(_name), getLastName(_name))
-
 
     val fullName: String = "$firstName $lastName"
 
@@ -61,7 +64,7 @@ class Athlete(
         _groupName: GroupName
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
-    lateinit var race: Race
+    val race: Race = Race(groupName)
     lateinit var startTime: LocalTime
 
     fun extractFieldToString(field: CompetitionData.Companion.Fields): String = when (field) {

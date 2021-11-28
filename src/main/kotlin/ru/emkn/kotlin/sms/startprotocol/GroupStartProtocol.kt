@@ -23,6 +23,7 @@ class GroupStartProtocol(private val group: Group, path: String) {
                     athlete.sportCategory.toString(),
                     startTime.toString(withSecond = true),
                 )
+                athlete.startTime = startTime
             }
         }
     }
