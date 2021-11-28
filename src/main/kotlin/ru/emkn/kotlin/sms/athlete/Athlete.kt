@@ -85,6 +85,13 @@ class Athlete(
         private var lastUsedNumber = 1
         private fun numerate() = AthleteNumber(lastUsedNumber++.toString())
     }
+
+    override fun equals(other: Any?): Boolean {
+        if(other !is Athlete) {
+            return false
+        }
+        return (this.name.fullName == other.name.fullName) && (this.groupName.value == other.groupName.value)
+    }
 }
 
 
