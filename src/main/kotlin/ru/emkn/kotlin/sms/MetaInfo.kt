@@ -1,7 +1,4 @@
 package ru.emkn.kotlin.sms
-
-import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
 import java.io.File
 
