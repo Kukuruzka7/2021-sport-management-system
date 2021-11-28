@@ -25,7 +25,6 @@ internal class StartProtocolTests {
             AthleteNumber("$num")
         )
         val group = Group(Race(GroupName("М2002")), listOf(athlete))
-
         GroupStartProtocol(group, "src/test/resources/StartProtocolTests/")
         val list = csvReader().readAll(File("src/test/resources/StartProtocolTests/М2002.csv"))
         assertEquals(num.toString(), list[1][0])

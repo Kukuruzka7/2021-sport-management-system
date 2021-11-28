@@ -67,7 +67,7 @@ class Athlete(
     val race = Race(groupName)
     lateinit var startTime: LocalTime
 
-    override fun toString(): String = "[$name, $number, §$groupName]"
+    override fun toString(): String = "[$name, $number, $groupName]"
 
     fun extractFieldToString(field: CompetitionData.Companion.Fields): String = when (field) {
         CompetitionData.Companion.Fields.NUMBER -> number.toString()
@@ -84,6 +84,13 @@ class Athlete(
     companion object {
         private var lastUsedNumber = 1
         private fun numerate() = AthleteNumber(lastUsedNumber++.toString())
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if(other !is Athlete) {
+            return false
+        }
+        return (this.name.fullName == other.name.fullName) && (this.groupName.value == other.groupName.value)
     }
 }
 
