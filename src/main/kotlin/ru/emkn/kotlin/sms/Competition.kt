@@ -17,13 +17,13 @@ class Competition {
 
     companion object {
         private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
-            logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size}" }
+            logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size})" }
             val teamMap = athList.groupBy { it.teamName }
             return teamMap.keys.map { Team(it, teamMap[it]!!) }
         }
 
         private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
-            logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size}" }
+            logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size})" }
             val groupMap = athList.groupBy { it.race }
             return groupMap.keys.map { Group(it, groupMap[it]!!) }
         }

@@ -3,6 +3,7 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
+import logger
 import ru.emkn.kotlin.sms.SportType.Companion.getSportType
 import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.application.Application
