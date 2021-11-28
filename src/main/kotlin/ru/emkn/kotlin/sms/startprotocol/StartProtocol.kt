@@ -5,7 +5,7 @@ import ru.emkn.kotlin.sms.finishprotocol.createDir
 
 class StartProtocol(groups: List<Group>, competitionPath: String) {
     private val generateCSV: List<GroupStartProtocol>
-    private val path = "${competitionPath}startProtocol"
+    private val path = "${competitionPath}startProtocol/"
 
     init {
         createDir(path)

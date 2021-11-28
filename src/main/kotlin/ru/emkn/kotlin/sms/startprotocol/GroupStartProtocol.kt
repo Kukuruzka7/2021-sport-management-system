@@ -24,7 +24,7 @@ class GroupStartProtocol(private val group: Group, path: String) {
                     athlete.name.lastName,
                     athlete.birthDate.year,
                     athlete.sportCategory.toString(),
-                    startTime.toString(),
+                    startTime.toString(true),
                 )
                 val instant = startTime.toInstant(timeZone)
                 val instantOneMinuteLater = instant.plus(1, DateTimeUnit.MINUTE, timeZone)
@@ -34,3 +34,14 @@ class GroupStartProtocol(private val group: Group, path: String) {
     }
 }
 
+fun LocalDateTime.toString(withHours: Boolean): String {
+    return if (withHours) {
+        "${this.hour / 10}${this.hour % 10}:${this.minute / 10}${this.minute % 10}:${this.second / 10}${this.second % 10}"
+    } else {
+        if(this.hour == 0) {
+            "${this.minute / 10}${this.minute % 10}:${this.second / 10}${this.second % 10}"
+        } else {
+            "${this.hour}:${this.minute / 10}${this.minute % 10}:${this.second / 10}${this.second % 10}:"
+        }
+    }
+}
