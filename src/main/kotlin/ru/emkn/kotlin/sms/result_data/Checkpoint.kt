@@ -13,6 +13,8 @@ class Checkpoint(val name: String) {
         }
         return name == other.name
     }
+
+    override fun toString(): String = name
 }
 
 open class CheckpointRes(open val checkpoint: Checkpoint, val athleteNumber: AthleteNumber, val date: LocalTime)

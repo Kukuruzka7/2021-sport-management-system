@@ -18,7 +18,7 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
     init {
         logger.trace { "Инит-блок класса InputCheckpointResults(_list.size = ${list.size})" }
         //отбрасываем первый элемент -- там лежит только название чекпоинта
-        val athletesResults = list.drop(0)
+        val athletesResults = list.drop(1).dropLastWhile { it == "" }
         //количество полей, которое описывает результаты каждого атлета
         val numOfFields = Fields.values().size
         //представляем линейный массив в виде прямоугольного, в каждой строке -- информация атлетом
@@ -48,7 +48,7 @@ class InputCheckpointResults(override val list: List<String>) : InputResult() {
 
     //парсит результат конкретного атлета
     private fun parseResultOfAthlete(row: List<String>, _checkpoint: Checkpoint): CheckpointRes {
-        logger.trace { "Вызов parseResultOfAthlete(row.size = ${row.size}, _checkpoint = $_checkpoint" }
+        logger.trace { "Вызов parseResultOfAthlete(row.size = ${row.size}, _checkpoint = $_checkpoint)" }
         //если данных меньше о прохождении атлета меньше (по количеству), чем ожидаем, мы вылета
         if (row.size < Fields.values().size) {
             throw ResultByCheckpointInvalidRow(row)
