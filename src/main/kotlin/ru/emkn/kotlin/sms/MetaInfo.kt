@@ -20,6 +20,7 @@ data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
     }
 
     companion object {
+        //private
         fun parse(args: List<String>): MetaInfo {
             check(args)
             return MetaInfo(
@@ -28,7 +29,7 @@ data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
                 SportType.getSportType(args[Fields.SPORT_TYPE.ordinal])
             )
         }
-
+        //private
         fun check(args: List<String>) {
             if (args.size < Fields.values().size) {
                 throw MetaInfoTooFewArguments(args.size)

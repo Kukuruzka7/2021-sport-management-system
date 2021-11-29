@@ -9,13 +9,13 @@ import ru.emkn.kotlin.sms.result_data.Table
 import java.io.File
 
 
-class InputCompetitionResultByCheckPoints(override val fileName: String, val competition: Competition) :
+class InputCompetitionResultByCheckPoints(override val fileName: String, private val competition: Competition) :
     InputCompetitionResult() {
 
-    val rows = csvReader().readAll(File(fileName).readText())
+    private val rows = csvReader().readAll(File(fileName).readText())
 
     //по названию чекпоинта получаем результат атлетов на этом чекпоинте, достается из competition
-    val checkpointNameMap: Map<String, InputCheckpointResults> = buildCheckpointMap()
+    private val checkpointNameMap: Map<String, InputCheckpointResults> = buildCheckpointMap()
 
     private fun buildCheckpointMap(): Map<String, InputCheckpointResults> {
         logger.trace { "Вызов buildCheckpointMap()" }
