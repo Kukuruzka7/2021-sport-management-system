@@ -6,7 +6,7 @@ import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import java.time.LocalTime
 
 
-class Checkpoint(val name: String) {
+data class Checkpoint(val name: String) {
     override operator fun equals(other: Any?): Boolean {
         if (other !is Checkpoint) {
             return false
@@ -17,7 +17,7 @@ class Checkpoint(val name: String) {
     override fun toString(): String = name
 }
 
-open class CheckpointRes(open val checkpoint: Checkpoint, val athleteNumber: AthleteNumber, val date: LocalTime) {
+data class CheckpointRes(val checkpoint: Checkpoint, val athleteNumber: AthleteNumber, val date: LocalTime) {
     override fun equals(other: Any?): Boolean {
         if (other !is CheckpointRes) {
             return false;

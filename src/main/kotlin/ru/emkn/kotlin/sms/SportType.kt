@@ -6,7 +6,6 @@ enum class SportType() {
 
     override fun toString(): String = toRussian[this]!!
 
-
     companion object {
         private val toRussian = mapOf(RUNNING to "RUNNING", SWIMMING to "плавание", X to "X")
 
