@@ -1,0 +1,3 @@
+src/test/testFiles/NadeusZarabotaet/Application1.csv
+src/test/testFiles/NadeusZarabotaet/Application2.csv
+src/test/testFiles/NadeusZarabotaet/Application3.csv
