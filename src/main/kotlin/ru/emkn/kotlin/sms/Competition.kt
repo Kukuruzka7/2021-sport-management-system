@@ -16,19 +16,20 @@ class Competition {
     val checkPointsByGroupName: Map<String, List<Checkpoint>>
 
     companion object {
-        private fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
+        //private
+        fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
             logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size})" }
             val teamMap = athList.groupBy { it.teamName.name }
             return teamMap.map { Team(TeamName(it.key), it.value) }
         }
-
-        private fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
+        //private
+        fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
             logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size})" }
             val groupMap = athList.groupBy { it.race.groupName.value }
             return groupMap.map { Group(Race(GroupName(it.key)), it.value) }
         }
-
-        private fun groupDivision(athleteList: List<Athlete>): List<Group> {
+        //private
+         fun groupDivision(athleteList: List<Athlete>): List<Group> {
             logger.trace { "Вызов функции groupDivision(athleteList.size = ${athleteList.size})" }
             val groupNameList = athleteList.map { it.groupName.value }.toSet().toList()
             val athleteByGroupName = athleteList.groupBy { it.groupName.value }
@@ -42,7 +43,7 @@ class Competition {
     }
 
     constructor(_info: MetaInfo, application: Application) {
-        logger.info { "Вызов конструктора Competition(data)" }
+        logger.info { "Вызов конструктора Competition(info,data)" }
         info = _info
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }

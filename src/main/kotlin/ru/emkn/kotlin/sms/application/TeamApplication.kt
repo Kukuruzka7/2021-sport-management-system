@@ -9,6 +9,8 @@ import ru.emkn.kotlin.sms.athlete.Sex
 import java.io.File
 import logger
 import ru.emkn.kotlin.sms.*
+import java.lang.reflect.Modifier.PROTECTED
+import kotlin.reflect.KVisibility
 
 //по данным из заявки получение данных об атлетах
 class TeamApplication(file: File, val numberOfApplication: Int) {
@@ -38,7 +40,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         enum class Fields {
             LAST_NAME, FIRST_NAME, SEX, BIRTH_DATE, SPORT_CATEGORY
         }
-
+        //private
         fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
             logger.trace { "Вызов checkFormatOfApplication(${numberOfApplication})" }
             if (rows.isEmpty()) {
@@ -49,7 +51,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
                 checkRow(rows[i], numberOfApplication)
             }
         }
-
+        //private
         fun checkRow(row: List<String>, numberOfApplication: Int) {
             logger.trace { "Вызов checkRow(${row})" }
             if (row.size < Fields.values().size) {
@@ -69,7 +71,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
                 throw WrongCategoryInApplicationOnLine(numberOfApplication, row[Fields.BIRTH_DATE.ordinal])
             }
         }
-
+        //private
         fun processingRow(row: List<String>, teamName: TeamName): Athlete {
             logger.trace { "Вызов processingRow(row.size = ${row.size})" }
             val name = Name(firstName = row[Fields.FIRST_NAME.ordinal], lastName = row[Fields.LAST_NAME.ordinal])
@@ -86,7 +88,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
                 _groupName = GroupName("$sex${birthDate.year}"),
             )
         }
-
+        //private
         fun processingData(rows: List<List<String>>, teamName: TeamName): List<Athlete> {
             logger.trace { "Вызов processingData(rows)" }
             return rows.map { processingRow(it, teamName) }
