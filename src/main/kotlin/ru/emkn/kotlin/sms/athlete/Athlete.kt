@@ -82,7 +82,7 @@ class Athlete(
     }
 
     companion object {
-        private var lastUsedNumber = 1
+        var lastUsedNumber = 1
         private fun numerate() = AthleteNumber(lastUsedNumber++.toString())
     }
 
