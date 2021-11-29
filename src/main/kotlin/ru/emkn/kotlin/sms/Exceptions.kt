@@ -29,6 +29,9 @@ class WrongSexInApplicationOnLine(numberOfApplication: Int, sex: String) :
 class WrongYearInApplicationOnLine(numberOfApplication: Int, year: String) :
     Exception("Заявка номер $numberOfApplication содержит спортсмена с неопределенным возрастом. Ожидается число.\n В реальности:\n$year")
 
+class WrongCategoryInApplicationOnLine(numberOfApplication: Int, year: String) :
+    Exception("Заявка номер $numberOfApplication содержит спортсмена с неопределенной категорией. Ожидается число.\n В реальности:\n$year")
+
 class WrongAthleteNameInResults(athleteName: Name) : Exception("Спортсмен с именем ${athleteName.fullName}")
 
 class ResultCanNotBeRead(fileName: String) : Exception("Результат в файле $fileName не может быть прочитан")
