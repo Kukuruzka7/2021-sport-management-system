@@ -57,7 +57,7 @@ class InputResultTest {
             inputAthleteResultsNum1.resultsOnCheckPoints
         )
         assertEquals(
-            emptyList<CheckpointRes>(),
+            emptyList(),
             inputAthleteResultsEmpty.resultsOnCheckPoints
         )
         assertEquals(

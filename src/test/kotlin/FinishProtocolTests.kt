@@ -39,7 +39,7 @@ internal class FinishProtocolTests {
         val comp = Competition(
             CompetitionData(
                 listOf(
-                    listOf("1", "Сибгатуллин Данил", "М", "2002-12-30", "I", "Б05", "М2002", "TODO()", "12:01")
+                    listOf("1", "Сибгатуллин Данил", "М", "2002-12-30", "IIIю", "Б05", "М2002", "TODO()", "12:01")
                 ),
                 listOf("123", "2021-11-27", "RUNNING")
             )
