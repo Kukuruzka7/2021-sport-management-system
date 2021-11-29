@@ -13,16 +13,6 @@ class GroupName(val value: String) {
 class Race(val groupName: GroupName) {
     val checkPoints = getCheckPoints(groupName.value)
 
-    private fun getCheckPoints(groupName: String): List<Checkpoint> {
-        logger.trace { "Вызов getCheckPoints()" }
-        val courseRow = classesBySportType.find { it[0] == groupName }
-        require(courseRow != null)
-        val course = courseRow[1]
-        val courseList = coursesBySportType.find { it[0] == course }
-        require(courseList != null)
-        return courseList.subList(1, courseList.lastIndex).filter { it != "" }.map { Checkpoint(it) }
-    }
-
     override fun toString() = groupName.toString()
 
     override operator fun equals(other: Any?): Boolean {
@@ -37,6 +27,16 @@ class Race(val groupName: GroupName) {
         const val dir = "src/main/resources/races/"
         val classesBySportType = csvReader().readAll(File("$dir$sport/classes.csv"))
         val coursesBySportType = csvReader().readAll(File("$dir$sport/courses.csv"))
+
+        fun getCheckPoints(groupName: String): List<Checkpoint> {
+            logger.trace { "Вызов getCheckPoints()" }
+            val courseRow = classesBySportType.find { it[0] == groupName }
+            require(courseRow != null)
+            val course = courseRow[1]
+            val courseList = coursesBySportType.find { it[0] == course }
+            require(courseList != null)
+            return courseList.subList(1, courseList.lastIndex).filter { it != "" }.map { Checkpoint(it) }
+        }
     }
 }
 
