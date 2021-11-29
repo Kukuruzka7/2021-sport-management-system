@@ -2,7 +2,7 @@ package ru.emkn.kotlin.sms.result_data
 
 import logger
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
-
+//оболочка для map
 class Table(_map: Map<AthleteNumber, List<CheckpointRes>?>) {
     val map: Map<AthleteNumber, List<CheckpointRes>?>
     operator fun get(athleteNumber: AthleteNumber) = map[athleteNumber]

@@ -73,9 +73,4 @@ class InputResultTest {
             inputAthleteResultsSplits.resultsOnCheckPoints
         )
     }
-
-    @Test
-    fun testCheckpointNameMaps() {
-
-    }
 }

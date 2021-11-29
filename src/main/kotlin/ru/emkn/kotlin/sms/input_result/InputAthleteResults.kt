@@ -41,7 +41,7 @@ class InputAthleteResults(_list: List<String>) : InputResult() {
 
     //парсим результат на конкретном чекпоинте
     private fun parseResultOnCheckpoint(row: List<String>, athleteNumber: AthleteNumber): CheckpointRes {
-        logger.trace { "Вызов parseResultOnCheckpoint(row.size = ${row.size}, athleteNumber = $athleteNumber" }
+        logger.trace { "Вызов parseResultOnCheckpoint(row.size = ${row.size}, athleteNumber = $athleteNumber)" }
         //если данных меньше о прохождении чекпоинта меньше (по количеству), чем ожидаем, мы вылетаем
         if (row.size < Fields.values().size) {
             logger.error { ResultByAthleteInvalidRow(row) }
