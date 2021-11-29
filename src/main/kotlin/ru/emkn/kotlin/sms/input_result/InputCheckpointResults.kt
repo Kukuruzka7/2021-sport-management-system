@@ -1,6 +1,5 @@
 package ru.emkn.kotlin.sms.input_result
 
-import kotlinx.datetime.LocalDateTime
 import logger
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
