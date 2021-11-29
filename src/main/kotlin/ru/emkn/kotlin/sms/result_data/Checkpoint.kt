@@ -17,5 +17,12 @@ class Checkpoint(val name: String) {
     override fun toString(): String = name
 }
 
-open class CheckpointRes(open val checkpoint: Checkpoint, val athleteNumber: AthleteNumber, val date: LocalTime)
+open class CheckpointRes(open val checkpoint: Checkpoint, val athleteNumber: AthleteNumber, val date: LocalTime) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is CheckpointRes) {
+            return false;
+        }
+        return checkpoint == other.checkpoint && athleteNumber == other.athleteNumber && date == other.date
+    }
+}
 

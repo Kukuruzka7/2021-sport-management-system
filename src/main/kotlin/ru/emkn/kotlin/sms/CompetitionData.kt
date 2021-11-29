@@ -30,7 +30,7 @@ class CompetitionData(val athletesData: List<List<String>>, val metaInfo: List<S
     }
 
 
-    fun saveMetaInfo(fileName: String) =
+    private fun saveMetaInfo(fileName: String) =
         CsvWriter().writeAll(listOf(metaInfo), File(fileName))
 
 
