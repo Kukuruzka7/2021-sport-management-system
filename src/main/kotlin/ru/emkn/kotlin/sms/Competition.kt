@@ -68,9 +68,9 @@ class Competition {
         }, info.toStringList())
     }
 
-    fun getCheckPoint(groupName: GroupName): List<Checkpoint> {
+    fun getCheckPoint(groupName: GroupName): List<String> {
         val result = checkPointsByGroupName[groupName.value]
         require(result != null)
-        return result
+        return result.map { it.name }
     }
 }
