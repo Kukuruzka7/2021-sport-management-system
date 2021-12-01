@@ -8,21 +8,21 @@ import ru.emkn.kotlin.sms.DirectoryCouldNotBeCreated
 import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.result_data.ResultData
-import ru.emkn.kotlin.sms.startprotocol.toStringWithSeconds
 import java.io.File
+import java.time.Duration
 import java.time.LocalTime
 import kotlin.math.max
 
 data class AthleteResult(
     val athlete: Athlete,
-    val finishTime: LocalTime?,
+    val finishTime: Duration?,
 )
 
 data class AthleteProtocol(
     val athlete: Athlete,
-    val finishTime: LocalTime?,
+    val finishTime: Duration?,
     val num: Int,
-    val lag: LocalTime?,
+    val lag: Duration?,
     val points: Double,
 ) {
     val place = if (finishTime != null) num else null
@@ -80,25 +80,27 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
             }
         }
         val sortedList = listWithoutDisqualified.sortedBy { it.finishTime } + listDisqualified
-        val bestTime = listWithoutDisqualified.first().finishTime ?: LocalTime.of(0, 0, 0)
+        val bestTime = listWithoutDisqualified.first().finishTime ?: Duration.ofSeconds(0)
         return sortedList.map {
             val points = calculatePoints(it.finishTime, bestTime)
             AthleteProtocol(
                 it.athlete,
                 it.finishTime,
                 sortedList.indexOf(it) + 1,
-                if (it.finishTime - bestTime != LocalTime.of(0, 0, 0)) (it.finishTime - bestTime) else null,
+                if (it.finishTime != bestTime && (it.finishTime != null)) {
+                    (it.finishTime - bestTime)
+                } else null,
                 points
             )
         }
     }
 
-    private fun calculatePoints(finishTime: LocalTime?, bestTime: LocalTime): Double {
+    private fun calculatePoints(finishTime: Duration?, bestTime: Duration): Double {
         return if (finishTime == null) {
             0.0
         } else max(
             0.0,
-            100.0 * (2.0 - 1.0 * finishTime.toInt() / bestTime.toInt())
+            100.0 * (2.0 - 1.0 * finishTime.seconds / bestTime.seconds)
         )
     }
 
@@ -160,17 +162,20 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 fun LocalTime.toInt(): Int = this.hour * 3600 + this.minute * 60 + this.second
 
 //Функция разности двух LocalTime
-operator fun LocalTime?.minus(subtrahend: LocalTime): LocalTime? {
+operator fun LocalTime?.minus(subtrahend: LocalTime): Duration? {
     if (this == null) return null
     val thisTime = this.toInt()
     val subtrahendTime = subtrahend.toInt()
-    val difference = thisTime - subtrahendTime + 24 * 60 * 60
-    return LocalTime.of((difference / 3600) % 24, (difference % 3600) / 60, difference % 60)
+    val difference = (thisTime - subtrahendTime + 24 * 60 * 60) % (24 * 60 * 60)
+    return Duration.ofSeconds(difference.toLong())
 }
 
-fun LocalTime.toStringWithoutHours(): String {
-    val hours = if (this.hour == 0) "" else "${this.hour}:"
-    return "${hours}${this.minute / 10}${this.minute % 10}:${this.second / 10}${this.second % 10}"
+fun Duration.toStringWithSeconds(): String =
+    "${this.toHours() / 10}${this.toHours() % 10}:${this.toMinutesPart() / 10}${this.toMinutesPart() % 10}:${this.toSecondsPart() / 10}${this.toSecondsPart() % 10}"
+
+fun Duration.toStringWithoutHours(): String {
+    val hours = if (this.toHours() == 0L) "" else "${this.toHours()}:"
+    return "${hours}${this.toMinutesPart() / 10}${this.toMinutesPart() % 10}:${this.toSecondsPart() / 10}${this.toSecondsPart() % 10}"
 }
 
 //Запись информации о таблице
