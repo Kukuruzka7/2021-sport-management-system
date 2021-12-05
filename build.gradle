@@ -1,3 +1,5 @@
+import org.jetbrains.compose.compose
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.31'
     id 'application'
@@ -8,6 +10,8 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    google()
 }
 
 dependencies {
@@ -15,15 +19,23 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-    implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
-    runtimeOnly("org.slf4j:slf4j-simple:1.7.29")
+    implementation('io.github.microutils:kotlin-logging-jvm:2.1.0')
+    runtimeOnly('org.slf4j:slf4j-simple:1.7.32')
+
+    implementation(compose.desktop.currentOs)
 
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    testImplementation "junit:junit:4.13.2"
+    testImplementation 'junit:junit:4.13.2'
 
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0") //for JVM platform
     implementation('org.jetbrains.kotlinx:kotlinx-datetime:0.3.1')
+}
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+    }
 }
 
 test {
