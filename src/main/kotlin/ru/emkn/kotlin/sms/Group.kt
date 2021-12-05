@@ -10,8 +10,8 @@ class GroupName(val value: String) {
     override fun toString() = value
 }
 
-class Race(val groupName: GroupName) {
-    val checkPoints = getCheckPoints(groupName.value)
+class Race(val groupName: GroupName, val sportType: SportType) {
+    val checkPoints = getCheckPoints(groupName.value, sportType)
 
     override fun toString() = groupName.toString()
 
@@ -25,15 +25,17 @@ class Race(val groupName: GroupName) {
 
     companion object {
         const val dir = "src/main/resources/races/"
-        val classesBySportType = csvReader().readAll(File("$dir$sport/classes.csv"))
-        val coursesBySportType = csvReader().readAll(File("$dir$sport/courses.csv"))
+        val classesBySportType =
+            SportType.values().map { csvReader().readAll(File("$dir${it.toString()}/classes.csv")) }
+        val coursesBySportType =
+            SportType.values().map { csvReader().readAll(File("$dir${it.toString()}/courses.csv")) }
 
-        fun getCheckPoints(groupName: String): List<Checkpoint> {
+        fun getCheckPoints(groupName: String, sportType: SportType): List<Checkpoint> {
             logger.trace { "Вызов getCheckPoints()" }
-            val courseRow = classesBySportType.find { it[0] == groupName }
+            val courseRow = classesBySportType[sportType.ordinal].find { it[0] == groupName }
             require(courseRow != null)
             val course = courseRow[1]
-            val courseList = coursesBySportType.find { it[0] == course }
+            val courseList = coursesBySportType[sportType.ordinal].find { it[0] == course }
             require(courseList != null)
             return courseList.subList(1, courseList.lastIndex).filter { it != "" }.map { Checkpoint(it) }
         }

@@ -12,7 +12,6 @@ internal class StartProtocolTests {
 
     @Test
     fun testNumberAndStartTime() {
-        sport = SportType.RUNNING
         val num = Random.nextInt(1, 59)
         val athlete = Athlete(
             Name("Данил Сибгатуллин"),
@@ -24,7 +23,7 @@ internal class StartProtocolTests {
             GroupName("М2002"),
             AthleteNumber("$num")
         )
-        val group = Group(Race(GroupName("М2002")), listOf(athlete))
+        val group = Group(Race(GroupName("М2002"), SportType.RUNNING), listOf(athlete))
         GroupStartProtocol(group, "src/test/resources/StartProtocolTests/")
         val list = csvReader().readAll(File("src/test/resources/StartProtocolTests/М2002.csv"))
         assertEquals(num.toString(), list[1][0])

@@ -1,10 +1,12 @@
 package ru.emkn.kotlin.sms
 
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.result_data.Checkpoint
+import java.io.File
 
 
 class Competition {
@@ -22,20 +24,22 @@ class Competition {
             val teamMap = athList.groupBy { it.teamName.name }
             return teamMap.map { Team(TeamName(it.key), it.value) }
         }
+
         //private
-        fun generateGroupListByAthleteList(athList: List<Athlete>): List<Group> {
+        fun generateGroupListByAthleteList(athList: List<Athlete>, sportType: SportType): List<Group> {
             logger.trace { "Вызов generateGroupListByAthleteList(athList.size = ${athList.size})" }
             val groupMap = athList.groupBy { it.race.groupName.value }
-            return groupMap.map { Group(Race(GroupName(it.key)), it.value) }
+            return groupMap.map { Group(Race(GroupName(it.key), sportType), it.value) }
         }
+
         //private
-         fun groupDivision(athleteList: List<Athlete>): List<Group> {
+        fun groupDivision(athleteList: List<Athlete>, sportType: SportType): List<Group> {
             logger.trace { "Вызов функции groupDivision(athleteList.size = ${athleteList.size})" }
             val groupNameList = athleteList.map { it.groupName.value }.toSet().toList()
             val athleteByGroupName = athleteList.groupBy { it.groupName.value }
             return groupNameList.map {
                 Group(
-                    Race(GroupName(it)),
+                    Race(GroupName(it), sportType),
                     athleteByGroupName[it] ?: throw WeHaveAProblem("Тут не должно быть null.")
                 )
             }
@@ -48,7 +52,7 @@ class Competition {
         teamList = application.teamApplicationsList.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
-        groupList = groupDivision(athleteList)
+        groupList = groupDivision(athleteList, info.sport)
         checkPointsByGroupName = groupList.associateBy({ it.race.groupName.value }, { it.race.checkPoints })
     }
 
@@ -57,10 +61,11 @@ class Competition {
         info = MetaInfo(data.metaInfo)
         athleteList = data.toAthletesList()
         teamList = generateTeamListByAthleteList(athleteList)
-        groupList = generateGroupListByAthleteList(athleteList)
+        groupList = generateGroupListByAthleteList(athleteList, info.sport)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
         checkPointsByGroupName = groupList.associateBy({ it.race.groupName.value }, { it.race.checkPoints })
     }
+
 
     fun toCompetitionData(): CompetitionData {
         logger.info { "Вызов функции toCompetitionData()" }

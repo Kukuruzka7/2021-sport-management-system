@@ -107,7 +107,6 @@ internal class TeamApplicationTests {
 
     @Test
     fun testProcessingRow() {
-        sport = SportType.RUNNING
         val row1 = listOf("Розалина", "Миргалимова", "Ж", "2003", "КМС", "никуда не хочу")
         val athlete1 = processingRow(row1, TeamName("Команда мечты"))
         assert(athlete1.name.fullName == "Миргалимова Розалина")
@@ -120,7 +119,6 @@ internal class TeamApplicationTests {
 
     @Test
     fun testProcessingData() {
-        sport = SportType.RUNNING
         val row1 = listOf("Розалина", "Миргалимова", "Ж", "2003", "КМС", "никуда не хочу")
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
@@ -138,7 +136,6 @@ internal class TeamApplicationTests {
 
     @Test
     fun testTeamApplication() {
-        sport = SportType.RUNNING
         val teamApplication = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication1.csv"), 0)
         val row1 = listOf("Миргалимова", "Розалина", "Ж", "2003", "КМС", "никуда не хочу")
         val row2 = listOf("Сибгатуллин", "Данил", "М", "2002", "МС", "не знаю")

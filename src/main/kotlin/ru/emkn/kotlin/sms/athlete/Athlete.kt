@@ -1,10 +1,7 @@
 package ru.emkn.kotlin.sms.athlete
 
 import kotlinx.datetime.LocalDate
-import ru.emkn.kotlin.sms.CompetitionData
-import ru.emkn.kotlin.sms.GroupName
-import ru.emkn.kotlin.sms.Race
-import ru.emkn.kotlin.sms.TeamName
+import ru.emkn.kotlin.sms.*
 import java.time.LocalTime
 
 class AthleteNumber(val value: String) {
@@ -64,7 +61,7 @@ class Athlete(
         _groupName: GroupName
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
-    val race = Race(groupName)
+    val race = Race(groupName, SportType.RUNNING)
     lateinit var startTime: LocalTime
 
     override fun toString(): String = "[$name, $number, $groupName]"
