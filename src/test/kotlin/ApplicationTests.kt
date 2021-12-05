@@ -4,7 +4,6 @@ import ru.emkn.kotlin.sms.TeamName
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.application.TeamApplication
 import ru.emkn.kotlin.sms.finishprotocol.minus
-import ru.emkn.kotlin.sms.sport
 import ru.emkn.kotlin.sms.startprotocol.toStringWithSeconds
 import java.io.File
 import java.time.LocalTime
@@ -15,7 +14,6 @@ internal class ApplicationTests {
 
     @Test
     fun testTeamApplication() {
-        sport = SportType.RUNNING
         val teamApplication1 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication1.csv"), 0)
         val teamApplication2 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication2.csv"), 0)
         val application = Application(

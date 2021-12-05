@@ -4,7 +4,6 @@ import ru.emkn.kotlin.sms.SportType
 import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.application.TeamApplication
 import ru.emkn.kotlin.sms.result_data.Checkpoint
-import ru.emkn.kotlin.sms.sport
 import java.io.File
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -13,7 +12,6 @@ internal class GroupTests {
 
     @Test
     fun testRace() {
-        sport = SportType.RUNNING
         val teamApplication1 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication1.csv"), 0)
         val teamApplication2 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication2.csv"), 0)
         val application = Application(
@@ -28,14 +26,13 @@ internal class GroupTests {
 
     @Test
     fun testGetCheckPoints() {
-        sport = SportType.RUNNING
-        val checkPoints1 = getCheckPoints("М2000")
+        val checkPoints1 = getCheckPoints("М2000", SportType.RUNNING)
         assertEquals(listOf(Checkpoint("100"), Checkpoint("200"), Checkpoint("300"), Checkpoint("400")), checkPoints1)
-        val checkPoints2 = getCheckPoints("М2003")
+        val checkPoints2 = getCheckPoints("М2003", SportType.RUNNING)
         assertEquals(listOf(Checkpoint("200"), Checkpoint("400"), Checkpoint("600"), Checkpoint("800")), checkPoints2)
-        val checkPoints3 = getCheckPoints("Ж2000")
+        val checkPoints3 = getCheckPoints("Ж2000", SportType.RUNNING)
         assertEquals(listOf(Checkpoint("30")), checkPoints3)
-        val checkPoints4 = getCheckPoints("Ж2003")
+        val checkPoints4 = getCheckPoints("Ж2003", SportType.RUNNING)
         assertEquals(listOf(Checkpoint("60")), checkPoints4)
     }
 }

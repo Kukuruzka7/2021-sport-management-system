@@ -40,8 +40,6 @@ enum class UserBehavior(val behavior: String) {
 
 const val dir = "src/main/resources/competitions/"
 
-var sport = SportType.X
-
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
     if (checkEmptyInput(args)) return
@@ -66,7 +64,7 @@ fun start(inputData: Array<String>) {
     logger.info { "Вызов функции start. Обработка входных данных." }
     if (checkForEmptyInputStart(inputData)) return
     val name = inputData[FieldsStart.NAME.ordinal]
-    sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    val sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
     if (checkSportType(inputData)) return
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
@@ -82,7 +80,7 @@ fun start(inputData: Array<String>) {
     logger.info { "Создание StartProtocol." }
     try {
         StartProtocol(competition.groupList, dir + competition.info.name + "/")
-    }catch (e: Exception){
+    } catch (e: Exception) {
         println(e.message)
         return
     }
@@ -108,7 +106,6 @@ fun finishByAthletes(inputData: Array<String>) {
     val data: List<List<String>> = getData(name) ?: return
     logger.info { "Результаты атлетов получены." }
     val info: MetaInfo = getMetaInfo(name) ?: return
-    sport = info.sport
     logger.info { "Создание Competition." }
     val competition: Competition = getCompetition(data, info) ?: return
     logger.info { "Competition создан." }
@@ -116,7 +113,7 @@ fun finishByAthletes(inputData: Array<String>) {
     logger.info { "Создание FinishProtocol." }
     try {
         FinishProtocol(athletesResults, competition)
-    }catch (e: Exception){
+    } catch (e: Exception) {
         println(e.message)
         return
     }
@@ -136,7 +133,6 @@ fun finishByCheckPoints(inputData: Array<String>) {
     val data: List<List<String>> = getData(name) ?: return
     logger.info { "Результаты получены." }
     val info: MetaInfo = getMetaInfo(name) ?: return
-    sport = info.sport
     logger.info { "Создание Competition." }
     val competition: Competition = getCompetition(data, info) ?: return
     logger.info { "Competition создан." }
@@ -144,7 +140,7 @@ fun finishByCheckPoints(inputData: Array<String>) {
     logger.info { "Создание FinishProtocol." }
     try {
         FinishProtocol(athletesResults, competition)
-    }catch (e: Exception){
+    } catch (e: Exception) {
         println(e.message)
         return
     }
@@ -183,7 +179,7 @@ private fun getDate(dateString: String): LocalDate? {
 }
 
 private fun checkSportType(inputData: Array<String>): Boolean {
-    if (sport == SportType.X) {
+    if (getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal]) == SportType.X) {
         println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return true
     }

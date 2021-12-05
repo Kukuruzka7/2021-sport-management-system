@@ -56,7 +56,6 @@ internal class CompetitionDataTests {
 
     @Test
     fun testToAthleteList() {
-        sport = SportType.RUNNING
         val row1 =
             listOf("1", "Розалина Миргалимова", "Ж", "2003-01-01", "КМС", "A", "Ж2003", "никуда не хочу", "12:00:00")
         val row2 = listOf("2", "Данил Сибгатуллин", "М", "2002-01-01", "МС", "B", "М2002", "не знаю", "12:00:01")
