@@ -1,8 +1,7 @@
 import org.junit.Test
-import ru.emkn.kotlin.sms.*
-import ru.emkn.kotlin.sms.application.Application
+import ru.emkn.kotlin.sms.CompetitionData
+import ru.emkn.kotlin.sms.TeamName
 import ru.emkn.kotlin.sms.application.TeamApplication
-import java.io.File
 import kotlin.test.assertContentEquals
 
 internal class CompetitionDataTests {

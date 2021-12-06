@@ -1,15 +1,10 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import org.junit.Test
-import ru.emkn.kotlin.sms.SportType
 import ru.emkn.kotlin.sms.TeamName
-import ru.emkn.kotlin.sms.application.Application
-import ru.emkn.kotlin.sms.application.TeamApplication
 import ru.emkn.kotlin.sms.athlete.Athlete
-import ru.emkn.kotlin.sms.athlete.Category
 import ru.emkn.kotlin.sms.start
 import java.io.File
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 internal class ApplicationGeneratorTests {
