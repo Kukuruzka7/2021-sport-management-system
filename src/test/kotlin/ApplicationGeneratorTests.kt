@@ -7,7 +7,6 @@ import ru.emkn.kotlin.sms.application.Application
 import ru.emkn.kotlin.sms.application.TeamApplication
 import ru.emkn.kotlin.sms.athlete.Athlete
 import ru.emkn.kotlin.sms.athlete.Category
-import ru.emkn.kotlin.sms.sport
 import ru.emkn.kotlin.sms.start
 import java.io.File
 import kotlin.test.assertContentEquals

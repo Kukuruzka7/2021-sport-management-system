@@ -1,7 +1,6 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.Competition
 import ru.emkn.kotlin.sms.CompetitionData
-import ru.emkn.kotlin.sms.SportType
 import ru.emkn.kotlin.sms.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
 import ru.emkn.kotlin.sms.finishprotocol.createDir
@@ -9,7 +8,6 @@ import ru.emkn.kotlin.sms.result_data.Checkpoint
 import ru.emkn.kotlin.sms.result_data.CheckpointRes
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.result_data.Table
-import ru.emkn.kotlin.sms.sport
 import java.io.File
 import java.time.LocalTime
 import kotlin.test.Test
@@ -19,7 +17,6 @@ internal class FinishProtocolTests {
 
     @Test
     fun test1() {
-        sport = SportType.RUNNING
 
         val resData = ResultData(
             Table(

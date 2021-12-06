@@ -18,7 +18,6 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         logger.trace { "Считывание данных об атлетах из ${file.name}." }
         csvReader().readAll(file)
     } catch (e: Exception) {
-        println(e.message)
         logger.error { ApplicationCanNotBeRead(numberOfApplication) }
         throw ApplicationCanNotBeRead(numberOfApplication)
     }
@@ -40,8 +39,9 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         enum class Fields {
             LAST_NAME, FIRST_NAME, SEX, BIRTH_DATE, SPORT_CATEGORY
         }
-        //private
-        fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
+
+        // private
+         fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
             logger.trace { "Вызов checkFormatOfApplication(${numberOfApplication})" }
             if (rows.isEmpty()) {
                 logger.error { "В заявке $numberOfApplication нет данных об атлетах." }

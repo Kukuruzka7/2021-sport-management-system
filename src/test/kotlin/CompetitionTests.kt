@@ -10,7 +10,6 @@ internal class CompetitionTests {
 
     @Test
     fun testGenerateTeamListByAthleteList() {
-        sport = SportType.RUNNING
         val row1 = listOf("Розалина", "Миргалимова", "Ж", "2003", "КМС", "никуда не хочу")
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
@@ -28,7 +27,6 @@ internal class CompetitionTests {
 
     @Test
     fun testGenerateGroupListByAthleteList() {
-        sport = SportType.RUNNING
         val row1 = listOf("Розалина", "Миргалимова", "Ж", "2003", "КМС", "никуда не хочу")
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
@@ -39,14 +37,13 @@ internal class CompetitionTests {
         val athlete4 = TeamApplication.processingRow(row4, TeamName("C"))
         val athletes = listOf(athlete1, athlete2, athlete3, athlete4)
         assertContentEquals(
-            Competition.generateGroupListByAthleteList(athletes).map { it.race.groupName.value },
+            Competition.generateGroupListByAthleteList(athletes, SportType.RUNNING).map { it.race.groupName.value },
             listOf("Ж2003", "М2002", "М2004", "М2003")
         )
     }
 
     @Test
     fun testGroupDivision() {
-        sport = SportType.RUNNING
         val row1 = listOf("Розалина", "Миргалимова", "Ж", "2003", "КМС", "никуда не хочу")
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
@@ -57,14 +54,13 @@ internal class CompetitionTests {
         val athlete4 = TeamApplication.processingRow(row4, TeamName("C"))
         val athletes = listOf(athlete1, athlete2, athlete3, athlete4)
         assertContentEquals(
-            Competition.groupDivision(athletes).map { it.race.groupName.value },
+            Competition.groupDivision(athletes, SportType.RUNNING).map { it.race.groupName.value },
             listOf("Ж2003", "М2002", "М2004", "М2003")
         )
     }
 
     @Test
     fun testCompetition(){
-        sport = SportType.RUNNING
         val teamApplication1 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication1.csv"), 0)
         val teamApplication2 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication2.csv"), 0)
         val application = Application(
