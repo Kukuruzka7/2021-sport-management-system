@@ -1,20 +1,5 @@
 package ru.emkn.kotlin.sms
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.*
-import androidx.compose.ui.window.rememberWindowState
-
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
@@ -27,6 +12,7 @@ import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
+import ru.emkn.kotlin.sms.view.View
 import java.io.File
 
 enum class FieldsStart {
@@ -55,33 +41,8 @@ enum class UserBehavior(val behavior: String) {
 const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
-    application {
-        Window(
-            onCloseRequest = ::exitApplication,
-            title = "Compose for Desktop",
-            state = rememberWindowState(width = 300.dp, height = 300.dp)
-        ) {
-            val count = remember { mutableStateOf(0) }
-            MaterialTheme {
-                Column(Modifier.fillMaxSize(), Arrangement.spacedBy(5.dp)) {
-                    Button(modifier = Modifier.align(Alignment.CenterHorizontally),
-                        onClick = {
-                            count.value++
-                        }) {
-                        Text(if (count.value == 0) "Hello World" else "Clicked ${count.value}!")
-                    }
-                    Button(modifier = Modifier.align(Alignment.CenterHorizontally),
-                        onClick = {
-                            count.value = 0
-                        }) {
-                        Text("Reset")
-                    }
-                }
-            }
-        }
-    }
     logger.info { "Начало работы программы." }
-
+    View.render()
     if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
         UserBehavior.START -> start(args)
@@ -190,31 +151,31 @@ fun finishByCheckPoints(inputData: Array<String>) {
 }
 
 private fun getApplication(teamApplicationNames: List<String>): Application? {
-    try {
-        return Application(teamApplicationNames.map {
+    return try {
+        Application(teamApplicationNames.map {
             File(it)
         })
     } catch (e: Exception) {
         println(e.message)
-        return null
+        null
     }
 }
 
 private fun getTeamApplicationNames(fileName: String): List<String>? {
-    try {
-        return File(fileName).readLines()
+    return try {
+        File(fileName).readLines()
     } catch (e: Exception) {
         println("Файл $fileName не может быть прочитан.")
-        return null
+        null
     }
 }
 
 private fun getDate(dateString: String): LocalDate? {
-    try {
-        return dateString.toLocalDate()
+    return try {
+        dateString.toLocalDate()
     } catch (e: Exception) {
         println("Дата состязания $dateString не корректна.")
-        return null
+        null
     }
 }
 
@@ -243,14 +204,14 @@ private fun checkForEmptyInputFinish(inputData: Array<String>): Boolean {
 }
 
 private fun resultDataByAthlete(fileName: String, data: List<List<String>>, info: MetaInfo): ResultData? {
-    try {
-        return ResultData(
+    return try {
+        ResultData(
             InputCompetitionResultByAthletes(fileName).toTable(),
             CompetitionData(data, info.toStringList()).getStartTime()
         )
     } catch (e: Exception) {
         println(e.message)
-        return null
+        null
     }
 }
 
@@ -260,32 +221,32 @@ private fun resultDataByCheckPoints(
     competition: Competition,
     info: MetaInfo
 ): ResultData? {
-    try {
-        return ResultData(
+    return try {
+        ResultData(
             InputCompetitionResultByCheckPoints(fileName, competition).toTable(),
             CompetitionData(data, info.toStringList()).getStartTime()
         )
     } catch (e: Exception) {
         println(e.message)
-        return null
+        null
     }
 }
 
 private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competition? {
-    try {
-        return Competition(CompetitionData(data, info.toStringList()))
+    return try {
+        Competition(CompetitionData(data, info.toStringList()))
     } catch (e: Exception) {
         println(e.message)
-        return null
+        null
     }
 }
 
 private fun getData(name: String): List<List<String>>? {
-    try {
-        return csvReader().readAll(File("$dir$name/competitionData.csv"))
+    return try {
+        csvReader().readAll(File("$dir$name/competitionData.csv"))
     } catch (e: Exception) {
         println("Что-то пошло не так, попробуйте ввести заявки заново.")
-        return null
+        null
     }
 }
 
