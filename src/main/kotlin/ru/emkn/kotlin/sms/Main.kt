@@ -1,5 +1,20 @@
 package ru.emkn.kotlin.sms
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.*
+import androidx.compose.ui.window.rememberWindowState
+
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
@@ -13,7 +28,6 @@ import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.result_data.ResultData
 import ru.emkn.kotlin.sms.startprotocol.StartProtocol
 import java.io.File
-import kotlin.math.log
 
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
@@ -42,6 +56,7 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
+
     if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
         UserBehavior.START -> start(args)
@@ -242,7 +257,7 @@ private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competitio
 
 private fun getData(name: String): List<List<String>>? {
     try {
-        return csvReader().readAll(File(dir + name + "/competitionData.csv"))
+        return csvReader().readAll(File("$dir$name/competitionData.csv"))
     } catch (e: Exception) {
         println("Что-то пошло не так, попробуйте ввести заявки заново.")
         return null
@@ -250,14 +265,14 @@ private fun getData(name: String): List<List<String>>? {
 }
 
 private fun getMetaInfo(name: String): MetaInfo? = try {
-    MetaInfo(csvReader().readAll(File(dir + name + "/competitionInfo.csv"))[0])
+    MetaInfo(csvReader().readAll(File("$dir$name/competitionInfo.csv"))[0])
 } catch (e: Exception) {
     println("Что-то пошло не так, попробуйте ввести заявки заново.")
     null
 }
 
 private fun checkCompetitionExist(name: String): Boolean {
-    if (!File(dir + name + "/competitionData.csv").exists()) {
+    if (!File("$dir$name/competitionData.csv").exists()) {
         println("Такого соревнования еще не проводилось. Сначала введите заявки на участие.")
         return true
     }
