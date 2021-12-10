@@ -55,6 +55,31 @@ enum class UserBehavior(val behavior: String) {
 const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "Compose for Desktop",
+            state = rememberWindowState(width = 300.dp, height = 300.dp)
+        ) {
+            val count = remember { mutableStateOf(0) }
+            MaterialTheme {
+                Column(Modifier.fillMaxSize(), Arrangement.spacedBy(5.dp)) {
+                    Button(modifier = Modifier.align(Alignment.CenterHorizontally),
+                        onClick = {
+                            count.value++
+                        }) {
+                        Text(if (count.value == 0) "Hello World" else "Clicked ${count.value}!")
+                    }
+                    Button(modifier = Modifier.align(Alignment.CenterHorizontally),
+                        onClick = {
+                            count.value = 0
+                        }) {
+                        Text("Reset")
+                    }
+                }
+            }
+        }
+    }
     logger.info { "Начало работы программы." }
 
     if (checkEmptyInput(args)) return
