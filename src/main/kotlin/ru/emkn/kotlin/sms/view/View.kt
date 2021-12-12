@@ -13,12 +13,18 @@ object View {
         application {
             Window(
                 onCloseRequest = ::exitApplication,
-                title = "Compose for Desktop",
-                state = rememberWindowState(width = 1280.dp, height = 1080.dp)
+                title = "Tatarstan Supergut",
+                state = rememberWindowState(width = 2000.dp, height = 1080.dp)
             ) {
-                val rows = MutableList(0) { MutableList(0) { mutableStateOf("") } }
-                val count = remember { mutableStateOf(rows.size) }
-                Table(rows, count).draw()
+                Table(
+                    listOf(
+                        ColumnInfo("Фамилия", 200.dp),
+                        ColumnInfo("Имя", 150.dp),
+                        ColumnInfo("Отчество", 200.dp),
+                        ColumnInfo("Г.р.", 100.dp, true)
+                    ),
+                    "src/main/resources/tableTest.csv"
+                ).draw()
             }
         }
     }
