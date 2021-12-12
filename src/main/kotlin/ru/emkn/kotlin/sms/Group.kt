@@ -26,9 +26,9 @@ class Race(val groupName: GroupName, val sportType: SportType) {
     companion object {
         const val dir = "src/main/resources/races/"
         val classesBySportType =
-            SportType.values().map { csvReader().readAll(File("$dir${it.toString()}/classes.csv")) }
+            SportType.values().map { csvReader().readAll(File("$dir${it}/classes.csv")) }
         val coursesBySportType =
-            SportType.values().map { csvReader().readAll(File("$dir${it.toString()}/courses.csv")) }
+            SportType.values().map { csvReader().readAll(File("$dir${it}/courses.csv")) }
 
         fun getCheckPoints(groupName: String, sportType: SportType): List<Checkpoint> {
             logger.trace { "Вызов getCheckPoints()" }
