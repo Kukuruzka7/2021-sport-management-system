@@ -25,6 +25,7 @@ class TableView(
     private val rows: MutableList<MutableList<MutableState<String>>> =
         MutableList(0) { MutableList(0) { mutableStateOf("") } }
     private val rowsCount: MutableState<Int> = mutableStateOf(rows.size)
+    val isOpen = mutableStateOf(true)
 
     private class SaveButton(private val modifier: Modifier, override val onClick: () -> Unit) : ISaveButton {
         val WIDTH = 120.dp
@@ -166,10 +167,6 @@ class TableView(
 
 
     private fun saveToFile(fileName: String, finalRows: List<List<String>>) {
-        csvWriter().open(fileName) {
-            finalRows.forEach {
-                writeRow(it)
-            }
-        }
+        isOpen.value = false
     }
 }

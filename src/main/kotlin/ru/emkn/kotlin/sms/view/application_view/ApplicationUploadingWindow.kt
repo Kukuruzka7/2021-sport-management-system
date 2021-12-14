@@ -3,12 +3,16 @@ package ru.emkn.kotlin.sms.view.application_view
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,21 +21,24 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.application
+import androidx.compose.ui.window.*
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
 import ru.emkn.kotlin.sms.view.IWindow
+import ru.emkn.kotlin.sms.view.table_view.ColumnInfo
+import ru.emkn.kotlin.sms.view.table_view.TableView
 import java.awt.FileDialog
 import java.io.File
 
+val openingApplication = mutableStateOf(-1)
 
 class ApplicationUploadingWindow() : IWindow {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     var finished = false
+
     override fun render() {
         application {
             Window(
@@ -39,8 +46,17 @@ class ApplicationUploadingWindow() : IWindow {
                 title = "Upload team's applications",
                 state = WindowState(width = WIDTH, height = HEIGHT)
             ) {
+                if (openingApplication.value != -1) {
+                    openTeamApplication()
+                }
+
+                val scrollState = rememberScrollState()
+
+                // Smooth scroll to specified pixels on first composition
+                LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
+
                 Column(
-                    Modifier.fillMaxSize(), Arrangement.spacedBy(UPPL_GAP)
+                    Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
                 ) {
                     Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
                         SaveButton {
@@ -51,7 +67,7 @@ class ApplicationUploadingWindow() : IWindow {
                     }
                     for (i in 0 until count.value) {
                         Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
-                            FileButton(files[i]).render()
+                            FileButton(files[i], i).render()
                             DeleteFileButton {
                                 files.removeAt(i)
                                 count.value--
@@ -63,8 +79,32 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    //Розалине: может быть, можно сделать это прямоугольником, а не кнопкой? Она вроде просто печатает в консоль название файла..
-    private class FileButton(file: File) : IButton {
+    @Composable
+    private fun openTeamApplication() {
+        //должен быть нормальный код, но пока все зависит от tableView
+        //это работает
+        val table = TableView(
+            listOf(
+                ColumnInfo("Фамилия", 200.dp),
+                ColumnInfo("Имя", 150.dp),
+                ColumnInfo("Отчество", 200.dp),
+                ColumnInfo("Г.р.", 100.dp, true)
+            ),
+            "src/main/resources/tableTest.csv"
+        )
+        Dialog(
+            onCloseRequest = { openingApplication.value = -1 },
+            title = "Tatarstan Supergut",
+            state = rememberDialogState(width = 2000.dp, height = 1080.dp)
+        ) {
+            table.draw()
+            if (!table.isOpen.value) {
+                openingApplication.value = -1
+            }
+        }
+    }
+
+    private class FileButton(file: File, val numberOfApplication: Int) : IButton {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
         var CORNERS = 4.dp
@@ -73,14 +113,15 @@ class ApplicationUploadingWindow() : IWindow {
         @Composable
         override fun render() {
             val interactionSource = remember { MutableInteractionSource() }
-            Button(colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
                 modifier = Modifier
                     .clip(RoundedCornerShape(CORNERS))
                     .size(HEIGHT, WIDTH)
                     .focusable(interactionSource = interactionSource),
-                //onClick = { println(files[index]) }
-                onClick = {}
-            ) {
+                onClick = {
+                    openingApplication.value = numberOfApplication
+                }) {
                 Text(text = text, color = Color.White)
             }
         }
