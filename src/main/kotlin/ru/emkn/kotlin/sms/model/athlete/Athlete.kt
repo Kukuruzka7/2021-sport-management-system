@@ -3,7 +3,7 @@ package ru.emkn.kotlin.sms.model.athlete
 import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.GroupName
 import ru.emkn.kotlin.sms.Race
-import ru.emkn.kotlin.sms.model.CompetitionData
+import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.TeamName
 import java.time.LocalTime
@@ -70,16 +70,16 @@ class Athlete(
 
     override fun toString(): String = "[$name, $number, $groupName]"
 
-    fun extractFieldToString(field: CompetitionData.Companion.Fields): String = when (field) {
-        CompetitionData.Companion.Fields.NUMBER -> number.toString()
-        CompetitionData.Companion.Fields.NAME -> name.toString()
-        CompetitionData.Companion.Fields.SEX -> sex.toString()
-        CompetitionData.Companion.Fields.BIRTH_DATE -> birthDate.toString()
-        CompetitionData.Companion.Fields.CATEGORY -> sportCategory.toString()
-        CompetitionData.Companion.Fields.TEAM_NAME -> teamName.toString()
-        CompetitionData.Companion.Fields.RACE -> race.toString()
-        CompetitionData.Companion.Fields.PREFERRED_GROUP -> preferredGroup.toString()
-        CompetitionData.Companion.Fields.START_TIME -> startTime.toString()
+    fun extractFieldToString(field: CompetitionSerialization.Companion.Fields): String = when (field) {
+        CompetitionSerialization.Companion.Fields.NUMBER -> number.toString()
+        CompetitionSerialization.Companion.Fields.NAME -> name.toString()
+        CompetitionSerialization.Companion.Fields.SEX -> sex.toString()
+        CompetitionSerialization.Companion.Fields.BIRTH_DATE -> birthDate.toString()
+        CompetitionSerialization.Companion.Fields.CATEGORY -> sportCategory.toString()
+        CompetitionSerialization.Companion.Fields.TEAM_NAME -> teamName.toString()
+        CompetitionSerialization.Companion.Fields.RACE -> race.toString()
+        CompetitionSerialization.Companion.Fields.PREFERRED_GROUP -> preferredGroup.toString()
+        CompetitionSerialization.Companion.Fields.START_TIME -> startTime.toString()
     }
 
     companion object {
@@ -88,7 +88,7 @@ class Athlete(
     }
 
     override fun equals(other: Any?): Boolean {
-        if(other !is Athlete) {
+        if (other !is Athlete) {
             return false
         }
         return (this.name.fullName == other.name.fullName) && (this.groupName.value == other.groupName.value)

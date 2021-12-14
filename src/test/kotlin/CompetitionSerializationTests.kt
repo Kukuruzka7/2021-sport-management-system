@@ -1,10 +1,10 @@
 import org.junit.Test
-import ru.emkn.kotlin.sms.model.CompetitionData
+import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.application.TeamApplication
 import kotlin.test.assertContentEquals
 
-internal class CompetitionDataTests {
+internal class CompetitionSerializationTests {
 
     @Test
     fun testCompetitionData() {
@@ -24,7 +24,7 @@ internal class CompetitionDataTests {
                 "ПЫТАЮСЬ БЫТЬ С НИМИ",
                 "12:00:03"
             )
-        CompetitionData(listOf(row1, row2, row3, row4), listOf("Olympiad", "2021-10-10", "RUNNING"))
+        CompetitionSerialization(listOf(row1, row2, row3, row4), listOf("Olympiad", "2021-10-10", "RUNNING"))
     }
 
     @Test
@@ -45,9 +45,9 @@ internal class CompetitionDataTests {
                 "ПЫТАЮСЬ БЫТЬ С НИМИ",
                 "12:00:03"
             )
-        val competitionData =
-            CompetitionData(listOf(row1, row2, row3, row4), listOf("Olympiad", "2021-10-10", "RUNNING"))
-        competitionData.save(
+        val competitionSerializator =
+            CompetitionSerialization(listOf(row1, row2, row3, row4), listOf("Olympiad", "2021-10-10", "RUNNING"))
+        competitionSerializator.save(
             "src/test/testFiles/testCompetitionData/competitionData.csv",
             "src/test/testFiles/testCompetitionData/competitionInfo.csv"
         )
@@ -86,7 +86,7 @@ internal class CompetitionDataTests {
             TeamName("D")
         )
         assertContentEquals(
-            CompetitionData(
+            CompetitionSerialization(
                 listOf(row1, row2, row3, row4),
                 listOf("Olympiad", "2021-10-10", "RUNNING")
             ).toAthletesList(),

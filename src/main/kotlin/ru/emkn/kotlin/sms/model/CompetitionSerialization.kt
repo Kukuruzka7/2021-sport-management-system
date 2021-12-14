@@ -10,7 +10,7 @@ import java.io.File
 import java.time.LocalTime
 
 
-class CompetitionData(val athletesData: List<List<String>>, val metaInfo: List<String>) {
+class CompetitionSerialization(val athletesData: List<List<String>>, val metaInfo: List<String>) {
 
     init {
         logger.trace { "Создание экземпляра класса CompetitionData" }

@@ -1,6 +1,6 @@
 package ru.emkn.kotlin.sms
 
-import ru.emkn.kotlin.sms.model.CompetitionData
+import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.model.athlete.Name
@@ -54,7 +54,7 @@ class DirectoryCouldNotBeCreated(path: String) : Exception("Не получил�
 class FileCouldNotBeCreated(fileName: String) : Exception("Не получилось создать файл $fileName")
 
 class CompetitionDataTooFewArgumentsInRow(row: List<String>) :
-    Exception("Файл [CompetitionData] поврежден: Ожидается\n${CompetitionData.inputFormat}\nВ реальности\n$row")
+    Exception("Файл [CompetitionData] поврежден: Ожидается\n${CompetitionSerialization.inputFormat}\nВ реальности\n$row")
 
 class CompetitionDataInvalidSex(sex: String) : Exception("Некорректный пол $sex, введите М или Ж")
 
