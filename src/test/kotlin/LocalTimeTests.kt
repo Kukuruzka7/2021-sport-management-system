@@ -1,8 +1,8 @@
-import ru.emkn.kotlin.sms.finishprotocol.minus
-import ru.emkn.kotlin.sms.finishprotocol.toInt
-import ru.emkn.kotlin.sms.finishprotocol.toStringWithSeconds
-import ru.emkn.kotlin.sms.finishprotocol.toStringWithoutHours
-import ru.emkn.kotlin.sms.startprotocol.toStringWithSeconds
+import ru.emkn.kotlin.sms.model.finishprotocol.minus
+import ru.emkn.kotlin.sms.model.finishprotocol.toInt
+import ru.emkn.kotlin.sms.model.finishprotocol.toStringWithSeconds
+import ru.emkn.kotlin.sms.model.finishprotocol.toStringWithoutHours
+import ru.emkn.kotlin.sms.model.startprotocol.toStringWithSeconds
 import java.time.LocalTime
 import kotlin.test.Test
 import kotlin.test.assertEquals

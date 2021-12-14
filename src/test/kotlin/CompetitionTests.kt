@@ -1,8 +1,11 @@
 import kotlinx.datetime.LocalDate
+import ru.emkn.kotlin.sms.model.Competition
+import ru.emkn.kotlin.sms.model.MetaInfo
+import ru.emkn.kotlin.sms.model.SportType
+import ru.emkn.kotlin.sms.model.TeamName
 import org.junit.Test
-import ru.emkn.kotlin.sms.*
-import ru.emkn.kotlin.sms.application.Application
-import ru.emkn.kotlin.sms.application.TeamApplication
+import ru.emkn.kotlin.sms.model.application.Application
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import java.io.File
 import kotlin.test.assertContentEquals
 
@@ -69,7 +72,7 @@ internal class CompetitionTests {
                 File("src/test/testFiles/testTeamApplication/teamApplication2.csv")
             )
         )
-        val competition = Competition(MetaInfo("Olympiad", LocalDate(2010,10,10),SportType.RUNNING),application)
+        val competition = Competition(MetaInfo("Olympiad", LocalDate(2010, 10, 10), SportType.RUNNING), application)
         assert(competition.groupList.size==3)
         assert(competition.teamList.size==2)
         assert(competition.groupList.all{it.athletes.size==2})
