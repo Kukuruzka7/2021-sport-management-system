@@ -1,9 +1,9 @@
 import kotlinx.datetime.LocalDate
+import org.junit.Test
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.TeamName
-import org.junit.Test
 import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.model.application.TeamApplication
 import java.io.File

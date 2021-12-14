@@ -1,11 +1,13 @@
 package ru.emkn.kotlin.sms.model.input_result
 
-import ru.emkn.kotlin.sms.*
+import logger
+import ru.emkn.kotlin.sms.InvalidDateFormat
+import ru.emkn.kotlin.sms.ResultByAthleteInvalidRow
+import ru.emkn.kotlin.sms.ResultMissesAthleteNumber
 import ru.emkn.kotlin.sms.model.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.model.result_data.Checkpoint
 import ru.emkn.kotlin.sms.model.result_data.CheckpointRes
 import java.time.LocalTime
-import logger
 
 
 //информация о прохождении атлетом чекпоинтов, создается по названию файла с цсв-шкой.

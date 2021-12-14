@@ -1,11 +1,11 @@
 package ru.emkn.kotlin.sms
 
-import java.io.File
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.result_data.Checkpoint
+import java.io.File
 
 class GroupName(val value: String) {
     override fun toString() = value

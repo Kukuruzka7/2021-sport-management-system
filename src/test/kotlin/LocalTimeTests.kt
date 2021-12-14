@@ -3,10 +3,10 @@ import ru.emkn.kotlin.sms.model.finishprotocol.toInt
 import ru.emkn.kotlin.sms.model.finishprotocol.toStringWithSeconds
 import ru.emkn.kotlin.sms.model.finishprotocol.toStringWithoutHours
 import ru.emkn.kotlin.sms.model.startprotocol.toStringWithSeconds
+import java.time.Duration
 import java.time.LocalTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import java.time.Duration
 
 internal class LocalTimeTests {
 

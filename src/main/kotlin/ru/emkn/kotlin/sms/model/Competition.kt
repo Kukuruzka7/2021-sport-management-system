@@ -1,11 +1,14 @@
 package ru.emkn.kotlin.sms.model
 
 import logger
+import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.GroupName
+import ru.emkn.kotlin.sms.Race
+import ru.emkn.kotlin.sms.WeHaveAProblem
 import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.model.result_data.Checkpoint
-import ru.emkn.kotlin.sms.*
 
 
 class Competition {

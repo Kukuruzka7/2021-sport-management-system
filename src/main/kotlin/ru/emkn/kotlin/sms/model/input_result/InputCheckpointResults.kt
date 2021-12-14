@@ -1,7 +1,9 @@
 package ru.emkn.kotlin.sms.model.input_result
 
 import logger
-import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.InvalidDateFormat
+import ru.emkn.kotlin.sms.ResultByCheckpointInvalidRow
+import ru.emkn.kotlin.sms.ResultMissesCheckPointName
 import ru.emkn.kotlin.sms.model.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.model.result_data.Checkpoint
 import ru.emkn.kotlin.sms.model.result_data.CheckpointRes

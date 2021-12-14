@@ -3,9 +3,9 @@ package ru.emkn.kotlin.sms.model.finishprotocol
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import logger
-import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.DirectoryCouldNotBeCreated
 import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.result_data.ResultData
 import java.io.File

@@ -1,10 +1,11 @@
 package ru.emkn.kotlin.sms.model.athlete
 
 import kotlinx.datetime.LocalDate
+import ru.emkn.kotlin.sms.GroupName
+import ru.emkn.kotlin.sms.Race
 import ru.emkn.kotlin.sms.model.CompetitionData
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.TeamName
-import ru.emkn.kotlin.sms.*
 import java.time.LocalTime
 
 class AthleteNumber(val value: String) {

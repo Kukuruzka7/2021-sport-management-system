@@ -1,14 +1,18 @@
 import kotlinx.datetime.LocalDate
+import ru.emkn.kotlin.sms.ApplicationHasWrongFormatOnLine
+import ru.emkn.kotlin.sms.WrongCategoryInApplicationOnLine
+import ru.emkn.kotlin.sms.WrongSexInApplicationOnLine
+import ru.emkn.kotlin.sms.WrongYearInApplicationOnLine
 import ru.emkn.kotlin.sms.model.TeamName
-import ru.emkn.kotlin.sms.*
-import ru.emkn.kotlin.sms.model.athlete.*
-import kotlin.test.Test
-import ru.emkn.kotlin.sms.model.application.*
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.model.application.TeamApplication.Companion.checkFormatOfApplication
 import ru.emkn.kotlin.sms.model.application.TeamApplication.Companion.checkRow
 import ru.emkn.kotlin.sms.model.application.TeamApplication.Companion.processingData
 import ru.emkn.kotlin.sms.model.application.TeamApplication.Companion.processingRow
+import ru.emkn.kotlin.sms.model.athlete.Category
+import ru.emkn.kotlin.sms.model.athlete.Sex
 import java.io.File
+import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 

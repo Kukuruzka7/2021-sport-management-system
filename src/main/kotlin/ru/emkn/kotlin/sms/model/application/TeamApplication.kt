@@ -2,15 +2,15 @@ package ru.emkn.kotlin.sms.model.application
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
+import logger
+import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.model.Team
+import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.athlete.Category
 import ru.emkn.kotlin.sms.model.athlete.Name
 import ru.emkn.kotlin.sms.model.athlete.Sex
 import java.io.File
-import logger
-import ru.emkn.kotlin.sms.model.Team
-import ru.emkn.kotlin.sms.model.TeamName
-import ru.emkn.kotlin.sms.*
 
 //по данным из заявки получение данных об атлетах
 class TeamApplication(file: File, val numberOfApplication: Int) {

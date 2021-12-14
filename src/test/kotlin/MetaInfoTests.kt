@@ -1,8 +1,8 @@
 import org.junit.Test
 import ru.emkn.kotlin.sms.InvalidDateFormat
 import ru.emkn.kotlin.sms.InvalidSportType
-import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.MetaInfoTooFewArguments
+import ru.emkn.kotlin.sms.model.MetaInfo
 
 internal class MetaInfoTests {
 

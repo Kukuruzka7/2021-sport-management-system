@@ -2,8 +2,8 @@ package ru.emkn.kotlin.sms.model.input_result
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
+import ru.emkn.kotlin.sms.InputCheckpointResultIsAbsent
 import ru.emkn.kotlin.sms.model.Competition
-import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.result_data.CheckpointRes
 import ru.emkn.kotlin.sms.model.result_data.Table

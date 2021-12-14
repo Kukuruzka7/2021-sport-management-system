@@ -3,7 +3,7 @@ package ru.emkn.kotlin.sms.model.startprotocol
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import ru.emkn.kotlin.sms.Group
 import java.io.File
-import java.time.LocalTime as LocalTime
+import java.time.LocalTime
 
 class GroupStartProtocol(private val group: Group, path: String) {
     private val groupPath: String = "$path${group.race.groupName}.csv"
