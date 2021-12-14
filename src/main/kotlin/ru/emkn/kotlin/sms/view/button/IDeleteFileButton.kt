@@ -5,5 +5,5 @@ import androidx.compose.ui.unit.Dp
 interface IDeleteFileButton : IButton {
     val HEIGHT: Dp
     val WIDTH: Dp
-    override val text: String
+    val text: String
 }

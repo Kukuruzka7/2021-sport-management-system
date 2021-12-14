@@ -1,21 +1,19 @@
 package ru.emkn.kotlin.sms.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -39,15 +37,17 @@ class StartWindow : IWindow {
                     height = HEIGHT
                 )
             ) {
-                Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    WelcomeSign(Modifier).render()
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        CreateButton { }.render()
-                        OpenButton {}.render()
+                Box(Modifier.fillMaxSize().background(BACKGROUND_COLOR)) {
+                    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        WelcomeSign(Modifier.padding(vertical = WELCOME_SIGN_PADDING)).render()
+                        Row(
+                            modifier = Modifier.fillMaxSize().offset(y = BUTTONS_OFFSET),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            CreateButton {}.render()
+                            OpenButton {}.render()
+                        }
                     }
                 }
             }
@@ -55,25 +55,20 @@ class StartWindow : IWindow {
     }
 
     companion object {
-        val WIDTH = 500.dp
+        val WIDTH = 700.dp
         val HEIGHT = 400.dp
+        val WELCOME_SIGN_PADDING = 50.dp
+        val BUTTONS_OFFSET = 35.dp
+        val BACKGROUND_COLOR = Color(0xF1353638)
+        val TEXT_COLOR = Color(0xF1B9B9B9)
     }
 
     open class StartWindowButton(
-        private val onClick: () -> Unit,
-        override val text: String,
-        private val icon: ImageVector
+        private val text: String, private val icon: ImageVector, private val onClick: () -> Unit
     ) : IButton {
         @Composable
         override fun render() {
-            /*Button(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(CORNERS))
-                    .focusable(interactionSource = remember { MutableInteractionSource() }),
-                onClick = onClick
-
-             */
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(
                     modifier = Modifier
                         .clip(RoundedCornerShape(CORNERS))
@@ -82,11 +77,12 @@ class StartWindow : IWindow {
                 ) {
                     Icon(
                         icon,
-                        "contentDescription",
-                        tint = Color.DarkGray
+                        modifier = Modifier.size(40.dp),
+                        contentDescription = "кнопочка",
+                        tint = TEXT_COLOR
                     )
                 }
-                Text(text)
+                Text(text, color = TEXT_COLOR)
             }
         }
 
@@ -95,18 +91,25 @@ class StartWindow : IWindow {
         }
     }
 
-    private class CreateButton(onClick: () -> Unit) : StartWindowButton(onClick, "Создать", Icons.Filled.Add)
-    private class OpenButton(onClick: () -> Unit) : StartWindowButton(onClick, "Открыть", Icons.Default.ArrowDropDown)
+    private class CreateButton(onClick: () -> Unit) : StartWindowButton("Создать", Icons.Filled.Add, onClick)
+    private class OpenButton(onClick: () -> Unit) : StartWindowButton("Открыть", Icons.Default.PlayArrow, onClick)
 
     private class WelcomeSign(val modifier: Modifier) {
+        @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         fun render() {
-            Text(text = TEXT, modifier = modifier, fontSize = FONT_SIZE, fontWeight = FontWeight.Bold)
+            Text(
+                text = TEXT,
+                modifier = modifier,
+                color = TEXT_COLOR,
+                fontSize = FONT_SIZE,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         companion object {
-            private val TEXT = "Добро пожаловать в Sport Management System"
-            private val FONT_SIZE = 20.sp
+            private val TEXT = "Добро пожаловать в sport management system!"
+            private val FONT_SIZE = 22.sp
         }
     }
 }

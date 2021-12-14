@@ -83,8 +83,7 @@ class ApplicationUploadingWindow() : IWindow {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
         var CORNERS = 4.dp
-        override val text: String
-            get() = file.name
+        val text: String = file.name
 
         @Composable
         override fun render() {
@@ -136,8 +135,7 @@ class ApplicationUploadingWindow() : IWindow {
     }
 
     private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
-        override val text: String
-            get() = "Загрузить файл"
+        val text: String = "Загрузить файл"
 
         @Composable
         override fun render() {
