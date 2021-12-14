@@ -1,6 +1,5 @@
-package ru.emkn.kotlin.sms.view
+package ru.emkn.kotlin.sms.view.application_view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -30,6 +29,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import ru.emkn.kotlin.sms.view.button.IButton
+import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
+import ru.emkn.kotlin.sms.view.button.ISaveButton
+import ru.emkn.kotlin.sms.view.IWindow
 import java.awt.FileDialog
 import java.io.File
 
@@ -53,7 +56,7 @@ class ApplicationUploadingWindow() : IWindow {
                 LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
 
                 Column(
-                    Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
+                    Modifier.fillMaxSize(), Arrangement.spacedBy(UPPL_GAP)
                 ) {
                     Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
                         SaveButton {
@@ -80,13 +83,15 @@ class ApplicationUploadingWindow() : IWindow {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
         var CORNERS = 4.dp
+        override val text: String
+            get() = file.name
 
-        @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         override fun render() {
             val interactionSource = remember { MutableInteractionSource() }
-            Button(colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
-                modifier = Modifier.clip(RoundedCornerShape(CORNERS))
+            Button(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(CORNERS))
                     .size(HEIGHT, WIDTH)
                     .focusable(interactionSource = interactionSource),
                 //onClick = { println(files[index]) }
@@ -97,8 +102,13 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    private class DeleteFileButton(private val onClick: () -> Unit) : Button {
-        @OptIn(ExperimentalComposeUiApi::class)
+    private class DeleteFileButton(private val onClick: () -> Unit) : IDeleteFileButton {
+
+        override val HEIGHT = 50.dp
+        override val WIDTH = 50.dp
+
+        override val text: String
+            get() = "–"
         @Composable
         override fun render() {
             Button(
@@ -106,29 +116,26 @@ class ApplicationUploadingWindow() : IWindow {
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xF11BFF99)),
                 shape = CircleShape,
                 onClick = onClick
-            ) { Text("-") }
-        }
-
-        companion object {
-            val HEIGHT = 50.dp
-            val WIDTH = 50.dp
+            ) { Text(text) }
         }
     }
 
-    private class SaveButton(val onClick: () -> Unit) : Button {
-        @OptIn(ExperimentalComposeUiApi::class)
+    private class SaveButton(override val onClick: () -> Unit) : ISaveButton {
+        override val text: String
+            get() = "Сохранить заявки"
         @Composable
         override fun render() {
             Button(
                 onClick = onClick
             ) {
-                Text("Сохранить заявки")
+                Text(text)
             }
         }
     }
 
-    private inner class NewFileButton(val fileDialog: FileDialog) : Button {
-        @OptIn(ExperimentalComposeUiApi::class)
+    private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
+        override val text: String
+            get() = "Загрузить файл"
         @Composable
         override fun render() {
             Button(
@@ -139,7 +146,7 @@ class ApplicationUploadingWindow() : IWindow {
                     count.value = files.size
                 }
             ) {
-                Text("Загрузить файл")
+                Text(text)
             }
         }
 

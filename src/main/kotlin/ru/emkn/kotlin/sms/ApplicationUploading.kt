@@ -1,7 +1,7 @@
 package ru.emkn.kotlin.sms
 
 import ru.emkn.kotlin.sms.model.application.Application
-import ru.emkn.kotlin.sms.view.ApplicationUploadingWindow
+import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
 
 class ApplicationUploading {
     fun application(): Application {

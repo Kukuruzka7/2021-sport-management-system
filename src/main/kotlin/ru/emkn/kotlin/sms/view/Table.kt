@@ -19,7 +19,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 
 data class ColumnInfo(val name: String, val width: Dp = 250.dp, val onlyDigits: Boolean = false)
 
-class Table(
+class TableView(
     private val firstRow: List<ColumnInfo>,
     private val fileName: String,
 ) {
@@ -72,9 +72,9 @@ class Table(
 
     @Composable
     private fun drawLastRow() {
-        Row {
+        Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
             Button(
-                modifier = Modifier.align(Alignment.Top).height(50.dp).width(120.dp),
+                modifier = Modifier.align(Alignment.TopStart).height(50.dp).width(120.dp),
                 colors = buttonColors(backgroundColor = Color(0xF11BFF99)),
                 shape = CircleShape,
                 onClick = {
@@ -83,9 +83,8 @@ class Table(
                 }) {
                 Text("+")
             }
-            Alignment.End
             Button(
-                modifier = Modifier.align(Alignment.Top).height(50.dp).width(120.dp),
+                modifier = Modifier.align(Alignment.TopEnd).height(50.dp).width(120.dp),
                 colors = buttonColors(backgroundColor = Color(0xF11BFF99)),
                 shape = CircleShape,
                 onClick = { saveToFile(fileName, getFinalRows(firstRow, rows)) }
