@@ -16,6 +16,7 @@ import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
+import ru.emkn.kotlin.sms.view.StartWindow
 import java.io.File
 
 enum class FieldsStart {
@@ -45,15 +46,15 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
-    println(ApplicationUploading().application())
-    if (checkEmptyInput(args)) return
+    println(StartWindow().render())
+    /*if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
         UserBehavior.START -> start(args)
         UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args)
         UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args)
         UserBehavior.ERROR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
     }
-    logger.info { "Завершение работы программы." }
+    logger.info { "Завершение работы программы." }*/
 }
 
 private fun checkEmptyInput(args: Array<String>): Boolean {

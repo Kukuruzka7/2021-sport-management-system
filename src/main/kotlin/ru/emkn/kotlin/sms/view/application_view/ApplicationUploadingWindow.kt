@@ -1,4 +1,4 @@
-package ru.emkn.kotlin.sms.view
+package ru.emkn.kotlin.sms.view.application_view
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import ru.emkn.kotlin.sms.view.IButton
+import ru.emkn.kotlin.sms.view.IWindow
 import java.awt.FileDialog
 import java.io.File
 
@@ -61,7 +63,7 @@ class ApplicationUploadingWindow() : IWindow {
     }
 
     //Розалине: может быть, можно сделать это прямоугольником, а не кнопкой? Она вроде просто печатает в консоль название файла..
-    private class FileButton(private val file: File) : Button {
+    private class FileButton(private val file: File) : IButton {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
         var CORNERS = 4.dp
@@ -83,9 +85,10 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    private class DeleteFileButton(private val onClick: () -> Unit) : Button {
+    private class DeleteFileButton(private val onClick: () -> Unit) : IButton {
         @OptIn(ExperimentalComposeUiApi::class)
         @Composable
+
         override fun render() {
             Button(
                 modifier = Modifier.height(HEIGHT).width(WIDTH),
@@ -94,14 +97,13 @@ class ApplicationUploadingWindow() : IWindow {
                 onClick = onClick
             ) { Text("-") }
         }
-
         companion object {
             val HEIGHT = 50.dp
             val WIDTH = 50.dp
         }
     }
 
-    private class SaveButton(val onClick: () -> Unit) : Button {
+    private class SaveButton(val onClick: () -> Unit) : IButton {
         @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         override fun render() {
@@ -113,7 +115,7 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    private inner class NewFileButton(val fileDialog: FileDialog) : Button {
+    private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
         @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         override fun render() {
