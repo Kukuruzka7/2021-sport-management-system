@@ -3,29 +3,20 @@ package ru.emkn.kotlin.sms.view.application_view
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
@@ -41,8 +32,6 @@ class ApplicationUploadingWindow() : IWindow {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     var finished = false
-
-    @OptIn(ExperimentalComposeUiApi::class)
     override fun render() {
         application {
             Window(
@@ -50,13 +39,8 @@ class ApplicationUploadingWindow() : IWindow {
                 title = "Upload team's applications",
                 state = WindowState(width = WIDTH, height = HEIGHT)
             ) {
-                val scrollState = rememberScrollState()
-
-                // Smooth scroll to specified pixels on first composition
-                LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
-
                 Column(
-                    Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
+                    Modifier.fillMaxSize(), Arrangement.spacedBy(UPPL_GAP)
                 ) {
                     Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
                         SaveButton {
@@ -79,7 +63,8 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    private class FileButton(private val file: File) : IButton {
+    //Розалине: может быть, можно сделать это прямоугольником, а не кнопкой? Она вроде просто печатает в консоль название файла..
+    private class FileButton(file: File) : IButton {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
         var CORNERS = 4.dp
@@ -96,7 +81,7 @@ class ApplicationUploadingWindow() : IWindow {
                 //onClick = { println(files[index]) }
                 onClick = {}
             ) {
-                Text(text = file.name, color = Color.White)
+                Text(text = text, color = Color.White)
             }
         }
     }
