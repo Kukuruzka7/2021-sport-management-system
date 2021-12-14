@@ -7,6 +7,6 @@ class ApplicationUploading {
     fun application(): Application {
         val window = ApplicationUploadingWindow()
         window.render()
-        return Application(window.files)
+        return Application(window.files.distinct())
     }
 }
