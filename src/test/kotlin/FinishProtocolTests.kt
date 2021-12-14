@@ -1,6 +1,6 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.model.Competition
-import ru.emkn.kotlin.sms.model.CompetitionData
+import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.athlete.AthleteNumber
 import ru.emkn.kotlin.sms.model.finishprotocol.FinishProtocol
 import ru.emkn.kotlin.sms.model.finishprotocol.createDir
@@ -34,7 +34,7 @@ internal class FinishProtocolTests {
         )
         createDir("src/main/resources/competitions/123/")
         val comp = Competition(
-            CompetitionData(
+            CompetitionSerialization(
                 listOf(
                     listOf("1", "Сибгатуллин Данил", "М", "2002-12-30", "IIIю", "Б05", "М2002", "TODO()", "12:01")
                 ),

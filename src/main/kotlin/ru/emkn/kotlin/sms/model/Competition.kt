@@ -58,10 +58,10 @@ class Competition {
         checkPointsByGroupName = groupList.associateBy({ it.race.groupName.value }, { it.race.checkPoints })
     }
 
-    constructor(data: CompetitionData) {
+    constructor(serial: CompetitionSerialization) {
         logger.info { "Вызов конструктора Competition(data)" }
-        info = MetaInfo(data.metaInfo)
-        athleteList = data.toAthletesList()
+        info = MetaInfo(serial.metaInfo)
+        athleteList = serial.toAthletesList()
         teamList = generateTeamListByAthleteList(athleteList)
         groupList = generateGroupListByAthleteList(athleteList, info.sport)
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
@@ -69,10 +69,10 @@ class Competition {
     }
 
 
-    fun toCompetitionData(): CompetitionData {
+    fun toCompetitionSerialization(): CompetitionSerialization {
         logger.info { "Вызов функции toCompetitionData()" }
-        return CompetitionData(athleteList.map { athlete ->
-            (CompetitionData.Companion.Fields.values().map { athlete.extractFieldToString(it) })
+        return CompetitionSerialization(athleteList.map { athlete ->
+            (CompetitionSerialization.Companion.Fields.values().map { athlete.extractFieldToString(it) })
         }, info.toStringList())
     }
 
