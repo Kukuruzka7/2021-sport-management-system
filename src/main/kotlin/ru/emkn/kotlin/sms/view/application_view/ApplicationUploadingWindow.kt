@@ -56,7 +56,7 @@ class ApplicationUploadingWindow() : IWindow {
                 LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
 
                 Column(
-                    Modifier.fillMaxSize(), Arrangement.spacedBy(UPPL_GAP)
+                    Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
                 ) {
                     Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
                         SaveButton {
@@ -79,7 +79,7 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    private class FileButton(private val file: File) : Button {
+    private class FileButton(private val file: File) : IButton {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
         var CORNERS = 4.dp
@@ -89,7 +89,7 @@ class ApplicationUploadingWindow() : IWindow {
         @Composable
         override fun render() {
             val interactionSource = remember { MutableInteractionSource() }
-            Button(
+            Button(colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
                 modifier = Modifier
                     .clip(RoundedCornerShape(CORNERS))
                     .size(HEIGHT, WIDTH)
@@ -109,6 +109,7 @@ class ApplicationUploadingWindow() : IWindow {
 
         override val text: String
             get() = "–"
+
         @Composable
         override fun render() {
             Button(
@@ -123,6 +124,7 @@ class ApplicationUploadingWindow() : IWindow {
     private class SaveButton(override val onClick: () -> Unit) : ISaveButton {
         override val text: String
             get() = "Сохранить заявки"
+
         @Composable
         override fun render() {
             Button(
@@ -136,6 +138,7 @@ class ApplicationUploadingWindow() : IWindow {
     private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
         override val text: String
             get() = "Загрузить файл"
+
         @Composable
         override fun render() {
             Button(
