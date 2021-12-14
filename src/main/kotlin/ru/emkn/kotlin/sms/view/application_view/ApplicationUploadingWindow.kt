@@ -3,20 +3,29 @@ package ru.emkn.kotlin.sms.view.application_view
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
@@ -32,6 +41,8 @@ class ApplicationUploadingWindow() : IWindow {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     var finished = false
+
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun render() {
         application {
             Window(
@@ -39,8 +50,13 @@ class ApplicationUploadingWindow() : IWindow {
                 title = "Upload team's applications",
                 state = WindowState(width = WIDTH, height = HEIGHT)
             ) {
+                val scrollState = rememberScrollState()
+
+                // Smooth scroll to specified pixels on first composition
+                LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
+
                 Column(
-                    Modifier.fillMaxSize(), Arrangement.spacedBy(UPPL_GAP)
+                    Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
                 ) {
                     Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
                         SaveButton {
@@ -63,7 +79,6 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    //Розалине: может быть, можно сделать это прямоугольником, а не кнопкой? Она вроде просто печатает в консоль название файла..
     private class FileButton(private val file: File) : IButton {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
@@ -74,7 +89,7 @@ class ApplicationUploadingWindow() : IWindow {
         @Composable
         override fun render() {
             val interactionSource = remember { MutableInteractionSource() }
-            Button(
+            Button(colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
                 modifier = Modifier
                     .clip(RoundedCornerShape(CORNERS))
                     .size(HEIGHT, WIDTH)
@@ -94,6 +109,7 @@ class ApplicationUploadingWindow() : IWindow {
 
         override val text: String
             get() = "–"
+
         @Composable
         override fun render() {
             Button(
@@ -108,6 +124,7 @@ class ApplicationUploadingWindow() : IWindow {
     private class SaveButton(override val onClick: () -> Unit) : ISaveButton {
         override val text: String
             get() = "Сохранить заявки"
+
         @Composable
         override fun render() {
             Button(
@@ -121,6 +138,7 @@ class ApplicationUploadingWindow() : IWindow {
     private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
         override val text: String
             get() = "Загрузить файл"
+
         @Composable
         override fun render() {
             Button(

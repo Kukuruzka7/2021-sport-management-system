@@ -16,6 +16,7 @@ import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
 import ru.emkn.kotlin.sms.view.View
+import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
 import java.io.File
 
 enum class FieldsStart {
@@ -45,7 +46,7 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
-    View.render()
+    ApplicationUploadingWindow().render()
 //    println(StartWindow().render())
     /*if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
