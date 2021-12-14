@@ -4,7 +4,6 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import logger
-import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.CompetitionData
 import ru.emkn.kotlin.sms.model.MetaInfo
@@ -16,7 +15,7 @@ import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
-import ru.emkn.kotlin.sms.view.StartWindow
+import ru.emkn.kotlin.sms.view.View
 import java.io.File
 
 enum class FieldsStart {
@@ -46,7 +45,8 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
-    println(StartWindow().render())
+    View.render()
+//    println(StartWindow().render())
     /*if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
         UserBehavior.START -> start(args)

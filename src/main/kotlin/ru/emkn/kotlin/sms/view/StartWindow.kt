@@ -2,31 +2,31 @@ package ru.emkn.kotlin.sms.view
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
-import javax.swing.event.TreeWillExpandListener
+import ru.emkn.kotlin.sms.view.button.IButton
 
 class StartWindow : IWindow {
     override fun render() {
@@ -61,10 +61,9 @@ class StartWindow : IWindow {
 
     open class StartWindowButton(
         private val onClick: () -> Unit,
-        private val text: String,
+        override val text: String,
         private val icon: ImageVector
     ) : IButton {
-        @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         override fun render() {
             /*Button(
@@ -100,7 +99,6 @@ class StartWindow : IWindow {
     private class OpenButton(onClick: () -> Unit) : StartWindowButton(onClick, "Открыть", Icons.Default.ArrowDropDown)
 
     private class WelcomeSign(val modifier: Modifier) {
-        @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         fun render() {
             Text(text = TEXT, modifier = modifier, fontSize = FONT_SIZE, fontWeight = FontWeight.Bold)

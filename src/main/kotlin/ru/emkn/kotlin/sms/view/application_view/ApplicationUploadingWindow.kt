@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
@@ -21,7 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import ru.emkn.kotlin.sms.view.IButton
+import ru.emkn.kotlin.sms.view.button.IButton
+import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
+import ru.emkn.kotlin.sms.view.button.ISaveButton
 import ru.emkn.kotlin.sms.view.IWindow
 import java.awt.FileDialog
 import java.io.File
@@ -67,8 +68,9 @@ class ApplicationUploadingWindow() : IWindow {
         var WIDTH = 50.dp
         var HEIGHT = 500.dp
         var CORNERS = 4.dp
+        override val text: String
+            get() = file.name
 
-        @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         override fun render() {
             val interactionSource = remember { MutableInteractionSource() }
@@ -85,38 +87,40 @@ class ApplicationUploadingWindow() : IWindow {
         }
     }
 
-    private class DeleteFileButton(private val onClick: () -> Unit) : IButton {
-        @OptIn(ExperimentalComposeUiApi::class)
-        @Composable
+    private class DeleteFileButton(private val onClick: () -> Unit) : IDeleteFileButton {
 
+        override val HEIGHT = 50.dp
+        override val WIDTH = 50.dp
+
+        override val text: String
+            get() = "–"
+        @Composable
         override fun render() {
             Button(
                 modifier = Modifier.height(HEIGHT).width(WIDTH),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xF11BFF99)),
                 shape = CircleShape,
                 onClick = onClick
-            ) { Text("-") }
-        }
-        companion object {
-            val HEIGHT = 50.dp
-            val WIDTH = 50.dp
+            ) { Text(text) }
         }
     }
 
-    private class SaveButton(val onClick: () -> Unit) : IButton {
-        @OptIn(ExperimentalComposeUiApi::class)
+    private class SaveButton(override val onClick: () -> Unit) : ISaveButton {
+        override val text: String
+            get() = "Сохранить заявки"
         @Composable
         override fun render() {
             Button(
                 onClick = onClick
             ) {
-                Text("Сохранить заявки")
+                Text(text)
             }
         }
     }
 
     private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
-        @OptIn(ExperimentalComposeUiApi::class)
+        override val text: String
+            get() = "Загрузить файл"
         @Composable
         override fun render() {
             Button(
@@ -127,7 +131,7 @@ class ApplicationUploadingWindow() : IWindow {
                     count.value = files.size
                 }
             ) {
-                Text("Загрузить файл")
+                Text(text)
             }
         }
 
