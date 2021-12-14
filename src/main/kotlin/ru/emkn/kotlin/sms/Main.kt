@@ -47,7 +47,7 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
-    StartWindow().render()
+    ApplicationUploadingWindow().render()
 //    println(StartWindow().render())
     /*if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {

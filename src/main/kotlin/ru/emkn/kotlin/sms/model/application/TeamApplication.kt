@@ -14,7 +14,7 @@ import java.io.File
 
 //по данным из заявки получение данных об атлетах
 class TeamApplication(file: File, val numberOfApplication: Int) {
-    private val rows: List<List<String>> = try {
+    val rows: List<List<String>> = try {
         logger.trace { "Считывание данных об атлетах из ${file.name}." }
         csvReader().readAll(file)
     } catch (e: Exception) {
