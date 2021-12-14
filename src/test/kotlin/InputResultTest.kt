@@ -1,9 +1,9 @@
 import org.junit.Test
-import ru.emkn.kotlin.sms.athlete.AthleteNumber
-import ru.emkn.kotlin.sms.input_result.InputAthleteResults
-import ru.emkn.kotlin.sms.input_result.InputCheckpointResults
-import ru.emkn.kotlin.sms.result_data.Checkpoint
-import ru.emkn.kotlin.sms.result_data.CheckpointRes
+import ru.emkn.kotlin.sms.model.athlete.AthleteNumber
+import ru.emkn.kotlin.sms.model.input_result.InputAthleteResults
+import ru.emkn.kotlin.sms.model.input_result.InputCheckpointResults
+import ru.emkn.kotlin.sms.model.result_data.Checkpoint
+import ru.emkn.kotlin.sms.model.result_data.CheckpointRes
 import java.time.LocalTime
 import kotlin.test.assertEquals
 

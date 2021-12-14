@@ -1,9 +1,9 @@
 import org.junit.Test
 import ru.emkn.kotlin.sms.Race.Companion.getCheckPoints
-import ru.emkn.kotlin.sms.SportType
-import ru.emkn.kotlin.sms.application.Application
-import ru.emkn.kotlin.sms.application.TeamApplication
-import ru.emkn.kotlin.sms.result_data.Checkpoint
+import ru.emkn.kotlin.sms.model.SportType
+import ru.emkn.kotlin.sms.model.application.Application
+import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.model.result_data.Checkpoint
 import java.io.File
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

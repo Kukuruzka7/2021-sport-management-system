@@ -1,6 +1,6 @@
 import org.junit.Test
-import ru.emkn.kotlin.sms.application.Application
-import ru.emkn.kotlin.sms.application.TeamApplication
+import ru.emkn.kotlin.sms.model.application.Application
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import java.io.File
 import kotlin.test.assertContentEquals
 

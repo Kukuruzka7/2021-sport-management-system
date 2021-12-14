@@ -1,11 +1,11 @@
 import kotlinx.datetime.LocalDate
 import org.junit.Test
 import ru.emkn.kotlin.sms.GroupName
-import ru.emkn.kotlin.sms.TeamName
-import ru.emkn.kotlin.sms.athlete.Athlete
-import ru.emkn.kotlin.sms.athlete.Category
-import ru.emkn.kotlin.sms.athlete.Name
-import ru.emkn.kotlin.sms.athlete.Sex
+import ru.emkn.kotlin.sms.model.TeamName
+import ru.emkn.kotlin.sms.model.athlete.Athlete
+import ru.emkn.kotlin.sms.model.athlete.Category
+import ru.emkn.kotlin.sms.model.athlete.Name
+import ru.emkn.kotlin.sms.model.athlete.Sex
 
 internal class AthleteTests {
 
