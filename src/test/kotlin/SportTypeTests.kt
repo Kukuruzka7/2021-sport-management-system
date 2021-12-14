@@ -1,6 +1,5 @@
 import org.junit.Test
-import ru.emkn.kotlin.sms.SportType
-import ru.emkn.kotlin.sms.athlete.Name
+import ru.emkn.kotlin.sms.model.SportType
 
 internal class SportTypeTests {
 

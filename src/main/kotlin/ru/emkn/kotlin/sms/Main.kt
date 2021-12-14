@@ -4,15 +4,18 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import logger
-import ru.emkn.kotlin.sms.SportType.Companion.getSportType
 import ru.emkn.kotlin.sms.UserBehavior.Companion.getBehavior
-import ru.emkn.kotlin.sms.application.Application
-import ru.emkn.kotlin.sms.finishprotocol.FinishProtocol
-import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByAthletes
-import ru.emkn.kotlin.sms.input_result.InputCompetitionResultByCheckPoints
-import ru.emkn.kotlin.sms.result_data.ResultData
-import ru.emkn.kotlin.sms.startprotocol.StartProtocol
-import ru.emkn.kotlin.sms.view.View
+import ru.emkn.kotlin.sms.model.Competition
+import ru.emkn.kotlin.sms.model.CompetitionData
+import ru.emkn.kotlin.sms.model.MetaInfo
+import ru.emkn.kotlin.sms.model.SportType
+import ru.emkn.kotlin.sms.model.SportType.Companion.getSportType
+import ru.emkn.kotlin.sms.model.application.Application
+import ru.emkn.kotlin.sms.model.finishprotocol.FinishProtocol
+import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
+import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
+import ru.emkn.kotlin.sms.model.result_data.ResultData
+import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
 import java.io.File
 
 enum class FieldsStart {
@@ -42,7 +45,7 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
-    View.render()
+    println(ApplicationUploading().application())
     if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
         UserBehavior.START -> start(args)

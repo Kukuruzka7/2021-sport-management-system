@@ -1,8 +1,8 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import org.junit.Test
-import ru.emkn.kotlin.sms.TeamName
-import ru.emkn.kotlin.sms.athlete.Athlete
+import ru.emkn.kotlin.sms.model.TeamName
+import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.start
 import java.io.File
 import kotlin.test.assertEquals

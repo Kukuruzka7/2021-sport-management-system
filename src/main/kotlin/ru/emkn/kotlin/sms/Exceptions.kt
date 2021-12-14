@@ -1,10 +1,11 @@
 package ru.emkn.kotlin.sms
 
-import ru.emkn.kotlin.sms.application.TeamApplication
-import ru.emkn.kotlin.sms.athlete.Name
-import ru.emkn.kotlin.sms.input_result.InputAthleteResults
-import ru.emkn.kotlin.sms.input_result.InputCheckpointResults
-import ru.emkn.kotlin.sms.result_data.Checkpoint
+import ru.emkn.kotlin.sms.model.CompetitionData
+import ru.emkn.kotlin.sms.model.MetaInfo
+import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.model.athlete.Name
+import ru.emkn.kotlin.sms.model.input_result.InputAthleteResults
+import ru.emkn.kotlin.sms.model.input_result.InputCheckpointResults
 
 class WeHaveAProblem(problem: String) : Exception(problem)
 
