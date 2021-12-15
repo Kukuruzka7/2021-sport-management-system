@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import logger
 import ru.emkn.kotlin.sms.model.Competition
-import ru.emkn.kotlin.sms.model.CompetitionData
+import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.SportType.Companion.getSportType
@@ -17,7 +17,6 @@ import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
 import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.View
-import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
 import java.io.File
 
 enum class FieldsStart {
@@ -47,7 +46,8 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
-    ApplicationUploadingWindow().render()
+    View.render()
+//    ApplicationUploadingWindow().render()
 //    println(StartWindow().render())
     /*if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
@@ -93,7 +93,7 @@ fun start(inputData: Array<String>) {
     }
     logger.info { "StartProtocol создан." }
     logger.info { "Сохранение Competition" }
-    competition.toCompetitionData().save(
+    competition.toCompetitionSerialization().save(
         dir + competition.info.name + "/competitionData.csv",
         dir + competition.info.name + "/competitionInfo.csv"
     )
@@ -213,7 +213,7 @@ private fun resultDataByAthlete(fileName: String, data: List<List<String>>, info
     return try {
         ResultData(
             InputCompetitionResultByAthletes(fileName).toTable(),
-            CompetitionData(data, info.toStringList()).getStartTime()
+            CompetitionSerialization(data, info.toStringList()).getStartTime()
         )
     } catch (e: Exception) {
         println(e.message)
@@ -230,7 +230,7 @@ private fun resultDataByCheckPoints(
     return try {
         ResultData(
             InputCompetitionResultByCheckPoints(fileName, competition).toTable(),
-            CompetitionData(data, info.toStringList()).getStartTime()
+            CompetitionSerialization(data, info.toStringList()).getStartTime()
         )
     } catch (e: Exception) {
         println(e.message)
@@ -240,7 +240,7 @@ private fun resultDataByCheckPoints(
 
 private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competition? {
     return try {
-        Competition(CompetitionData(data, info.toStringList()))
+        Competition(CompetitionSerialization(data, info.toStringList()))
     } catch (e: Exception) {
         println(e.message)
         null

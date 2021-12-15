@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,26 +21,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.view.IWindow
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
-import ru.emkn.kotlin.sms.view.IWindow
-import ru.emkn.kotlin.sms.view.table_view.ColumnInfo
-import ru.emkn.kotlin.sms.view.table_view.TableView
+import ru.emkn.kotlin.sms.view.table_view.WithHeaderTableView
 import java.awt.FileDialog
 import java.io.File
-import java.lang.reflect.Executable
 
 val openingApplication = mutableStateOf(-1)
-val openingApplicationException = mutableStateOf(-1)
 
-class ApplicationUploadingWindow() : IWindow {
+class ApplicationUploadingWindow : IWindow {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     var finished = false
 
-    @Composable
     override fun render() {
         application {
             Window(
@@ -84,37 +78,19 @@ class ApplicationUploadingWindow() : IWindow {
 
     @Composable
     private fun openTeamApplication() {
-        try{
-            val teamApplication = TeamApplication(files[openingApplication.value],openingApplication.value)
-            // val table = Table(teamApplication.rows)
-            //Dialog(
-            //            onCloseRequest = { openingApplication.value = -1 },
-            //            title = "${files[openingApplication.value].name}",
-            //            state = rememberDialogState(width = 2000.dp, height = 1080.dp)
-            //        ) {
-            //            table.draw()
-            //            if (!table.isOpen.value) {
-            //                openingApplication.value = -1
-            //            }
-            //        }
-        }catch (e: Exception){
-            openingApplicationException.value = openingApplication.value
-        }
-        val table = TableView(
+        //должен быть нормальный код, но пока все зависит от tableView
+        //это работает
+        val table = WithHeaderTableView(
             listOf(
-                ColumnInfo("Фамилия", 200.dp),
-                ColumnInfo("Имя", 150.dp),
-                ColumnInfo("Отчество", 200.dp),
-                ColumnInfo("Г.р.", 100.dp, true)
-            ),
-            "src/main/resources/tableTest.csv"
+                listOf("Фамилия", "Имя", "Отчество", "Г.р."),
+            )
         )
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
             title = "Tatarstan Supergut",
             state = rememberDialogState(width = 2000.dp, height = 1080.dp)
         ) {
-            table.draw()
+            table.render()
             if (!table.isOpen.value) {
                 openingApplication.value = -1
             }
