@@ -4,8 +4,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import ru.emkn.kotlin.sms.view.table_view.ColumnInfo
-import ru.emkn.kotlin.sms.view.table_view.TableView
+import ru.emkn.kotlin.sms.view.table_view.*
 
 object View {
     fun render() {
@@ -15,15 +14,14 @@ object View {
                 title = "Tatarstan Supergut",
                 state = rememberWindowState(width = 2000.dp, height = 1080.dp)
             ) {
-                TableView(
+                MutableTableView(
                     listOf(
-                        ColumnInfo("Фамилия", 200.dp),
-                        ColumnInfo("Имя", 150.dp),
-                        ColumnInfo("Отчество", 200.dp),
-                        ColumnInfo("Г.р.", 100.dp, true)
-                    ),
-                    "src/main/resources/tableTest.csv"
-                ).draw()
+                        listOf("Фамилия", "Имя", "Отчество", "Г.р."),
+                        listOf("Москаленко", "Тимофей", "Дмитриевич", "2004"),
+                        listOf("Миргалимова", "Розалина", "Зуфаровна", "2003"),
+                        listOf("Сибгатуллин", "Данил", "Игоревич", "2002"),
+                    )
+                ).render()
             }
         }
     }
