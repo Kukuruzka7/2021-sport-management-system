@@ -35,6 +35,16 @@ interface StartWindowManager : WindowManager {
 }
 
 class StartWindow(val winManager: StartWindowManager) : IWindow(winManager) {
+
+    companion object {
+        val WIDTH = 700.dp
+        val HEIGHT = 400.dp
+        val WELCOME_SIGN_PADDING = 50.dp
+        val BUTTONS_OFFSET = 35.dp
+        val BACKGROUND_COLOR = Color(0xF1111111)
+        val TEXT_COLOR = Color(0xF1dddddd)
+    }
+
     @Composable
     override fun render() {
         Window(
@@ -64,15 +74,6 @@ class StartWindow(val winManager: StartWindowManager) : IWindow(winManager) {
         }
     }
 
-    companion object {
-        val WIDTH = 700.dp
-        val HEIGHT = 400.dp
-        val WELCOME_SIGN_PADDING = 50.dp
-        val BUTTONS_OFFSET = 35.dp
-        val BACKGROUND_COLOR = Color(0xF1353638)
-        val TEXT_COLOR = Color(0xF1B9B9B9)
-    }
-
     open class StartWindowButton(
         private val text: String, private val icon: ImageVector, private val onClick: () -> Unit
     ) : IButton {
@@ -89,15 +90,16 @@ class StartWindow(val winManager: StartWindowManager) : IWindow(winManager) {
                         icon,
                         modifier = Modifier.size(40.dp),
                         contentDescription = "кнопочка",
-                        tint = TEXT_COLOR
+                        tint = ICON_COLOR
                     )
                 }
-                Text(text, color = TEXT_COLOR)
+                Text(text, color = ICON_COLOR)
             }
         }
 
         companion object {
             val CORNERS = 4.dp
+            val ICON_COLOR = Color(0xF12A7BF6)
         }
     }
 
