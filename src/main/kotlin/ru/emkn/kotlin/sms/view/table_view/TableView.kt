@@ -10,14 +10,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.emkn.kotlin.sms.view.text_field.ITextField
 
+enum class TableType {
+    START_PROTOCOL,
+    FINISH_PROTOCOL,
+    APPLICATION,
+    CHECKPOINT_RES,
+}
+
 abstract class TableView(
     list: List<List<String>>,
 ) {
-    constructor(columnsCount: Int) : this(List(columnsCount) { emptyList() })
 
     val columnsCount: Int
 
-    open fun getFirstRow(list: List<List<String>>): List<ColumnInfo> = List(columnsCount) { ColumnInfo("", 150.dp) }
+    open fun getFirstRow(list: List<List<String>>): List<ColumnInfo> = List(columnsCount) { ColumnInfo("", 100.dp) }
     open fun getOtherRows(list: List<List<String>>): MutableList<MutableList<MutableState<String>>> =
         list.map { sublist -> sublist.map { mutableStateOf(it) }.toMutableList() }.toMutableList()
 

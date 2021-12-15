@@ -14,13 +14,14 @@ object View {
                 title = "Tatarstan Supergut",
                 state = rememberWindowState(width = 2000.dp, height = 1080.dp)
             ) {
-                MutableTableView(
+                WithHeaderMutableTableView(
                     listOf(
                         listOf("Фамилия", "Имя", "Отчество", "Г.р."),
                         listOf("Москаленко", "Тимофей", "Дмитриевич", "2004"),
                         listOf("Миргалимова", "Розалина", "Зуфаровна", "2003"),
                         listOf("Сибгатуллин", "Данил", "Игоревич", "2002"),
-                    )
+                    ),
+                    TableType.APPLICATION
                 ).render()
             }
         }

@@ -9,7 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.emkn.kotlin.sms.view.text_field.ITextField
 
-class WithHeaderTableView(list: List<List<String>>) : TableView(list), IWithHeaderTableView {
+class WithHeaderTableView(list: List<List<String>>, type: TableType) : TableView(list), IWithHeaderTableView {
+
+    init {
+        require(type == TableType.FINISH_PROTOCOL || type == TableType.START_PROTOCOL) { "WithHeaderTableView не подходит для типа ${type}" }
+    }
 
     private class HeaderTextField(private val modifier: Modifier, private val str: String) : ITextField {
         val HEIGHT = 50.dp
@@ -27,7 +31,9 @@ class WithHeaderTableView(list: List<List<String>>) : TableView(list), IWithHead
     }
 
     override fun getFirstRow(list: List<List<String>>): List<ColumnInfo> {
-        return list.first().map { ColumnInfo(it, 200.dp) }
+        return list.first().map {
+            it.toColumnType().getInfo(it)
+        }
     }
 
     override fun getOtherRows(list: List<List<String>>): MutableList<MutableList<MutableState<String>>> {

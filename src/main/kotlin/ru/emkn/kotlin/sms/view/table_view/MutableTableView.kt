@@ -16,9 +16,13 @@ import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
 
-open class MutableTableView(list: List<List<String>>) : TableView(list), IMutableTableView {
+open class MutableTableView(list: List<List<String>>, type: TableType) : TableView(list), IMutableTableView {
 
-    constructor(columnsCount: Int) : this(List(columnsCount) { emptyList() })
+    init {
+        require(type == TableType.CHECKPOINT_RES || type == TableType.APPLICATION) {"MutableTableView не подходит для типа ${type}"}
+    }
+
+    constructor(columnsCount: Int, type: TableType) : this(List(columnsCount) { emptyList() }, type)
 
     protected class SaveButton(private val modifier: Modifier, override val onClick: () -> Unit) : ISaveButton {
         val WIDTH = 120.dp
@@ -99,7 +103,7 @@ open class MutableTableView(list: List<List<String>>) : TableView(list), IMutabl
     override fun drawTableRow(row: MutableList<MutableState<String>>) {
         repeat(row.size) { i ->
             CellTextField(Modifier.width(firstRow[i].width), row[i].value) { str ->
-                row[i].value = str.filter { ('0'..'9').contains(it) || !firstRow[i].onlyDigits }
+                row[i].value = firstRow[i].filter(str)
             }.render()
         }
     }

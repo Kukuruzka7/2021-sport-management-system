@@ -25,6 +25,7 @@ import ru.emkn.kotlin.sms.view.IWindow
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
+import ru.emkn.kotlin.sms.view.table_view.TableType
 import ru.emkn.kotlin.sms.view.table_view.WithHeaderTableView
 import java.awt.FileDialog
 import java.io.File
@@ -83,7 +84,8 @@ class ApplicationUploadingWindow : IWindow {
         val table = WithHeaderTableView(
             listOf(
                 listOf("Фамилия", "Имя", "Отчество", "Г.р."),
-            )
+            ),
+            TableType.FINISH_PROTOCOL
         )
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
