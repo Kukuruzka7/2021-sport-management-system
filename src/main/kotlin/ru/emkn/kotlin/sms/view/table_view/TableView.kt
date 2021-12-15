@@ -27,6 +27,7 @@ abstract class TableView(
     open fun getOtherRows(list: List<List<String>>): MutableList<MutableList<MutableState<String>>> =
         list.map { sublist -> sublist.map { mutableStateOf(it) }.toMutableList() }.toMutableList()
 
+    open val readOnly = false
     val firstRow: List<ColumnInfo>
     val rows: MutableList<MutableList<MutableState<String>>>
     val rowsCount: MutableState<Int>
@@ -48,7 +49,8 @@ abstract class TableView(
     open class CellTextField(
         private val modifier: Modifier,
         private val str: String,
-        private val onValueChange: (String) -> Unit
+        override val readOnly: Boolean,
+        private val onValueChange: (String) -> Unit,
     ) : ITextField {
         val HEIGHT = 50.dp
 
@@ -59,14 +61,14 @@ abstract class TableView(
                 singleLine = true,
                 value = str,
                 onValueChange = onValueChange,
-                readOnly = false,
+                readOnly = readOnly,
             )
         }
     }
 
     @Composable
     open fun drawTableRow(row: MutableList<MutableState<String>>) = repeat(row.size) { i ->
-        CellTextField(Modifier.width(firstRow[i].width), row[i].value) { }.render()
+        CellTextField(Modifier.width(firstRow[i].width), row[i].value, true) { }.render()
     }
 
     @Composable
@@ -98,3 +100,5 @@ abstract class TableView(
         rows: MutableList<MutableList<MutableState<String>>>
     ): List<List<String>> = listOf(firstRow.map { it.name }) + rows.map { list -> list.map { it.value } }
 }
+
+val applicationFirstRow = listOf("Фамилия","Имя","Пол", "Г.р.",	"Разряд")

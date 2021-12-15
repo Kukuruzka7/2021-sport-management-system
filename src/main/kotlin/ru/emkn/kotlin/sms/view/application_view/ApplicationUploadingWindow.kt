@@ -9,7 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +29,7 @@ import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
 import ru.emkn.kotlin.sms.view.table_view.TableType
+import ru.emkn.kotlin.sms.view.table_view.WithHeaderMutableTableView
 import ru.emkn.kotlin.sms.view.table_view.WithHeaderTableView
 import java.awt.FileDialog
 import java.io.File
@@ -35,7 +39,7 @@ val openingApplication = mutableStateOf(-1)
 class ApplicationUploadingWindow : IWindow {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
-    var finished = false
+    val finished = mutableStateOf(false)
 
     override fun render() {
         application {
@@ -59,7 +63,7 @@ class ApplicationUploadingWindow : IWindow {
                     Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
                         SaveButton {
                             exitApplication()
-                            finished = true
+                            finished.value = true
                         }.render()
                         NewFileButton(FileDialog(ComposeWindow())).render()
                     }
@@ -81,18 +85,21 @@ class ApplicationUploadingWindow : IWindow {
     private fun openTeamApplication() {
         //должен быть нормальный код, но пока все зависит от tableView
         //это работает
-        val table = WithHeaderTableView(
-            listOf(
-                listOf("Фамилия", "Имя", "Отчество", "Г.р."),
-            ),
-            TableType.FINISH_PROTOCOL
+
+        val table = WithHeaderMutableTableView(
+//            listOf(
+//                listOf("Фамилия", "Имя", "Отчество", "Г.р."),
+//            ),
+            TableType.APPLICATION
         )
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
             title = "Tatarstan Supergut",
             state = rememberDialogState(width = 2000.dp, height = 1080.dp)
         ) {
-            table.render()
+            Box(Modifier.fillMaxSize(0.7f), Alignment.Center) {
+                table.render()
+            }
             if (!table.isOpen.value) {
                 openingApplication.value = -1
             }
@@ -127,8 +134,8 @@ class ApplicationUploadingWindow : IWindow {
         override val HEIGHT = 50.dp
         override val WIDTH = 50.dp
 
-        override val text: String
-            get() = "–"
+        @Composable
+        private fun drawIcon() = Icon(Icons.Default.Delete, contentDescription = null)
 
         @Composable
         override fun render() {
@@ -137,7 +144,7 @@ class ApplicationUploadingWindow : IWindow {
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xF11BFF99)),
                 shape = CircleShape,
                 onClick = onClick
-            ) { Text(text) }
+            ) { drawIcon() }
         }
     }
 

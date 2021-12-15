@@ -19,12 +19,14 @@ import ru.emkn.kotlin.sms.view.button.ISaveButton
 open class MutableTableView(list: List<List<String>>, type: TableType) : TableView(list), IMutableTableView {
 
     init {
-        require(type == TableType.CHECKPOINT_RES || type == TableType.APPLICATION) {"MutableTableView не подходит для типа ${type}"}
+        require(type == TableType.CHECKPOINT_RES || type == TableType.APPLICATION) { "MutableTableView не подходит для типа ${type}" }
     }
 
     constructor(columnsCount: Int, type: TableType) : this(List(columnsCount) { emptyList() }, type)
 
-    protected class SaveButton(private val modifier: Modifier, override val onClick: () -> Unit) : ISaveButton {
+    override val readOnly: Boolean = false
+
+    protected class SaveButton(override val onClick: () -> Unit) : ISaveButton {
         val WIDTH = 120.dp
         val HEIGHT = 50.dp
         override val text: String
@@ -33,7 +35,7 @@ open class MutableTableView(list: List<List<String>>, type: TableType) : TableVi
         @Composable
         override fun render() {
             Button(
-                modifier = modifier.height(HEIGHT).width(WIDTH),
+                modifier = Modifier.height(HEIGHT).width(WIDTH),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xF11BFF99)),
                 shape = CircleShape,
                 onClick = onClick
@@ -44,13 +46,9 @@ open class MutableTableView(list: List<List<String>>, type: TableType) : TableVi
     }
 
 
-
     protected class DeleteRowButton(private val onClick: () -> Unit) : IDeleteFileButton {
         override val HEIGHT = 50.dp
         override val WIDTH = 50.dp
-
-        override val text: String
-            get() = "–"
 
         @Composable
         private fun drawIcon() = Icon(Icons.Default.Delete, contentDescription = null)
@@ -92,17 +90,22 @@ open class MutableTableView(list: List<List<String>>, type: TableType) : TableVi
                 rows.add(MutableList(columnsCount) { mutableStateOf("") })
                 rowsCount.value = rows.size
             }.render()
-            SaveButton(Modifier.align(Alignment.TopEnd)) {
+        }
+    }
+
+    @Composable
+    override fun drawFirstRow(row: List<ColumnInfo>) {
+        Row {
+            SaveButton {
                 isOpen.value = false
             }.render()
         }
     }
 
-
     @Composable
     override fun drawTableRow(row: MutableList<MutableState<String>>) {
         repeat(row.size) { i ->
-            CellTextField(Modifier.width(firstRow[i].width), row[i].value) { str ->
+            CellTextField(Modifier.width(firstRow[i].width), row[i].value, readOnly) { str ->
                 row[i].value = firstRow[i].filter(str)
             }.render()
         }

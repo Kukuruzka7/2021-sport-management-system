@@ -17,6 +17,7 @@ class WithHeaderTableView(list: List<List<String>>, type: TableType) : TableView
 
     private class HeaderTextField(private val modifier: Modifier, private val str: String) : ITextField {
         val HEIGHT = 50.dp
+        override val readOnly: Boolean = true
 
         @Composable
         override fun render() {
@@ -25,7 +26,7 @@ class WithHeaderTableView(list: List<List<String>>, type: TableType) : TableView
                 singleLine = true,
                 value = str,
                 onValueChange = { },
-                readOnly = true,
+                readOnly = readOnly,
             )
         }
     }

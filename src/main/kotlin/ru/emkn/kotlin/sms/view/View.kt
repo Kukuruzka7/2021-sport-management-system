@@ -5,6 +5,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import ru.emkn.kotlin.sms.view.table_view.*
+import java.io.File
 
 object View {
     fun render() {
@@ -14,14 +15,10 @@ object View {
                 title = "Tatarstan Supergut",
                 state = rememberWindowState(width = 2000.dp, height = 1080.dp)
             ) {
-                WithHeaderMutableTableView(
-                    listOf(
-                        listOf("Фамилия", "Имя", "Отчество", "Г.р."),
-                        listOf("Москаленко", "Тимофей", "Дмитриевич", "2004"),
-                        listOf("Миргалимова", "Розалина", "Зуфаровна", "2003"),
-                        listOf("Сибгатуллин", "Данил", "Игоревич", "2002"),
-                    ),
-                    TableType.APPLICATION
+                WithHeaderTableView(
+                    File("src/main/resources/competitions/NadeusZarabotaet/finishProtocol/overallCSV.csv").readLines().drop(2)
+                        .map { it.split(",") },
+                    TableType.FINISH_PROTOCOL
                 ).render()
             }
         }
