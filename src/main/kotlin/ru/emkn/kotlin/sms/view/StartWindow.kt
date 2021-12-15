@@ -11,6 +11,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -26,28 +28,36 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import ru.emkn.kotlin.sms.view.button.IButton
 
-class StartWindow : IWindow {
+interface StartWindowManager : WindowManager {
+    fun closeStartWindow()
+
+    fun openAplUplWindow()
+}
+
+class StartWindow(val winManager: StartWindowManager) : IWindow(winManager) {
+    @Composable
     override fun render() {
-        application {
-            Window(
-                onCloseRequest = ::exitApplication,
-                title = ":)",
-                state = WindowState(
-                    width = WIDTH,
-                    height = HEIGHT
-                )
-            ) {
-                Box(Modifier.fillMaxSize().background(BACKGROUND_COLOR)) {
-                    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        WelcomeSign(Modifier.padding(vertical = WELCOME_SIGN_PADDING)).render()
-                        Row(
-                            modifier = Modifier.fillMaxSize().offset(y = BUTTONS_OFFSET),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            CreateButton {}.render()
-                            OpenButton {}.render()
-                        }
+        Window(
+            onCloseRequest = { winManager.closeStartWindow() },
+            title = "kek",
+            state = WindowState(
+                width = WIDTH,
+                height = HEIGHT
+            )
+        ) {
+            Box(Modifier.fillMaxSize().background(BACKGROUND_COLOR)) {
+                Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    WelcomeSign(Modifier.padding(vertical = WELCOME_SIGN_PADDING)).render()
+                    Row(
+                        modifier = Modifier.fillMaxSize().offset(y = BUTTONS_OFFSET),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        CreateButton {
+                            winManager.openAplUplWindow()
+                            winManager.closeStartWindow()
+                        }.render()
+                        OpenButton {}.render()
                     }
                 }
             }
