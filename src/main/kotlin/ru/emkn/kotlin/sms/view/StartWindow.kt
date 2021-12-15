@@ -28,14 +28,18 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import ru.emkn.kotlin.sms.view.button.IButton
 
-class StartWindow : IWindow() {
-    override val state: MutableState<Boolean> = mutableStateOf(true)
+interface StartWindowManager : WindowManager {
+    fun closeStartWindow()
 
+    fun openAplUplWindow()
+}
+
+class StartWindow(val winManager: StartWindowManager) : IWindow(winManager) {
     @Composable
     override fun render() {
         Window(
-            onCloseRequest = { state.value = false },
-            title = ":)",
+            onCloseRequest = { winManager.closeStartWindow() },
+            title = "kek",
             state = WindowState(
                 width = WIDTH,
                 height = HEIGHT
@@ -50,7 +54,8 @@ class StartWindow : IWindow() {
                         verticalAlignment = Alignment.Top
                     ) {
                         CreateButton {
-                            Controller.windows[1].state.value = true; Controller.windows[0].state.value = false
+                            winManager.openAplUplWindow()
+                            winManager.closeStartWindow()
                         }.render()
                         OpenButton {}.render()
                     }

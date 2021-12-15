@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import ru.emkn.kotlin.sms.view.IWindow
+import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
@@ -28,8 +29,12 @@ import java.io.File
 
 val openingApplication = mutableStateOf(-1)
 
-class ApplicationUploadingWindow : IWindow() {
-    override val state: MutableState<Boolean> = mutableStateOf(false)
+interface AplUplWinManager : WindowManager {
+    fun closeAplUplWindow()
+    fun saveApplication(files: List<File>)
+}
+
+class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(winManager) {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     var finished = false
@@ -37,7 +42,7 @@ class ApplicationUploadingWindow : IWindow() {
     @Composable
     override fun render() {
         Window(
-            onCloseRequest = { state.value = false },
+            onCloseRequest = { winManager.closeAplUplWindow() },
             title = "Upload team's applications",
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {

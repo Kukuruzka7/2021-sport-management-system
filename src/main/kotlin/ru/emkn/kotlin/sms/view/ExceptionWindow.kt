@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
-import ru.emkn.kotlin.sms.view.application_view.openingApplicationException
+
 
 //interface ExceptionWindow : IWindow {
 //    override val state: MutableState<Boolean> = mutableStateOf(false)
