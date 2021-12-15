@@ -105,7 +105,6 @@ class StartWindow(val winManager: StartWindowManager) : IWindow(winManager) {
     private class OpenButton(onClick: () -> Unit) : StartWindowButton("Открыть", Icons.Default.PlayArrow, onClick)
 
     private class WelcomeSign(val modifier: Modifier) {
-        @OptIn(ExperimentalComposeUiApi::class)
         @Composable
         fun render() {
             Text(
