@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms.view
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application

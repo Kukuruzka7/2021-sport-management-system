@@ -31,14 +31,17 @@ import ru.emkn.kotlin.sms.view.table_view.ColumnInfo
 import ru.emkn.kotlin.sms.view.table_view.TableView
 import java.awt.FileDialog
 import java.io.File
+import java.lang.reflect.Executable
 
 val openingApplication = mutableStateOf(-1)
+val openingApplicationException = mutableStateOf(-1)
 
 class ApplicationUploadingWindow() : IWindow {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     var finished = false
 
+    @Composable
     override fun render() {
         application {
             Window(
@@ -81,8 +84,22 @@ class ApplicationUploadingWindow() : IWindow {
 
     @Composable
     private fun openTeamApplication() {
-        //должен быть нормальный код, но пока все зависит от tableView
-        //это работает
+        try{
+            val teamApplication = TeamApplication(files[openingApplication.value],openingApplication.value)
+            // val table = Table(teamApplication.rows)
+            //Dialog(
+            //            onCloseRequest = { openingApplication.value = -1 },
+            //            title = "${files[openingApplication.value].name}",
+            //            state = rememberDialogState(width = 2000.dp, height = 1080.dp)
+            //        ) {
+            //            table.draw()
+            //            if (!table.isOpen.value) {
+            //                openingApplication.value = -1
+            //            }
+            //        }
+        }catch (e: Exception){
+            openingApplicationException.value = openingApplication.value
+        }
         val table = TableView(
             listOf(
                 ColumnInfo("Фамилия", 200.dp),
