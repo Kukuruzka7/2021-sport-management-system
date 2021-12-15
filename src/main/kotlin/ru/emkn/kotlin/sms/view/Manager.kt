@@ -7,13 +7,14 @@ import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
 import java.io.File
 
 
-class Manager : AplUplWinManager, StartWindowManager {
+class Manager(val model: IModel) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager {
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
     fun create(win: Win) {
         map[win] = when (win) {
             Win.START -> StartWindow(this)
             Win.APPLICATION_UPLOADING -> ApplicationUploadingWindow(this)
+            Win.COMPETITION -> CompetitionWindow(model.competition, this)
         }
         map[win]?.state?.value = true
     }
@@ -35,4 +36,6 @@ class Manager : AplUplWinManager, StartWindowManager {
     override fun closeStartWindow() = close(Win.START)
 
     override fun closeAplUplWindow() = close(Win.APPLICATION_UPLOADING)
+
+    override fun closeCompWindow() = close(Win.COMPETITION)
 }
