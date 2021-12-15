@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import ru.emkn.kotlin.sms.view.IWindow
+import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
@@ -36,45 +37,48 @@ import java.io.File
 
 val openingApplication = mutableStateOf(-1)
 
-class ApplicationUploadingWindow : IWindow {
+interface AplUplWinManager : WindowManager {
+    fun closeAplUplWindow()
+    fun saveApplication(files: List<File>)
+}
+
+class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(winManager) {
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     val finished = mutableStateOf(false)
 
+    @Composable
     override fun render() {
-        application {
-            Window(
-                onCloseRequest = ::exitApplication,
-                title = "Upload team's applications",
-                state = WindowState(width = WIDTH, height = HEIGHT)
+        Window(
+            onCloseRequest = { winManager.closeAplUplWindow() },
+            title = "Upload team's applications",
+            state = WindowState(width = WIDTH, height = HEIGHT)
+        ) {
+            if (openingApplication.value != -1) {
+                openTeamApplication()
+            }
+
+            val scrollState = rememberScrollState()
+
+            // Smooth scroll to specified pixels on first composition
+            LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
+
+            Column(
+                Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
             ) {
-                if (openingApplication.value != -1) {
-                    openTeamApplication()
+                Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
+                    SaveButton {
+                        finished.value = true
+                    }.render()
+                    NewFileButton(FileDialog(ComposeWindow())).render()
                 }
-
-                val scrollState = rememberScrollState()
-
-                // Smooth scroll to specified pixels on first composition
-                LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
-
-                Column(
-                    Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
-                ) {
-                    Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
-                        SaveButton {
-                            exitApplication()
-                            finished.value = true
+                for (i in 0 until count.value) {
+                    Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
+                        FileButton(files[i], i).render()
+                        DeleteFileButton {
+                            files.removeAt(i)
+                            count.value--
                         }.render()
-                        NewFileButton(FileDialog(ComposeWindow())).render()
-                    }
-                    for (i in 0 until count.value) {
-                        Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
-                            FileButton(files[i], i).render()
-                            DeleteFileButton {
-                                files.removeAt(i)
-                                count.value--
-                            }.render()
-                        }
                     }
                 }
             }
