@@ -17,13 +17,6 @@ import ru.emkn.kotlin.sms.view.table_view.*
 import java.io.File
 
 
-enum class Win {
-    START, APPLICATION_UPLOADING, COMPETITION;
-}
-
-interface WindowManager {
-}
-
 object View {
     fun render() {
         val compik = Competition(
@@ -36,7 +29,7 @@ object View {
             )
         )
         val manager = Manager(Model(compik))
-        manager.create(Win.START)
+        manager.create(Win.RESULT_UPLOADING)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {
