@@ -104,8 +104,8 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
     }
 
     private class FileButton(file: File, val numberOfResultFile: Int, val state: MutableState<Int>) : IButton {
-        var WIDTH = 50.dp
-        var HEIGHT = 500.dp
+        var WIDTH = 500.dp
+        var HEIGHT = 50.dp
         var CORNERS = 4.dp
         val text: String = file.name
 
@@ -116,7 +116,7 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
                 colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
                 modifier = Modifier
                     .clip(RoundedCornerShape(CORNERS))
-                    .size(HEIGHT, WIDTH)
+                    .size(WIDTH, HEIGHT)
                     .focusable(interactionSource = interactionSource),
                 onClick = {
                     state.value = numberOfResultFile
@@ -136,13 +136,6 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
 
         @Composable
         override fun render() {
-//            Button(
-//                colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
-//                modifier = Modifier.height(HEIGHT).width(WIDTH),
-//                shape = CircleShape,
-//                onClick = onClick
-//            ) { Text(text) }
-
             IconButton(
                 modifier = Modifier,
                 onClick = onClick,
@@ -151,7 +144,7 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
                     Icons.Filled.Delete,
                     modifier = Modifier.size(40.dp),
                     contentDescription = "кнопочка",
-                    tint = StartWindow.StartWindowButton.ICON_COLOR
+                    tint = ICON_COLOR
                 )
             }
         }
@@ -186,7 +179,7 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
                     count.value = files.size
                 }
             ) {
-                Text(text,color = TEXT_COLOR)
+                Text(text, color = TEXT_COLOR)
             }
         }
 
@@ -201,5 +194,6 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
         val BACKGROUND_COLOR = Color(0xF1111111)
         val TEXT_COLOR = Color(0xF1dddddd)
         var BUTTON_COLOR = Color(0xF1282828)
+        val ICON_COLOR = Color(0xF12A7BF6)
     }
 }

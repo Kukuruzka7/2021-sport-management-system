@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms.view.application_view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -7,9 +8,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,15 +20,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import ru.emkn.kotlin.sms.view.IWindow
+import ru.emkn.kotlin.sms.view.ResultUploadingWindow
 import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
+import ru.emkn.kotlin.sms.view.table_view.TableView
 import ru.emkn.kotlin.sms.view.table_view.WithHeaderTableView
+import java.awt.Cursor
 import java.awt.FileDialog
 import java.io.File
 
-val openingApplication = mutableStateOf(-1)
 
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
@@ -35,8 +38,12 @@ interface AplUplWinManager : WindowManager {
 }
 
 class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(winManager) {
+    val competitionName = mutableStateOf("")
+    val competitionDate = mutableStateOf("")
+    val competitionSportType = mutableStateOf("")
     val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
+    private val openingApplication = mutableStateOf(-1)
     var finished = false
 
     @Composable
@@ -46,41 +53,93 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
             title = "Upload team's applications",
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
-            if (openingApplication.value != -1) {
-                openTeamApplication()
-            }
-
-            val scrollState = rememberScrollState()
-
-            // Smooth scroll to specified pixels on first composition
-            LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
-
-            Column(
-                Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
+            Box(
+                Modifier.background(BACKGROUND_COLOR)
             ) {
-                Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
-                    SaveButton {
-                        finished = true
-                    }.render()
-                    NewFileButton(FileDialog(ComposeWindow())).render()
+                if (openingApplication.value != -1) {
+                    openTeamApplication()
                 }
-                for (i in 0 until count.value) {
-                    Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
-                        FileButton(files[i], i).render()
-                        DeleteFileButton {
-                            files.removeAt(i)
-                            count.value--
+
+                val scrollState = rememberScrollState()
+
+                // Smooth scroll to specified pixels on first composition
+                LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
+
+                Column(
+                    Modifier.padding(GOR_PAD, VER_PAD).fillMaxSize().verticalScroll(scrollState),
+                    Arrangement.spacedBy(UPPL_GAP)
+                ) {
+                    CompetitionDataButton("Название соревнования: ", competitionName.value) {
+                        competitionName.value = it
+                    }.render()
+                    CompetitionDataButton("Дата соревнования: ", competitionDate.value) {
+                        competitionDate.value = it
+                    }.render()
+                    CompetitionDataButton("Тип спорта: ", competitionSportType.value) {
+                        competitionSportType.value = it
+                    }.render()
+                    Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP)) {
+                        NewFileButton(FileDialog(ComposeWindow())).render()
+                        SaveButton {
+                            finished = true
                         }.render()
+                    }
+                    for (i in 0 until count.value) {
+                        Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
+                            FileButton(files[i], i, openingApplication).render()
+                            DeleteFileButton {
+                                files.removeAt(i)
+                                count.value--
+                            }.render()
+                        }
                     }
                 }
             }
         }
     }
 
+    private class CompetitionDataButton(
+        val textOfUnit: String,
+        val text: String,
+        private val onValueChange: (String) -> Unit
+    ) {
+
+        @Composable
+        fun render() {
+            Row(
+                Modifier.fillMaxWidth().height(HEIGHT),
+                Arrangement.spacedBy(MAIN_BUTTONS_GAP),
+                Alignment.CenterVertically
+            ) {
+                Text(modifier = Modifier.width(WIDTH_OF_TEXT), text = textOfUnit, color = TEXT_COLOR)
+                TextField(
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = BUTTON_COLOR,
+                        textColor = TEXT_COLOR,
+                        focusedIndicatorColor = FOCUS_COLOR,
+                        cursorColor = FOCUS_COLOR
+                    ),
+                    singleLine = true,
+                    value = text,
+                    onValueChange = onValueChange,
+                    readOnly = false
+                )
+            }
+        }
+
+        companion object {
+            var WIDTH_OF_TEXT = 200.dp
+            var HEIGHT = 50.dp
+            var CORNERS = 4.dp
+            val FOCUS_COLOR = Color(0xF12A7BF6)
+            val CURSOR_COLOR = Color(0xF12A7BF6)
+        }
+    }
+
+
     @Composable
     private fun openTeamApplication() {
-        //должен быть нормальный код, но пока все зависит от tableView
-        //это работает
+        //сюда надо написать открытие таблицы TODO
         val table = WithHeaderTableView(
             listOf(
                 listOf("Фамилия", "Имя", "Отчество", "Г.р."),
@@ -98,9 +157,9 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
         }
     }
 
-    private class FileButton(file: File, val numberOfApplication: Int) : IButton {
-        var WIDTH = 50.dp
-        var HEIGHT = 500.dp
+    private class FileButton(file: File, val numberOfApplication: Int, val state: MutableState<Int>) : IButton {
+        var WIDTH = 500.dp
+        var HEIGHT = 50.dp
         var CORNERS = 4.dp
         val text: String = file.name
 
@@ -108,15 +167,15 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
         override fun render() {
             val interactionSource = remember { MutableInteractionSource() }
             Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+                colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
                 modifier = Modifier
                     .clip(RoundedCornerShape(CORNERS))
-                    .size(HEIGHT, WIDTH)
+                    .size(WIDTH, HEIGHT)
                     .focusable(interactionSource = interactionSource),
                 onClick = {
-                    openingApplication.value = numberOfApplication
+                    state.value = numberOfApplication
                 }) {
-                Text(text = text, color = Color.White)
+                Text(text = text, color = TEXT_COLOR)
             }
         }
     }
@@ -131,35 +190,42 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
 
         @Composable
         override fun render() {
-            Button(
-                modifier = Modifier.height(HEIGHT).width(WIDTH),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xF11BFF99)),
-                shape = CircleShape,
-                onClick = onClick
-            ) { Text(text) }
+            IconButton(
+                modifier = Modifier,
+                onClick = onClick,
+            ) {
+                Icon(
+                    Icons.Filled.Delete,
+                    modifier = Modifier.size(40.dp),
+                    contentDescription = "кнопочка",
+                    tint = ICON_COLOR
+                )
+            }
         }
     }
 
     private class SaveButton(override val onClick: () -> Unit) : ISaveButton {
         override val text: String
-            get() = "Сохранить заявки"
+            get() = "Сохранить"
 
         @Composable
         override fun render() {
             Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
                 onClick = onClick
             ) {
-                Text(text)
+                Text(text, color = TEXT_COLOR)
             }
         }
     }
 
     private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
-        val text: String = "Загрузить файл"
+        val text: String = "Загрузить файлы"
 
         @Composable
         override fun render() {
             Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
                 onClick = {
                     fileDialog.isMultipleMode = true
                     fileDialog.isVisible = true
@@ -167,17 +233,23 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                     count.value = files.size
                 }
             ) {
-                Text(text)
+                Text(text, color = TEXT_COLOR)
             }
         }
 
     }
 
     companion object {
+        val GOR_PAD = 5.dp
+        val VER_PAD = 10.dp
         val UPPL_GAP = 5.dp
         val DEL_SHIFT = 5.dp
         val MAIN_BUTTONS_GAP = 5.dp
         val WIDTH = 1500.dp
         val HEIGHT = 1000.dp
+        val BACKGROUND_COLOR = Color(0xF1111111)
+        val TEXT_COLOR = Color(0xF1dddddd)
+        var BUTTON_COLOR = Color(0xF1282828)
+        val ICON_COLOR = Color(0xF12A7BF6)
     }
 }
