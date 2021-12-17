@@ -1,12 +1,11 @@
 package ru.emkn.kotlin.sms.view.application_view
 
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -22,16 +21,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.mouse.MouseScrollUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import ru.emkn.kotlin.sms.view.IWindow
+import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
-import ru.emkn.kotlin.sms.view.table_view.TableType
-import ru.emkn.kotlin.sms.view.table_view.WithHeaderMutableTableView
-import ru.emkn.kotlin.sms.view.table_view.WithHeaderTableView
+import ru.emkn.kotlin.sms.view.table_view.*
 import java.awt.FileDialog
 import java.io.File
 
@@ -64,7 +63,7 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
             LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
 
             Column(
-                Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
+                Modifier.wrapContentWidth().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
             ) {
                 Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
                     SaveButton {
@@ -99,10 +98,30 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
             title = "Tatarstan Supergut",
-            state = rememberDialogState(width = 2000.dp, height = 1080.dp)
+            state = rememberDialogState(
+                width = StartWindow.WIDTH,
+                height = StartWindow.HEIGHT
+            ),
+
         ) {
-            Box(Modifier.fillMaxSize(0.7f), Alignment.Center) {
-                table.render()
+            Box(Modifier.fillMaxSize().background(StartWindow.BACKGROUND_COLOR), Alignment.CenterEnd ) {
+                val listState = rememberLazyListState()
+                val tableCells = MutableList(1) { MutableList(applicationFirstRow.size) { mutableStateOf("") } }
+                TableContent(
+                    modifier = Modifier.wrapContentSize().align(Alignment.Center),
+                    mutable = true,
+                    drawHeader = true,
+                    firstRow = applicationFirstRow.map { it.toColumnType().getInfo(it) },
+                    tableCells
+                )
+//                HorizontalScrollbar(
+//                    modifier = Modifier.align(Alignment.BottomCenter).fillMaxHeight(),
+//                    adapter = rememberScrollbarAdapter(scrollState = listState)
+//                )
+//                VerticalScrollbar(
+//                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+//                    adapter = rememberScrollbarAdapter(scrollState = listState)
+//                )
             }
             if (!table.isOpen.value) {
                 openingApplication.value = -1

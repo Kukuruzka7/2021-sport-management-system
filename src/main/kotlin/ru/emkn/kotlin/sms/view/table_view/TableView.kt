@@ -2,6 +2,9 @@ package ru.emkn.kotlin.sms.view.table_view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +18,108 @@ enum class TableType {
     FINISH_PROTOCOL,
     APPLICATION,
     CHECKPOINT_RES,
+}
+
+val HEIGHT = 50.dp
+val WIDTH = 50.dp
+
+@Composable
+fun HeaderTextField(modifier: Modifier, str: String) {
+    TextField(
+        modifier = modifier,
+        singleLine = true,
+        value = str,
+        onValueChange = { },
+        readOnly = true,
+    )
+}
+
+@Composable
+fun Header(row: List<ColumnInfo>) {
+    repeat(row.size) { i -> HeaderTextField(Modifier.width(row[i].width).height(HEIGHT), row[i].name) }
+}
+
+@Composable
+fun DeleteRowButton(onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier.height(HEIGHT).width(WIDTH),
+        onClick = onClick,
+    ) { Icon(Icons.Default.Delete, contentDescription = null) }
+}
+
+@Composable
+fun AddRowButton(onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier.height(HEIGHT).width(WIDTH),
+        onClick = onClick,
+    ) { Icon(Icons.Default.Add, contentDescription = null) }
+}
+
+@Composable
+fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<ColumnInfo>, mutable: Boolean) =
+    repeat(list.size) { i ->
+        if (mutable) {
+            TextField(
+                modifier = Modifier.width(firstRow[i].width).height(HEIGHT),
+                singleLine = true,
+                value = list[i].value,
+                onValueChange = { list[i].value = firstRow[i].filter(it) },
+                readOnly = false,
+            )
+        } else {
+            TextField(
+                modifier = Modifier.width(firstRow[i].width).height(HEIGHT),
+                singleLine = true,
+                value = list[i].value,
+                onValueChange = { },
+                readOnly = true,
+            )
+        }
+    }
+
+@Composable
+fun TableContent(
+    modifier: Modifier,
+    mutable: Boolean = false,
+    drawHeader: Boolean = false,
+    firstRow: List<ColumnInfo> = emptyList(),
+    contentRows: MutableList<MutableList<MutableState<String>>>,
+) {
+    val rowsCount = mutableStateOf( contentRows.size )
+    Column(modifier, Arrangement.spacedBy(5.dp)) {
+        if (drawHeader) {
+            Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(5.dp), Alignment.Top) {
+                Header(firstRow)
+                if (mutable) {
+                    AddRowButton {
+                        contentRows.add(0, MutableList(firstRow.size) { mutableStateOf("") })
+                        println(contentRows.size)
+                        rowsCount.value = contentRows.size
+                        println(rowsCount.value)
+                    }
+                }
+            }
+        }
+        repeat(rowsCount.value) { i ->
+            Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(5.dp), Alignment.Top) {
+                drawRow(contentRows[i], firstRow, mutable)
+                if (mutable) {
+                    AddRowButton {
+                        contentRows.add(i + 1, MutableList(firstRow.size) { mutableStateOf("") })
+                        println(contentRows.size)
+                        rowsCount.value = contentRows.size
+                        println(rowsCount.value)
+                    }
+                    DeleteRowButton {
+                        contentRows.removeAt(i)
+                        println(contentRows.size)
+                        rowsCount.value = contentRows.size
+                        println(rowsCount.value)
+                    }
+                }
+            }
+        }
+    }
 }
 
 abstract class TableView(
@@ -101,4 +206,4 @@ abstract class TableView(
     ): List<List<String>> = listOf(firstRow.map { it.name }) + rows.map { list -> list.map { it.value } }
 }
 
-val applicationFirstRow = listOf("Фамилия","Имя","Пол", "Г.р.",	"Разряд")
+val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.", "Разряд")

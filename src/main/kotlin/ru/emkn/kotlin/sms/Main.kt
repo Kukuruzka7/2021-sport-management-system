@@ -47,8 +47,15 @@ const val dir = "src/main/resources/competitions/"
 
 fun main(args: Array<String>) {
     logger.info { "Начало работы программы." }
-//    View.render()
-    ApplicationUploadingWindow().render()
+    val list = MutableList(10) {it}
+    list.add(5, 10000)
+    println(list)
+    list.add(11, 10001)
+    println(list)
+    list.add(11, 10001)
+    println(list)
+    View.render()
+//    ApplicationUploadingWindow().render()
 //    println(StartWindow().render())
     /*if (checkEmptyInput(args)) return
     when (getBehavior(args[0])) {
