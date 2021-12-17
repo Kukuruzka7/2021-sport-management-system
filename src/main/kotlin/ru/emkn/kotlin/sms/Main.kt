@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms
 
+import androidx.compose.runtime.Composable
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
@@ -15,6 +16,8 @@ import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
+import ru.emkn.kotlin.sms.view.CompetitionWindow
+import ru.emkn.kotlin.sms.view.Manager
 import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.View
 import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
