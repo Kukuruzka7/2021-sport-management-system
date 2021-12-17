@@ -5,12 +5,10 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +24,6 @@ import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
-import ru.emkn.kotlin.sms.view.table_view.WithHeaderTableView
 import java.awt.FileDialog
 import java.io.File
 
@@ -85,21 +82,15 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
 
     @Composable
     private fun openResult() {
-        //сюда надо написать открытие таблицы TODO
-        val table = WithHeaderTableView(
-            listOf(
-                listOf("Фамилия", "Имя", "Отчество", "Г.р."),
-            )
-        )
         Dialog(
             onCloseRequest = { openingResult.value = -1 },
             title = "Tatarstan Supergut",
             state = rememberDialogState(width = 2000.dp, height = 1080.dp)
         ) {
-            table.render()
-            if (!table.isOpen.value) {
-                openingResult.value = -1
-            }
+//            table.render()
+//            if (!table.isOpen.value) {
+//                openingResult.value = -1
+//            }
         }
     }
 
@@ -131,8 +122,6 @@ class ResultUploadingWindow(val winManager: ResUplWinManager) : IWindow(winManag
         override val HEIGHT = 50.dp
         override val WIDTH = 50.dp
 
-        override val text: String
-            get() = "–"
 
         @Composable
         override fun render() {

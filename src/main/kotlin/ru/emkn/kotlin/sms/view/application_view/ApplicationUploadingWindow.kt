@@ -1,15 +1,12 @@
 package ru.emkn.kotlin.sms.view.application_view
 
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,13 +14,19 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.view.IWindow
+import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.button.IButton
 import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
-import ru.emkn.kotlin.sms.view.table_view.WithHeaderTableView
+import ru.emkn.kotlin.sms.view.table_view.TableContent
+import ru.emkn.kotlin.sms.view.table_view.TableType
+import ru.emkn.kotlin.sms.view.table_view.applicationFirstRow
 import java.awt.FileDialog
 import java.io.File
 
@@ -91,6 +94,10 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                         }
                     }
                 }
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(scrollState = scrollState)
+                )
             }
         }
     }
@@ -136,15 +143,7 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
 
     @Composable
     private fun openTeamApplication() {
-        //должен быть нормальный код, но пока все зависит от tableView
-        //это работает
-
-        val table = WithHeaderMutableTableView(
-//            listOf(
-//                listOf("Фамилия", "Имя", "Отчество", "Г.р."),
-//            ),
-            TableType.APPLICATION
-        )
+        val isOpen = mutableStateOf(true)
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
             title = "Tatarstan Supergut",
@@ -152,28 +151,30 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                 width = StartWindow.WIDTH,
                 height = StartWindow.HEIGHT
             ),
-
-        ) {
-            Box(Modifier.fillMaxSize().background(StartWindow.BACKGROUND_COLOR), Alignment.CenterEnd ) {
-                val listState = rememberLazyListState()
+            ) {
+            Box(Modifier.fillMaxSize().background(StartWindow.BACKGROUND_COLOR), Alignment.CenterEnd) {
+                val tableStateVertical = rememberScrollState(0)
+                val tableStateHorizontal = rememberScrollState(0)
                 val tableCells = MutableList(1) { MutableList(applicationFirstRow.size) { mutableStateOf("") } }
                 TableContent(
-                    modifier = Modifier.wrapContentSize().align(Alignment.Center),
-                    mutable = true,
-                    drawHeader = true,
-                    firstRow = applicationFirstRow.map { it.toColumnType().getInfo(it) },
-                    tableCells
+                    type = TableType.APPLICATION,
+                    modifier = Modifier.wrapContentSize()
+                        .align(Alignment.TopCenter)
+                        .verticalScroll(tableStateVertical)
+                        .horizontalScroll(tableStateHorizontal),
+                    open = isOpen,
+                    contentRows = tableCells
                 )
-//                HorizontalScrollbar(
-//                    modifier = Modifier.align(Alignment.BottomCenter).fillMaxHeight(),
-//                    adapter = rememberScrollbarAdapter(scrollState = listState)
-//                )
-//                VerticalScrollbar(
-//                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-//                    adapter = rememberScrollbarAdapter(scrollState = listState)
-//                )
+                HorizontalScrollbar(
+                    modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+                    adapter = rememberScrollbarAdapter(scrollState = tableStateHorizontal)
+                )
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(scrollState = tableStateVertical)
+                )
             }
-            if (!table.isOpen.value) {
+            if (!isOpen.value) {
                 openingApplication.value = -1
             }
         }
@@ -206,9 +207,6 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
 
         override val HEIGHT = 50.dp
         override val WIDTH = 50.dp
-
-        @Composable
-        private fun drawIcon() = Icon(Icons.Default.Delete, contentDescription = null)
 
         @Composable
         override fun render() {
@@ -258,7 +256,6 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                 Text(text)
             }
         }
-
     }
 
     companion object {
