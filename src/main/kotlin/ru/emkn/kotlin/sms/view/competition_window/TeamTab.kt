@@ -5,7 +5,9 @@ import androidx.compose.ui.Modifier
 import ru.emkn.kotlin.sms.model.Team
 import ru.emkn.kotlin.sms.view.IModel
 
-class TeamTab(teamList: List<Team>, _modifier: Modifier): ITab(TabEnum.TEAMS, _modifier) {
+data class TeamHyperlink(val team: Team, val csvName: String)
+
+class TeamTab(val teamLinks: List<TeamHyperlink>, _modifier: Modifier) : ITab(TabEnum.TEAMS, _modifier) {
     @Composable
     override fun render() {
         TODO("Not yet implemented")
