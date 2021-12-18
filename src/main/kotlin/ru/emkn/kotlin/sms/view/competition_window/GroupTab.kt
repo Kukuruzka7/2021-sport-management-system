@@ -16,7 +16,7 @@ data class GroupHyperlink(val name: String, val csvName: String)
 class GroupTab(private val groupLinks: List<GroupHyperlink>, _modifier: Modifier) : ITab(TabEnum.GROUPS, _modifier) {
     @Composable
     override fun render() {
-        Row(modifier = modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Column (modifier = modifier.fillMaxSize()) {
             LinkColumn(groupLinks.filterIndexed { index, _ -> index % 2 == 0 })
             LinkColumn(groupLinks.filterIndexed { index, _ -> index % 2 == 1 })
         }
