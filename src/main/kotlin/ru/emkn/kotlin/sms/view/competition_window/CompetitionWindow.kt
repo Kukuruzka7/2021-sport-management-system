@@ -1,6 +1,6 @@
 package ru.emkn.kotlin.sms.view.competition_window
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +28,8 @@ import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
+import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
+import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import java.awt.datatransfer.Clipboard
 
@@ -129,10 +132,23 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
             Box(
                 modifier = Modifier.clip(RoundedCornerShape(CORNERS)).background(color = FOREGROUND_C)
             ) {
-                Column(modifier = Modifier.fillMaxWidth().absolutePadding(bottom = PADDING)) {
+                val scrollState = rememberScrollState()
+                Column(
+                    modifier = Modifier.fillMaxWidth().absolutePadding(bottom = PADDING)
+                        .verticalScroll(state = scrollState)
+                ) {
                     TopPanel(tabState)
                     factory.get(tabState, Modifier.fillMaxWidth()).render()
                 }
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(scrollState = scrollState),
+                    style = ScrollbarStyle(
+                        hoverColor = SCROLLBAR_HOVER_C, unhoverColor = SCROLLBAR_UNHOVER_C,
+                        minimalHeight = 16.dp, thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp), hoverDurationMillis = 300,
+                    )
+                )
             }
         }
 

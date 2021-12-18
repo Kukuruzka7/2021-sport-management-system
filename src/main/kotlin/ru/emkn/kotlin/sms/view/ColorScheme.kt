@@ -7,5 +7,7 @@ object ColorScheme {
     val FOREGROUND_C = Color(0xF1282828) //темно-серый
     val TEXT_C = Color(0xF1DDDDDD) //почти белый
     val ACCENT_C = Color(0xF12A7BF6) //синий#808080
-    val GREY_C = Color(0xF1808080)
+    val GREY_C = Color(0xF1808080) //серый
+    val SCROLLBAR_HOVER_C = Color(0xF18f8f8f)
+    val SCROLLBAR_UNHOVER_C = Color(0xF1383838)
 }
