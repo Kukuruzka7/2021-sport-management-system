@@ -24,10 +24,11 @@ enum class TableType {
     CHECKPOINT_RES,
 }
 
-val TEXT_COLOR = Color(0xF1dddddd)
-val HEIGHT = 50.dp
-val WIDTH = 50.dp
-val ICON_COLOR = Color(0xF12A7BF6)
+private val TEXT_COLOR = Color(0xF1dddddd)
+private val ROW_HEIGHT = 50.dp
+private val BTN_HEIGHT = 50.dp
+private val BTN_WIDTH = 50.dp
+private val ICON_COLOR = Color(0xF12A7BF6)
 
 @Composable
 fun HeaderTextField(modifier: Modifier, str: String) {
@@ -42,40 +43,40 @@ fun HeaderTextField(modifier: Modifier, str: String) {
 }
 
 @Composable
-fun Header(row: List<ColumnInfo>) {
-    repeat(row.size) { i -> HeaderTextField(Modifier.width(row[i].width).height(HEIGHT), row[i].name) }
+private fun Header(row: List<ColumnInfo>) {
+    repeat(row.size) { i -> HeaderTextField(Modifier.width(row[i].width).height(ROW_HEIGHT), row[i].name) }
 }
 
 @Composable
-fun DeleteRowButton(onClick: () -> Unit) {
+private fun DeleteRowButton(onClick: () -> Unit) {
     IconButton(
-        modifier = Modifier.height(HEIGHT).width(WIDTH),
+        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
     ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ICON_COLOR) }
 }
 
 @Composable
-fun AddRowButton(onClick: () -> Unit) {
+private fun AddRowButton(onClick: () -> Unit) {
     IconButton(
-        modifier = Modifier.height(HEIGHT).width(WIDTH),
+        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
     ) { Icon(Icons.Default.Add, contentDescription = null, tint = ICON_COLOR) }
 }
 
 @Composable
-fun HomeButton(onClick: () -> Unit) {
+private fun HomeButton(onClick: () -> Unit) {
     IconButton(
-        modifier = Modifier.height(HEIGHT).width(WIDTH),
+        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
     ) { Icon(Icons.Default.Home, contentDescription = null, tint = ICON_COLOR) }
 }
 
 @Composable
-fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<ColumnInfo>, mutable: Boolean) =
+private fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<ColumnInfo>, mutable: Boolean) =
     repeat(list.size) { i ->
         if (mutable) {
             TextField(
-                modifier = Modifier.width(firstRow[i].width).height(HEIGHT),
+                modifier = Modifier.width(firstRow[i].width).height(ROW_HEIGHT),
                 singleLine = true,
                 value = list[i].value,
                 onValueChange = { list[i].value = firstRow[i].filter(it) },
@@ -84,7 +85,7 @@ fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<ColumnInfo>,
             )
         } else {
             TextField(
-                modifier = Modifier.width(firstRow[i].width).height(HEIGHT),
+                modifier = Modifier.width(firstRow[i].width).height(ROW_HEIGHT),
                 singleLine = true,
                 value = list[i].value,
                 onValueChange = { },

@@ -18,15 +18,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.view.IWindow
 import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.button.IButton
-import ru.emkn.kotlin.sms.view.button.IDeleteFileButton
 import ru.emkn.kotlin.sms.view.button.ISaveButton
-import ru.emkn.kotlin.sms.view.table_view.TableContent
-import ru.emkn.kotlin.sms.view.table_view.TableType
-import ru.emkn.kotlin.sms.view.table_view.applicationFirstRow
+import ru.emkn.kotlin.sms.view.table_view.*
 import java.awt.FileDialog
 import java.io.File
 
@@ -79,10 +77,16 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                         competitionSportType.value = it
                     }.render()
                     Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP)) {
-                        NewFileButton(FileDialog(ComposeWindow())).render()
+                        val fileDialog = FileDialog(ComposeWindow())
+                        NewFilesButton(Modifier) {
+                            fileDialog.isMultipleMode = true
+                            fileDialog.isVisible = true
+                            files += fileDialog.files.filter { it.name.endsWith(".csv") }
+                            count.value = files.size
+                        }
                         SaveButton {
                             finished.value = true
-                        }.render()
+                        }
                     }
                     for (i in 0 until count.value) {
                         Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
@@ -90,7 +94,7 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                             DeleteFileButton {
                                 files.removeAt(i)
                                 count.value--
-                            }.render()
+                            }
                         }
                     }
                 }
@@ -144,18 +148,21 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
     @Composable
     private fun openTeamApplication() {
         val isOpen = mutableStateOf(true)
+        val application = TeamApplication(files[openingApplication.value], openingApplication.value)
+        val rows = application.rows.drop(2)
+        val name = application.teamName.name
+        val tableCells = rows.map { list -> list.map { mutableStateOf(it) }.toMutableList() }.toMutableList()
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
-            title = "Tatarstan Supergut",
+            title = name,
             state = rememberDialogState(
                 width = StartWindow.WIDTH,
                 height = StartWindow.HEIGHT
             ),
-            ) {
+        ) {
             Box(Modifier.fillMaxSize().background(StartWindow.BACKGROUND_COLOR), Alignment.CenterEnd) {
                 val tableStateVertical = rememberScrollState(0)
                 val tableStateHorizontal = rememberScrollState(0)
-                val tableCells = MutableList(1) { MutableList(applicationFirstRow.size) { mutableStateOf("") } }
                 TableContent(
                     type = TableType.APPLICATION,
                     modifier = Modifier.wrapContentSize()
@@ -203,60 +210,6 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
         }
     }
 
-    private class DeleteFileButton(private val onClick: () -> Unit) : IDeleteFileButton {
-
-        override val HEIGHT = 50.dp
-        override val WIDTH = 50.dp
-
-        @Composable
-        override fun render() {
-            IconButton(
-                modifier = Modifier.height(HEIGHT).width(WIDTH),
-                onClick = onClick,
-            ) {
-                Icon(
-                    Icons.Filled.Delete,
-                    modifier = Modifier.size(40.dp),
-                    contentDescription = "кнопочка",
-                    tint = ICON_COLOR
-                )
-            }
-        }
-    }
-
-    private class SaveButton(override val onClick: () -> Unit) : ISaveButton {
-        override val text: String
-            get() = "Сохранить"
-
-        @Composable
-        override fun render() {
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
-                onClick = onClick
-            ) {
-                Text(text, color = TEXT_COLOR)
-            }
-        }
-    }
-
-    private inner class NewFileButton(val fileDialog: FileDialog) : IButton {
-        val text: String = "Загрузить файлы"
-
-        @Composable
-        override fun render() {
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
-                onClick = {
-                    fileDialog.isMultipleMode = true
-                    fileDialog.isVisible = true
-                    files += fileDialog.files
-                    count.value = files.size
-                }
-            ) {
-                Text(text)
-            }
-        }
-    }
 
     companion object {
         val GOR_PAD = 5.dp
@@ -267,8 +220,45 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
         val WIDTH = 1500.dp
         val HEIGHT = 1000.dp
         val BACKGROUND_COLOR = Color(0xF1111111)
-        val TEXT_COLOR = Color(0xF1dddddd)
-        var BUTTON_COLOR = Color(0xF1282828)
-        val ICON_COLOR = Color(0xF12A7BF6)
     }
+}
+
+
+private val TEXT_COLOR = Color(0xF1dddddd)
+private val BUTTON_COLOR = Color(0xF1282828)
+private val ICON_COLOR = Color(0xF12A7BF6)
+private val BTN_HEIGHT = 50.dp
+private val BTN_WIDTH = 50.dp
+
+
+@Composable
+private fun SaveButton(onClick: () -> Unit) {
+    val text = "Сохранить"
+    Button(
+        colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
+        onClick = onClick
+    ) {
+        Text(text, color = TEXT_COLOR)
+    }
+}
+
+@Composable
+private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
+    val text = "Загрузить файлы"
+    Button(
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
+        onClick = onClick
+    ) {
+        Text(text, color = TEXT_COLOR)
+    }
+}
+
+
+@Composable
+private fun DeleteFileButton(onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
+        onClick = onClick,
+    ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ICON_COLOR) }
 }
