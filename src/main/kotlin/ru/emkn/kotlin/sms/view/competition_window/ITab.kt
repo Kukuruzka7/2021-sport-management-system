@@ -37,10 +37,27 @@ class TabFactory(private val model: IModel) {
 
 
     private fun create(tabEnum: TabEnum, modifier: Modifier, model: IModel): ITab = when (tabEnum) {
-        TabEnum.GROUPS -> GroupTab(model.competition.groupList, modifier)
-        TabEnum.TEAMS -> GroupTab(model.competition.groupList, modifier)
-        TabEnum.ATHLETES -> GroupTab(model.competition.groupList, modifier)
-        TabEnum.START_PROTOCOLS -> GroupTab(model.competition.groupList, modifier)
-        TabEnum.RESULT -> GroupTab(model.competition.groupList, modifier)
+        TabEnum.GROUPS -> GroupTab(
+            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
+            modifier
+        )
+        TabEnum.TEAMS -> GroupTab(
+            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
+            modifier
+        )
+        TabEnum.ATHLETES -> GroupTab(
+            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
+            modifier
+        )
+        TabEnum.START_PROTOCOLS -> GroupTab(model.competition.groupList.map {
+            GroupHyperlink(
+                it.race.groupName.value,
+                ""
+            )
+        }, modifier)
+        TabEnum.RESULT -> GroupTab(
+            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
+            modifier
+        )
     }
 }

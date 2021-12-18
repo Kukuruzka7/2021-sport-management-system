@@ -125,7 +125,7 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
 
     class MainBlock(val model: IModel) {
         val tabState = mutableStateOf(TabEnum.GROUPS)
-        private val factory = TabFactory(model)
+        private val tabFactory = TabFactory(model)
 
         @Composable
         fun render() {
@@ -134,11 +134,12 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
             ) {
                 val scrollState = rememberScrollState()
                 Column(
-                    modifier = Modifier.fillMaxWidth().absolutePadding(bottom = PADDING)
+                    modifier = Modifier.fillMaxSize().absolutePadding(bottom = PADDING)
                         .verticalScroll(state = scrollState)
                 ) {
                     TopPanel(tabState)
-                    factory.get(tabState, Modifier.fillMaxWidth()).render()
+                    Divider(color = GREY_C, thickness = DIVIDER_THICKNESS)
+                    tabFactory.get(tabState, Modifier.fillMaxSize()).render()
                 }
                 VerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
@@ -155,6 +156,7 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
         companion object {
             val CORNERS = 15.dp
             val PADDING = 15.dp
+            val DIVIDER_THICKNESS = 0.5.dp
         }
 
         @Composable
