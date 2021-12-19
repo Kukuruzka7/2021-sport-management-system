@@ -35,6 +35,7 @@ import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.table_view.TableContent
 import ru.emkn.kotlin.sms.view.table_view.TableType
+import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
 import java.awt.FileDialog
 import java.io.File
 
@@ -48,8 +49,8 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val competitionName = mutableStateOf("")
     private val competitionDate = mutableStateOf("")
     private val competitionSportType = mutableStateOf("")
-    private val files: MutableList<File> = mutableListOf()
-    private val count = mutableStateOf(files.size)
+    private val teamApplications: MutableList<TeamApplication> = mutableListOf()
+    private val count = mutableStateOf(teamApplications.size)
     private val openingApplication = mutableStateOf(-1)
     var finished = mutableStateOf(false)
 
@@ -57,7 +58,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     override fun render() {
         Window(
             onCloseRequest = { winManager.closeAplUplWindow() },
-            title = "Upload team's applications",
+            title = "Загрузка командных заявок",
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
             Box(
@@ -88,8 +89,9 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isMultipleMode = true
                             fileDialog.isVisible = true
-                            files += fileDialog.files.filter { it.name.endsWith(".csv") }
-                            count.value = files.size
+                            teamApplications += fileDialog.files.filter { it.name.endsWith(".csv") }
+                                .mapIndexed { idx, it -> TeamApplication(it, idx + count.value) }
+                            count.value = teamApplications.size
                         }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
                             finished.value = true
@@ -97,11 +99,11 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                     }
                     repeat(count.value) { i ->
                         Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
-                            FileButton(files[i].name) {
+                            FileButton(teamApplications[i].teamName) {
                                 openingApplication.value = i
                             }
                             DeleteFileButton {
-                                files.removeAt(i)
+                                teamApplications.removeAt(i)
                                 count.value--
                             }
                         }
@@ -124,10 +126,10 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     @Composable
     private fun openTeamApplication() {
         val isOpen = mutableStateOf(true)
-        val application = TeamApplication(files[openingApplication.value], openingApplication.value)
-        val rows = application.rows.drop(2)
+        val application = teamApplications[openingApplication.value]
+        val rows = application.rows
         val name = application.teamName
-        val tableCells = rows.map { list -> list.map { mutableStateOf(it) }.toMutableList() }.toMutableList()
+        val tableCells = rows.toMListMListStr()
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
             title = name,
@@ -145,9 +147,10 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         .align(Alignment.TopCenter)
                         .verticalScroll(tableStateVertical)
                         .horizontalScroll(tableStateHorizontal),
-                    open = isOpen,
                     contentRows = tableCells
-                )
+                ) {
+                    teamApplications[openingApplication.value] = TeamApplication(application, tableCells)
+                }
                 HorizontalScrollbar(
                     modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
                     adapter = rememberScrollbarAdapter(scrollState = tableStateHorizontal),
@@ -181,11 +184,11 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     }
 }
 
-
 private val BTN_HEIGHT = 50.dp
 private val BTN_WIDTH = 50.dp
 private val FILE_BTN_WIDTH = 500.dp
 private val CORNERS = 4.dp
+private val WIDTH_OF_TEXT = 200.dp
 
 @Composable
 private fun FileButton(name: String, onClick: () -> Unit) {
@@ -204,27 +207,21 @@ private fun FileButton(name: String, onClick: () -> Unit) {
 
 @Composable
 private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
-//    val text = "Сохранить"
     IconButton(
         modifier = modifier,
-//        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
         onClick = onClick
     ) {
         Icon(Icons.Default.ArrowForward, contentDescription = null, tint = ACCENT_C)
-//        Text(text, color = TEXT_C)
     }
 }
 
 @Composable
 private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
-//    val text = "Загрузить файлы"
     IconButton(
         modifier = modifier,
-//        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
         onClick = onClick
     ) {
         Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C)
-//        Text(text, color = TEXT_C)
     }
 }
 
@@ -236,8 +233,6 @@ private fun DeleteFileButton(onClick: () -> Unit) {
         onClick = onClick,
     ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ACCENT_C) }
 }
-
-var WIDTH_OF_TEXT = 200.dp
 
 @Composable
 private fun drawCompetitionDataRow(

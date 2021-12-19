@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms.model.application
 
+import androidx.compose.runtime.MutableState
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import logger
@@ -9,6 +10,7 @@ import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.athlete.Category
 import ru.emkn.kotlin.sms.model.athlete.Name
 import ru.emkn.kotlin.sms.model.athlete.Sex
+import ru.emkn.kotlin.sms.view.table_view.toListListStr
 import java.io.File
 
 fun getRows(file: File, indexOfApplication: Int): List<List<String>> =
@@ -21,23 +23,27 @@ fun getRows(file: File, indexOfApplication: Int): List<List<String>> =
     }
 
 //по данным из заявки получение данных об атлетах
-class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApplication: Int) {
+class TeamApplication(val teamName: String, val rows: List<List<String>>, private val indexOfApplication: Int) {
 
-    val teamName: String
     val team: Team
 
+    constructor(application: TeamApplication, contentRows: MutableList<MutableList<MutableState<String>>>) : this(
+        application.teamName,
+        contentRows.toListListStr(),
+        application.indexOfApplication
+    )
+
     constructor(file: File, indexOfApplication: Int) : this(
-        file.name,
-        getRows(file, indexOfApplication),
+        getRows(file, indexOfApplication)[0][0],
+        getRows(file, indexOfApplication).drop(2),
         indexOfApplication
     )
 
     init {
-        logger.trace { "Создание экземпляра класса TeamApplication(file = ${fileName})" }
+        logger.trace { "Создание экземпляра класса TeamApplication(file = ${teamName})" }
         checkFormatOfApplication(indexOfApplication, rows)
-        teamName = rows[0][0]
         team = Team(teamName, emptyList())
-        team.athletes = processingData(rows.subList(2, rows.size), teamName)
+        team.athletes = processingData(rows, teamName)
     }
 
     companion object {
@@ -55,10 +61,11 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
                 logger.error { "В заявке $numberOfApplication нет данных об атлетах." }
                 throw ApplicationHasWrongFormat(numberOfApplication)
             }
-            for (i in 2..rows.lastIndex) {
-                checkRow(rows[i], numberOfApplication)
+            rows.forEach {
+                checkRow(it, numberOfApplication)
             }
         }
+
         //private
         fun checkRow(row: List<String>, numberOfApplication: Int) {
             logger.trace { "Вызов checkRow(${row})" }
@@ -79,6 +86,7 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
                 throw WrongCategoryInApplicationOnLine(numberOfApplication, row[Fields.BIRTH_DATE.ordinal])
             }
         }
+
         //private
         fun processingRow(row: List<String>, teamName: String): Athlete {
             logger.trace { "Вызов processingRow(row.size = ${row.size})" }
@@ -96,6 +104,7 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
                 _groupName = GroupName("$sex${birthDate.year}"),
             )
         }
+
         //private
         fun processingData(rows: List<List<String>>, teamName: String): List<Athlete> {
             logger.trace { "Вызов processingData(rows)" }
