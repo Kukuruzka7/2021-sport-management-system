@@ -42,8 +42,9 @@ class TabFactory(private val model: Model) {
         require(model.competition != null)
         return when (tabEnum) {
             TabEnum.GROUPS -> {
-                val courses = csvReader().readAll(File(model.coursesFilename))
-                GroupsTab(courses, modifier)
+                val races =
+                    model.competition!!.groupList.map { it.race.checkPoints.map { checkpoint -> checkpoint.name } }
+                GroupsTab(races, modifier)
             }
             TabEnum.TEAMS -> TeamsTab(
                 model.competition!!.teamList.map { Hyperlink(it.name) {} }, modifier

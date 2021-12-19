@@ -163,7 +163,7 @@ fun TableContentImmutable(
     type: TableType,
     modifier: Modifier,
     list: List<List<String>>,
-    saveBtnAction: () -> Unit,
+    saveBtnAction: () -> Unit = {},
 ) {
     when (type) {
         TableType.FINISH_PROTOCOL -> {

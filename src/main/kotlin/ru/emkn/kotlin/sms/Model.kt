@@ -11,7 +11,6 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
     var competition: Competition? = null
     val competitionBuilder = CompetitionBuilder()
     var stage: MutableState<Stage> = mutableStateOf(Stage.ONGOING)
-    val coursesFilename = "sample-data/courses.csv"
 
     init {
         competitionBuilder.info(_info).application(_application)
