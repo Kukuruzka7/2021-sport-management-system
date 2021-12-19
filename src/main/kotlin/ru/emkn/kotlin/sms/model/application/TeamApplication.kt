@@ -36,7 +36,7 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
     init {
         logger.trace { "Создание экземпляра класса TeamApplication(file = ${fileName})" }
         checkFormatOfApplication(indexOfApplication, rows)
-        teamName = TeamName(rows[0][0])
+        teamName = rows[0][0]
         team = Team(teamName, emptyList())
         team.athletes = processingData(rows.subList(2, rows.size), teamName)
     }
@@ -60,7 +60,6 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
                 checkRow(rows[i], numberOfApplication)
             }
         }
-
         //private
         fun checkRow(row: List<String>, numberOfApplication: Int) {
             logger.trace { "Вызов checkRow(${row})" }
@@ -81,7 +80,6 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
                 throw WrongCategoryInApplicationOnLine(numberOfApplication, row[Fields.BIRTH_DATE.ordinal])
             }
         }
-
         //private
         fun processingRow(row: List<String>, teamName: TeamName): Athlete {
             logger.trace { "Вызов processingRow(row.size = ${row.size})" }
@@ -99,7 +97,6 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
                 _groupName = GroupName("$sex${birthDate.year}"),
             )
         }
-
         //private
         fun processingData(rows: List<List<String>>, teamName: TeamName): List<Athlete> {
             logger.trace { "Вызов processingData(rows)" }

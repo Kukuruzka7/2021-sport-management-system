@@ -22,6 +22,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
+import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
@@ -38,9 +39,12 @@ import ru.emkn.kotlin.sms.view.table_view.TableType
 import java.awt.FileDialog
 import java.io.File
 
+val openingApplication = mutableStateOf(-1)
+
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
     fun saveApplication(files: List<File>)
+    fun saveMetaInfo(info: MetaInfo)
 }
 
 class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWindow(winManager) {
@@ -50,7 +54,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     private val openingApplication = mutableStateOf(-1)
-    private val finished = mutableStateOf(false)
+    var finished = mutableStateOf(false)
 
     @Composable
     override fun render() {
@@ -60,8 +64,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
             Box(
-                modifier = Modifier.background(BACKGROUND_C).fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
+                Modifier.background(BACKGROUND_COLOR)
             ) {
                 if (openingApplication.value != -1) {
                     openTeamApplication()

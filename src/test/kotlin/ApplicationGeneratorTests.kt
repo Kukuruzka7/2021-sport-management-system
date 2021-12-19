@@ -1,7 +1,6 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import org.junit.Test
-import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.start
 import java.io.File
@@ -18,11 +17,11 @@ internal class ApplicationGeneratorTests {
     val categories = listOf("Iю", "IIю", "IIIю", "I", "II", "III", "КМС", "МС", "ММС")
     var iteration = 0
 
-    val result = mutableListOf<List<String>>()
+    val result = mutableListOf<List<kotlin.String>>()
 
-    fun generator(teamName: TeamName) {
-        csvWriter().open(dir + teamName.name + ".csv") {
-            writeRow(teamName.name, "", "", "", "")
+    fun generator(teamName: String) {
+        csvWriter().open("$dir$teamName.csv") {
+            writeRow(teamName, "", "", "", "")
             writeRow("Фамилия", "Имя", "Пол", "Год рождения", "Спорт категория")
             repeat(20) {
                 iteration++
@@ -68,9 +67,12 @@ internal class ApplicationGeneratorTests {
             "src/test/resources/ApplicationGeneratorTests/ApplicationsNames"
         )
         repeat(20) {
-            generator(TeamName(it.toString()))
+            generator(it.toString())
         }
         start(args)
-        assertEquals(csvReader().readAll(File("src/main/resources/competitions/testStart/competitionData.csv")), result.toList())
+        assertEquals(
+            csvReader().readAll(File("src/main/resources/competitions/testStart/competitionData.csv")),
+            result.toList()
+        )
     }
 }

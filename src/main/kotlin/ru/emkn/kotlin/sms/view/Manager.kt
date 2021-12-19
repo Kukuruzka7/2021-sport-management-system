@@ -1,5 +1,7 @@
 package ru.emkn.kotlin.sms.view
 
+import ru.emkn.kotlin.sms.model.MetaInfo
+import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.view.application_view.AplUplWinManager
 import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
 import ru.emkn.kotlin.sms.view.competition_window.CompetitionWindow
@@ -10,38 +12,50 @@ enum class Win {
     START, APPLICATION_UPLOADING, COMPETITION, RESULT_UPLOADING;
 }
 
-interface WindowManager {
-}
+interface WindowManager
 
-class Manager(val model: IModel) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
+class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
-    fun create(win: Win) {
+
+    fun open(win: Win) {
         map[win] = when (win) {
             Win.START -> StartWindow(this)
             Win.APPLICATION_UPLOADING -> ApplicationUploadingWindow(this)
             Win.COMPETITION -> CompetitionWindow(model, this)
             Win.RESULT_UPLOADING -> ResultUploadingWindow(this)
         }
-        map[win]?.state?.value = true
+        map[win]!!.state.value = true
     }
 
     fun close(win: Win) {
+        //require бы написать (ДС)
         map[win]?.state?.value = false
         map[win] = null
     }
 
     override fun saveApplication(files: List<File>) {
-        TODO("Not yet implemented")
+        val application: Application = TODO()
+        model.competitionBuilder.application(application)
+        model.checkBuilder()
+    }
+
+    override fun saveMetaInfo(info: MetaInfo) {
+        model.competitionBuilder.info(info)
+        model.checkBuilder()
     }
 
     override fun openAplUplWindow() {
         map[Win.APPLICATION_UPLOADING] = ApplicationUploadingWindow(this)
-        map[Win.APPLICATION_UPLOADING]?.state?.value = true
+        map[Win.APPLICATION_UPLOADING]!!.state.value = true
     }
 
     override fun openCompetitionWindow(name: String) {
-        TODO("Not yet implemented")
+        open(Win.COMPETITION)
+    }
+
+    override fun openCompetitionNameDialogueField(): String {
+        return "Nadeus Zarabotaet"
     }
 
     override fun closeStartWindow() = close(Win.START)
@@ -50,9 +64,14 @@ class Manager(val model: IModel) : AplUplWinManager, StartWindowManager, Competi
 
     override fun closeCompWindow() = close(Win.COMPETITION)
 
+    override fun openCSV(fileName: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun closeResUplWindow() = close(Win.RESULT_UPLOADING)
 
     override fun saveResults(files: List<File>) {
+        model.stage.value = Model.Companion.Stage.FINISHED
         TODO("Not yet implemented")
     }
 }
