@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.view.Model
 import java.io.File
 
@@ -42,9 +43,7 @@ class TabFactory(private val model: Model) {
         require(model.competition != null)
         return when (tabEnum) {
             TabEnum.GROUPS -> {
-                val races =
-                    model.competition!!.groupList.map { it.race.checkPoints.map { checkpoint -> checkpoint.name } }
-                GroupsTab(races, modifier)
+                GroupsTab(buildRacesTable(model.competition!!.groupList), modifier)
             }
             TabEnum.TEAMS -> TeamsTab(
                 model.competition!!.teamList.map { Hyperlink(it.name) {} }, modifier
@@ -58,4 +57,16 @@ class TabFactory(private val model: Model) {
             TabEnum.RESULT -> ResultsTab(modifier, model)
         }
     }
+
+    fun buildRacesTable(groupList: List<Group>): List<List<String>> {
+        val races = groupList.map {
+            it.race.checkPoints.map { checkpoint -> checkpoint.name }.toMutableList()
+                .apply { add(0, it.race.groupName.value) }
+        }
+        val maxLen = races.maxOf { it.size }
+        races.forEach { it + List(maxLen - it.size) { "" } }
+        return races.map { it.toList() }
+    }
+
+
 }
