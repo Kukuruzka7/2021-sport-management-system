@@ -35,35 +35,37 @@ class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier
     private class NoResultTab(private val modifier: Modifier) {
         @Composable
         fun render() {
-            Column(
-                modifier = modifier.padding(NO_RESULT_PADDING),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(SPACING)
-            ) {
-                Text(
-                    text = NO_RESULT_TEXT,
-                    fontSize = NO_RESULT_FONT_SIZE,
-                    color = TEXT_C
-                )
-                Text(
-                    text = SUGGESTION_TEXT,
-                    fontSize = SUGGESTION_FONT_SIZE,
-                    color = TEXT_C
-                )
-                Row() {
-                    DownloadResultByAthletesButton(Modifier)
-                    DownloadResultByCheckpointButton(Modifier)
+            Box(modifier = modifier.padding(PADDING).fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(
+                    modifier = Modifier.wrapContentSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(SPACING)
+                ) {
+                    Text(
+                        text = NO_RESULT_TEXT,
+                        fontSize = NO_RESULT_FONT_SIZE,
+                        color = TEXT_C
+                    )
+                    Text(
+                        text = SUGGESTION_TEXT,
+                        fontSize = SUGGESTION_FONT_SIZE,
+                        color = TEXT_C
+                    )
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        DownloadResultByAthletesButton(Modifier)
+                        DownloadResultByCheckpointButton(Modifier)
+                    }
                 }
             }
         }
 
         private companion object {
             const val NO_RESULT_TEXT = "Результаты пока не были загружены в систему"
-            val NO_RESULT_FONT_SIZE = 15.sp
-            val NO_RESULT_PADDING = 10.dp
+            val NO_RESULT_FONT_SIZE = 16.sp
+            val PADDING = 15.dp
             const val SUGGESTION_TEXT = "Вы можете сделать это сейчас:"
-            val SUGGESTION_FONT_SIZE = 12.sp
-            val SPACING = 10.dp
+            val SUGGESTION_FONT_SIZE = 14.sp
+            val SPACING = 20.dp
         }
 
         @Composable
@@ -80,11 +82,11 @@ class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier
 
         @Composable
         private fun DownloadResultByAthletesButton(modifier: Modifier) =
-            DownloadResultsButton(modifier, "По атлетам") {}
+            DownloadResultsButton(modifier, "По спортсменам") {}
 
         @Composable
         private fun DownloadResultByCheckpointButton(modifier: Modifier) =
-            DownloadResultsButton(modifier, "По контрольным пунктам") {}
+            DownloadResultsButton(modifier, "По пунктам") {}
 
     }
 
