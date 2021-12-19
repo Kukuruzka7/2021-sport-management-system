@@ -135,9 +135,9 @@ fun finishByCheckPoints(inputData: Array<String>) {
     val name = inputData[FieldsFinish.NAME.ordinal]
     logger.info { "Проверка на существование соревнования." }
     if (checkCompetitionExist(name)) return
-    logger.info { "Получение результатов по контрольным точкам." }
+    logger.info { "Получение результатов атлетов." }
     val data: List<List<String>> = getData(name) ?: return
-    logger.info { "Результаты получены." }
+    logger.info { "Результаты атлетов получены." }
     val info: MetaInfo = getMetaInfo(name) ?: return
     logger.info { "Создание Competition." }
     val competition: Competition = getCompetition(data, info) ?: return
@@ -153,6 +153,17 @@ fun finishByCheckPoints(inputData: Array<String>) {
     logger.info { "FinishProtocol успешно сохранен." }
     println("Финальные протоколы для соревнования ${competition.info.name} сохранены в src/main/resources/competitions/${competition.info.name}/finishProtocol/.")
     logger.info { "Завершение finishByCheckPoints." }
+}
+
+private fun getCompetition(name: String): Competition? {
+    logger.info { "Проверка на существование соревнования." }
+    if (checkCompetitionExist(name)) return null
+    logger.info { "Получение результатов по контрольным точкам." }
+    val data: List<List<String>> = getData(name) ?: return null
+    logger.info { "Результаты получены." }
+    val info: MetaInfo = getMetaInfo(name) ?: return null
+    logger.info { "Создание Competition." }
+    return getCompetition(data, info)
 }
 
 private fun getApplication(teamApplicationNames: List<String>): Application? {

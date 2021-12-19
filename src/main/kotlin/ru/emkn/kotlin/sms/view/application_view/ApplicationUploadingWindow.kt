@@ -23,7 +23,6 @@ import ru.emkn.kotlin.sms.view.IWindow
 import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.button.IButton
-import ru.emkn.kotlin.sms.view.button.ISaveButton
 import ru.emkn.kotlin.sms.view.table_view.*
 import java.awt.FileDialog
 import java.io.File
@@ -160,7 +159,7 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                 height = StartWindow.HEIGHT
             ),
         ) {
-            Box(Modifier.fillMaxSize().background(StartWindow.BACKGROUND_COLOR), Alignment.CenterEnd) {
+            Box(Modifier.fillMaxSize().background(BACKGROUND_COLOR), Alignment.CenterEnd) {
                 val tableStateVertical = rememberScrollState(0)
                 val tableStateHorizontal = rememberScrollState(0)
                 TableContent(
