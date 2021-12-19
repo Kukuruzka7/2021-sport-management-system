@@ -3,7 +3,6 @@ package ru.emkn.kotlin.sms.view.competition_window
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,16 +11,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
-import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
@@ -31,14 +26,14 @@ import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
-import java.awt.datatransfer.Clipboard
 
 interface CompetitionWindowsManager : WindowManager {
     fun closeCompWindow()
+    fun openCSV(fileName: String)
 }
 
 
-class CompetitionWindow(private val model: IModel, private val winManager: CompetitionWindowsManager) :
+class CompetitionWindow(private val model: Model, private val winManager: CompetitionWindowsManager) :
     IWindow(winManager) {
 
     companion object {
@@ -61,7 +56,7 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
                     verticalArrangement = Arrangement.spacedBy(SPACING)
                 ) {
                     CompetitionName(info.name)
-                    InfoBlock(info).render()
+                    InfoBlock(info, model.stage.value).render()
                     MainBlock(model).render()
                 }
             }
@@ -78,7 +73,7 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
     }
 
 
-    class InfoBlock(private val info: MetaInfo) {
+    class InfoBlock(private val info: MetaInfo, private val stage: Model.Companion.Stage) {
         @Composable
         fun render() {
             Box(modifier = Modifier.clip(RoundedCornerShape(CORNERS)).background(FOREGROUND_C)) {
@@ -91,7 +86,7 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
                     Divider(color = GREY_C, thickness = DIVIDER_THICKNESS)
                     TextBlock("дата проведения", info.date.toString())
                     Divider(color = GREY_C, thickness = DIVIDER_THICKNESS)
-                    TextBlock("текущее состояние", "идёт")
+                    TextBlock("текущее состояние", stage.toRussian())
                 }
             }
         }
@@ -121,9 +116,14 @@ class CompetitionWindow(private val model: IModel, private val winManager: Compe
                 )
             }
         }
+
+        fun Model.Companion.Stage.toRussian(): String = when (this) {
+            Model.Companion.Stage.ONGOING -> "идёт"
+            Model.Companion.Stage.FINISHED -> "завершено"
+        }
     }
 
-    class MainBlock(val model: IModel) {
+    class MainBlock(val model: Model) {
         val tabState = mutableStateOf(TabEnum.GROUPS)
         private val tabFactory = TabFactory(model)
 

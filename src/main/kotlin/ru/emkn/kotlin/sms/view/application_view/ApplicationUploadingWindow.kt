@@ -18,7 +18,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
+import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
 import ru.emkn.kotlin.sms.view.IWindow
 import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.WindowManager
@@ -33,6 +35,7 @@ val openingApplication = mutableStateOf(-1)
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
     fun saveApplication(files: List<File>)
+    fun saveMetaInfo(info: MetaInfo)
 }
 
 class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(winManager) {
@@ -150,7 +153,7 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
         val isOpen = mutableStateOf(true)
         val application = TeamApplication(files[openingApplication.value], openingApplication.value)
         val rows = application.rows.drop(2)
-        val name = application.teamName.name
+        val name = application.teamName
         val tableCells = rows.map { list -> list.map { mutableStateOf(it) }.toMutableList() }.toMutableList()
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
@@ -160,7 +163,7 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                 height = StartWindow.HEIGHT
             ),
         ) {
-            Box(Modifier.fillMaxSize().background(StartWindow.BACKGROUND_COLOR), Alignment.CenterEnd) {
+            Box(Modifier.fillMaxSize().background(BACKGROUND_C), Alignment.CenterEnd) {
                 val tableStateVertical = rememberScrollState(0)
                 val tableStateHorizontal = rememberScrollState(0)
                 TableContent(

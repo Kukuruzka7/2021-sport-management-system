@@ -17,14 +17,14 @@ class Competition {
     val athleteList: List<Athlete>
     val groupList: List<Group>
     val athleteByNumber: Map<AthleteNumber, Athlete>
-    val checkPointsByGroupName: Map<String, List<Checkpoint>>
+    val checkPointsByGroupName: Map<kotlin.String, List<Checkpoint>>
 
     companion object {
         //private
         fun generateTeamListByAthleteList(athList: List<Athlete>): List<Team> {
             logger.trace { "Вызов generateTeamListByAthleteList(athList.size = ${athList.size})" }
-            val teamMap = athList.groupBy { it.teamName.name }
-            return teamMap.map { Team(TeamName(it.key), it.value) }
+            val teamMap = athList.groupBy { it.teamName }
+            return teamMap.map { Team(it.key, it.value) }
         }
 
         //private
@@ -76,7 +76,7 @@ class Competition {
         }, info.toStringList())
     }
 
-    fun getCheckPoint(groupName: GroupName): List<String> {
+    fun getCheckPoint(groupName: GroupName): List<kotlin.String> {
         val result = checkPointsByGroupName[groupName.value]
         require(result != null)
         return result.map { it.name }

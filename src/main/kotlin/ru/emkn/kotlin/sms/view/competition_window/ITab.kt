@@ -3,14 +3,13 @@ package ru.emkn.kotlin.sms.view.competition_window
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import ru.emkn.kotlin.sms.view.IModel
 import ru.emkn.kotlin.sms.view.Model
 
 enum class TabEnum {
     GROUPS, TEAMS, ATHLETES, START_PROTOCOLS, RESULT;
 }
 
-abstract class ITab(tabEnum: TabEnum, protected val modifier: Modifier) {
+abstract class ITab(protected val modifier: Modifier) {
     @Composable
     abstract fun render()
 }
@@ -19,7 +18,7 @@ abstract class ITab(tabEnum: TabEnum, protected val modifier: Modifier) {
 /**
  * Это фабрика, производящая Табы. Она нужна для того, чтобы не создавать новые экземплеры ITab каждый раз, когда пользовательно открывает вкладку
  */
-class TabFactory(private val model: IModel) {
+class TabFactory(private val model: Model) {
     private val map: MutableMap<TabEnum, ITab> = mutableMapOf()
 
     //Если не уверены, что Tab уже создан
@@ -36,28 +35,20 @@ class TabFactory(private val model: IModel) {
     fun get(_tabEnum: MutableState<TabEnum>): ITab = map[_tabEnum.value]!!
 
 
-    private fun create(tabEnum: TabEnum, modifier: Modifier, model: IModel): ITab = when (tabEnum) {
-        TabEnum.GROUPS -> GroupTab(
-            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
+    private fun create(tabEnum: TabEnum, modifier: Modifier, model: Model): ITab = when (tabEnum) {
+        TabEnum.GROUPS -> GroupsTab(
+            model.competition.groupList.map { Hyperlink(it.race.groupName.value, {}) },
             modifier
         )
-        TabEnum.TEAMS -> GroupTab(
-            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
+        TabEnum.TEAMS -> TeamsTab(
+            model.competition.teamList.map { Hyperlink(it.name, {}) },
             modifier
         )
-        TabEnum.ATHLETES -> GroupTab(
-            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
+        TabEnum.ATHLETES -> AthletesTab(
+            model.competition.athleteList.map { Hyperlink(it.name.fullName, {}) },
             modifier
         )
-        TabEnum.START_PROTOCOLS -> GroupTab(model.competition.groupList.map {
-            GroupHyperlink(
-                it.race.groupName.value,
-                ""
-            )
-        }, modifier)
-        TabEnum.RESULT -> GroupTab(
-            model.competition.groupList.map { GroupHyperlink(it.race.groupName.value, "") },
-            modifier
-        )
+        TabEnum.START_PROTOCOLS -> StartProtocolsTab(modifier)
+        TabEnum.RESULT -> ResultsTab(modifier)
     }
 }
