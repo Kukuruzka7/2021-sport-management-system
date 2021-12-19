@@ -33,8 +33,6 @@ interface StartWindowManager : WindowManager {
 
     fun openCompetitionWindow(name: String)
 
-    fun openCompetitionNameDialogueField(): String
-
 }
 
 class StartWindow(private val winManager: StartWindowManager) : IWindow(winManager) {
@@ -102,7 +100,7 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
 
     @Composable
     private fun OpenButton() = StartWindowButton("Открыть", Icons.Default.PlayArrow) {
-        winManager.openCompetitionWindow(winManager.openCompetitionNameDialogueField())
+        winManager.openCompetitionWindow("TODO()")
     }
 
 

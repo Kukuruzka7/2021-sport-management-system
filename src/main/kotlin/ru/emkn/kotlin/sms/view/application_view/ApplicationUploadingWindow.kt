@@ -21,8 +21,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
+import kotlinx.datetime.toLocalDate
+import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.model.MetaInfo
+import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
@@ -43,6 +47,7 @@ interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
     fun saveApplication(files: List<File>)
     fun saveMetaInfo(info: MetaInfo)
+    fun getCompetitionsNames(): List<String>
 }
 
 class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWindow(winManager) {
@@ -50,9 +55,12 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val competitionDate = mutableStateOf("")
     private val competitionSportType = mutableStateOf("")
     private val teamApplications: MutableList<TeamApplication> = mutableListOf()
+    private val teamApplicationsNames: MutableList<String> = mutableListOf()
     private val count = mutableStateOf(teamApplications.size)
     private val openingApplication = mutableStateOf(-1)
-    private val finished = mutableStateOf(false)
+    private val openingException = mutableStateOf<Exception?>(null)
+    var finished = mutableStateOf(false)
+    val eWindow = ExceptionWindow(winManager)
 
     @Composable
     override fun render() {
@@ -61,9 +69,19 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             title = "Загрузка командных заявок",
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
+
             Box(
                 Modifier.background(BACKGROUND_C)
             ) {
+
+                if (openingException.value != null) {
+                    eWindow.e = openingException.value
+                    eWindow.render()
+                    if (eWindow.finished.value) {
+                        openingException.value = null
+                    }
+                }
+
                 if (openingApplication.value != -1) {
                     openTeamApplication()
                 }
@@ -89,12 +107,17 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isMultipleMode = true
                             fileDialog.isVisible = true
-                            teamApplications += fileDialog.files.filter { it.name.endsWith(".csv") }
-                                .mapIndexed { idx, it -> TeamApplication(it, idx + count.value) }
+                            teamApplications += getTeamApplicationsFromUser(fileDialog) ?: listOf()
                             count.value = teamApplications.size
                         }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
-                            finished.value = true
+                            val e = checkCompetitionData()
+                            if (e == null) {
+                                finished.value = true
+                            } else {
+                                eWindow.finished.value = false
+                                openingException.value = e
+                            }
                         }
                     }
                     repeat(count.value) { i ->
@@ -104,6 +127,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             }
                             DeleteFileButton {
                                 teamApplications.removeAt(i)
+                                teamApplicationsNames.removeAt(i)
                                 count.value--
                             }
                         }
@@ -122,6 +146,42 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         }
     }
 
+    private fun getTeamApplicationsFromUser(fileDialog: FileDialog): List<TeamApplication>? {
+        try {
+            val result = fileDialog.files
+                .mapIndexed { idx, it -> TeamApplication(it, idx + count.value) }
+                .filter { !teamApplicationsNames.contains(it.teamName) }
+            teamApplicationsNames += result.map { it.teamName }
+            return result
+        } catch (e: Exception) {
+            eWindow.finished.value = false
+            openingException.value = e
+        }
+        return null
+    }
+
+
+    private fun checkCompetitionData(): Exception? {
+        if (SportType.getSportType(competitionSportType.value) == SportType.X) {
+            return InvalidSportType(competitionSportType.value)
+        }
+
+        try {
+            competitionDate.value.toLocalDate()
+        } catch (e: Exception) {
+            return InvalidDateFormat(competitionDate.value)
+        }
+
+        if (competitionName.value == "") {
+            return InvalidCompetitionName(competitionName.value)
+        }
+
+        if (winManager.getCompetitionsNames().contains(competitionName.value)) {
+            return CompetitionAlreadyExist(competitionName.value)
+        }
+
+        return null
+    }
 
     @Composable
     private fun openTeamApplication() {
