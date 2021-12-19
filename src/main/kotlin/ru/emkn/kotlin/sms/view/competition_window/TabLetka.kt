@@ -44,13 +44,6 @@ abstract class TabLetka(private val links: List<Hyperlink>, _modifier: Modifier)
     abstract fun split(linksList: List<Hyperlink>): List<List<Hyperlink>>
 }
 
-class GroupsTab(links: List<Hyperlink>, _modifier: Modifier) : TabLetka(links, _modifier) {
-
-    override fun split(linksList: List<Hyperlink>): List<List<Hyperlink>> =
-        linksList.groupBy { it.name[0] }.values.toList().reversed()
-
-}
-
 class TeamsTab(links: List<Hyperlink>, _modifier: Modifier) : TabLetka(links, _modifier) {
     private val N_COLUMNS = 2
 
@@ -66,3 +59,8 @@ class AthletesTab(links: List<Hyperlink>, _modifier: Modifier) : TabLetka(links,
         List(N_COLUMNS) { i -> linksList.filterIndexed { index, _ -> index % N_COLUMNS == i } }
 }
 
+class StartProtocolsTab(links: List<Hyperlink>, _modifier: Modifier) : TabLetka(links, _modifier) {
+    override fun split(linksList: List<Hyperlink>): List<List<Hyperlink>> =
+        linksList.groupBy { it.name[0] }.values.toList().reversed()
+
+}

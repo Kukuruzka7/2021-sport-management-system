@@ -19,7 +19,7 @@ object View {
             )
         )
         val manager = Manager(Model(info, application))
-        manager.open(Win.RESULT_UPLOADING)
+        manager.open(Win.COMPETITION)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {
