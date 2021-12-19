@@ -135,9 +135,9 @@ fun finishByCheckPoints(inputData: Array<String>) {
     val name = inputData[FieldsFinish.NAME.ordinal]
     logger.info { "Проверка на существование соревнования." }
     if (checkCompetitionExist(name)) return
-    logger.info { "Получение результатов по контрольным точкам." }
+    logger.info { "Получение результатов атлетов." }
     val data: List<List<String>> = getData(name) ?: return
-    logger.info { "Результаты получены." }
+    logger.info { "Результаты атлетов получены." }
     val info: MetaInfo = getMetaInfo(name) ?: return
     logger.info { "Создание Competition." }
     val competition: Competition = getCompetition(data, info) ?: return

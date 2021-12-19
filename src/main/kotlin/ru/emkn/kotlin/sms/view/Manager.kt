@@ -9,12 +9,13 @@ import ru.emkn.kotlin.sms.view.competition_window.CompetitionWindowsManager
 import java.io.File
 
 enum class Win {
-    START, APPLICATION_UPLOADING, COMPETITION, RESULT_UPLOADING;
+    START, APPLICATION_UPLOADING, COMPETITION, RESULT_UPLOADING, EXCEPTION;
 }
 
 interface WindowManager
 
-class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
+class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager,
+    ExceptionWindowManager {
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
 
@@ -24,8 +25,9 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
             Win.APPLICATION_UPLOADING -> ApplicationUploadingWindow(this)
             Win.COMPETITION -> CompetitionWindow(model, this)
             Win.RESULT_UPLOADING -> ResultUploadingWindow(this)
+            Win.EXCEPTION -> ExceptionWindow(this)
         }
-        map[win]!!.state.value = true
+        map[win]?.state?.value = true
     }
 
     fun close(win: Win) {
@@ -69,6 +71,8 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
     }
 
     override fun closeResUplWindow() = close(Win.RESULT_UPLOADING)
+
+    override fun closeExceptionWindow() = close(Win.EXCEPTION)
 
     override fun saveResults(files: List<File>) {
         model.stage.value = Model.Companion.Stage.FINISHED
