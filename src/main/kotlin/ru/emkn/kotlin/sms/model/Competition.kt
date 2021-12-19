@@ -51,7 +51,7 @@ class Competition {
     constructor(_info: MetaInfo, application: Application) {
         logger.info { "Вызов конструктора Competition(info,data)" }
         info = _info
-        teamList = application.teamApplicationsList.map { it.team }
+        teamList = application.teamApplications.map { it.team }
         athleteList = teamList.flatMap { it.athletes }
         athleteByNumber = athleteList.associateBy({ it.number }, { it })
         groupList = groupDivision(athleteList, info.sport)
