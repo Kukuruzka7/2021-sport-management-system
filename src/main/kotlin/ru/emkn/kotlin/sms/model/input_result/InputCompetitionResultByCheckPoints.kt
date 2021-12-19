@@ -10,10 +10,12 @@ import ru.emkn.kotlin.sms.model.result_data.Table
 import java.io.File
 
 
-class InputCompetitionResultByCheckPoints(override val fileName: String, private val competition: Competition) :
+class InputCompetitionResultByCheckPoints(override val rows: List<List<String>>, private val competition: Competition) :
     InputCompetitionResult() {
-
-    override val rows = csvReader().readAll(File(fileName).readText())
+    constructor(fileName: String, competition: Competition) : this(
+        csvReader().readAll(File(fileName).readText()),
+        competition
+    )
 
     //по названию чекпоинта получаем результат атлетов на этом чекпоинте, достается из competition
     private val checkpointNameMap: Map<String, InputCheckpointResults> = buildCheckpointMap()
