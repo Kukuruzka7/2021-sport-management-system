@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,9 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.modifier.modifierLocalOf
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
@@ -38,8 +37,6 @@ import ru.emkn.kotlin.sms.view.table_view.TableContent
 import ru.emkn.kotlin.sms.view.table_view.TableType
 import java.awt.FileDialog
 import java.io.File
-
-val openingApplication = mutableStateOf(-1)
 
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
@@ -64,7 +61,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
             Box(
-                Modifier.background(BACKGROUND_COLOR)
+                Modifier.background(BACKGROUND_C)
             ) {
                 if (openingApplication.value != -1) {
                     openTeamApplication()
@@ -129,7 +126,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         val isOpen = mutableStateOf(true)
         val application = TeamApplication(files[openingApplication.value], openingApplication.value)
         val rows = application.rows.drop(2)
-        val name = application.teamName.name
+        val name = application.teamName
         val tableCells = rows.map { list -> list.map { mutableStateOf(it) }.toMutableList() }.toMutableList()
         Dialog(
             onCloseRequest = { openingApplication.value = -1 },
@@ -177,9 +174,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     }
 
     companion object {
-        val GOR_PAD = 5.dp
-        val VER_PAD = 10.dp
-        val UPPL_GAP = 5.dp
         val DEL_SHIFT = 5.dp
         val MAIN_BUTTONS_GAP = 5.dp
         val WIDTH = 1000.dp
@@ -210,7 +204,7 @@ private fun FileButton(name: String, onClick: () -> Unit) {
 
 @Composable
 private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
-    val text = "Сохранить"
+//    val text = "Сохранить"
     IconButton(
         modifier = modifier,
 //        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
@@ -223,7 +217,7 @@ private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
 
 @Composable
 private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
-    val text = "Загрузить файлы"
+//    val text = "Загрузить файлы"
     IconButton(
         modifier = modifier,
 //        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),

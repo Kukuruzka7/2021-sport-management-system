@@ -5,7 +5,6 @@ import kotlinx.datetime.LocalDate
 import logger
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.model.Team
-import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.athlete.Category
 import ru.emkn.kotlin.sms.model.athlete.Name
@@ -24,7 +23,7 @@ fun getRows(file: File, indexOfApplication: Int): List<List<String>> =
 //по данным из заявки получение данных об атлетах
 class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApplication: Int) {
 
-    val teamName: TeamName
+    val teamName: String
     val team: Team
 
     constructor(file: File, indexOfApplication: Int) : this(
@@ -81,7 +80,7 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
             }
         }
         //private
-        fun processingRow(row: List<String>, teamName: TeamName): Athlete {
+        fun processingRow(row: List<String>, teamName: String): Athlete {
             logger.trace { "Вызов processingRow(row.size = ${row.size})" }
             val name = Name(firstName = row[Fields.FIRST_NAME.ordinal], lastName = row[Fields.LAST_NAME.ordinal])
             val sex = Sex.getSex(row[Fields.SEX.ordinal])
@@ -98,7 +97,7 @@ class TeamApplication(fileName: String, val rows: List<List<String>>, indexOfApp
             )
         }
         //private
-        fun processingData(rows: List<List<String>>, teamName: TeamName): List<Athlete> {
+        fun processingData(rows: List<List<String>>, teamName: String): List<Athlete> {
             logger.trace { "Вызов processingData(rows)" }
             return rows.map { processingRow(it, teamName) }
         }
