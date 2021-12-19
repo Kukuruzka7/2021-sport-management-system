@@ -6,43 +6,51 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.modifier.modifierLocalOf
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
+import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
+import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
+import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
+import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
+import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
+import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import ru.emkn.kotlin.sms.view.IWindow
 import ru.emkn.kotlin.sms.view.StartWindow
 import ru.emkn.kotlin.sms.view.WindowManager
-import ru.emkn.kotlin.sms.view.button.IButton
-import ru.emkn.kotlin.sms.view.button.ISaveButton
-import ru.emkn.kotlin.sms.view.table_view.*
+import ru.emkn.kotlin.sms.view.table_view.TableContent
+import ru.emkn.kotlin.sms.view.table_view.TableType
 import java.awt.FileDialog
 import java.io.File
-
-val openingApplication = mutableStateOf(-1)
 
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
     fun saveApplication(files: List<File>)
 }
 
-class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(winManager) {
-    val competitionName = mutableStateOf("")
-    val competitionDate = mutableStateOf("")
-    val competitionSportType = mutableStateOf("")
-    val files: MutableList<File> = mutableListOf()
+class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWindow(winManager) {
+    private val competitionName = mutableStateOf("")
+    private val competitionDate = mutableStateOf("")
+    private val competitionSportType = mutableStateOf("")
+    private val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     private val openingApplication = mutableStateOf(-1)
-    var finished = mutableStateOf(false)
+    private val finished = mutableStateOf(false)
 
     @Composable
     override fun render() {
@@ -52,7 +60,8 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
             Box(
-                Modifier.background(BACKGROUND_COLOR)
+                modifier = Modifier.background(BACKGROUND_C).fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
             ) {
                 if (openingApplication.value != -1) {
                     openTeamApplication()
@@ -60,37 +69,37 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
 
                 val scrollState = rememberScrollState()
 
-                // Smooth scroll to specified pixels on first composition
-                LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
-
                 Column(
-                    Modifier.padding(GOR_PAD, VER_PAD).fillMaxSize().verticalScroll(scrollState),
-                    Arrangement.spacedBy(UPPL_GAP)
+                    modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
+                    Arrangement.spacedBy(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    CompetitionDataButton("Название соревнования: ", competitionName.value) {
-                        competitionName.value = it
-                    }.render()
-                    CompetitionDataButton("Дата соревнования: ", competitionDate.value) {
-                        competitionDate.value = it
-                    }.render()
-                    CompetitionDataButton("Тип спорта: ", competitionSportType.value) {
-                        competitionSportType.value = it
-                    }.render()
-                    Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP)) {
+                    Row(modifier = Modifier.fillMaxWidth(), Arrangement.SpaceEvenly, Alignment.Top) {
+                        drawCompetitionDataRow("Название соревнования", competitionName.value) {
+                            competitionName.value = it
+                        }
+                        drawCompetitionDataRow("Дата соревнования", competitionDate.value) {
+                            competitionDate.value = it
+                        }
+                        drawCompetitionDataRow("Тип спорта", competitionSportType.value) {
+                            competitionSportType.value = it
+                        }
                         val fileDialog = FileDialog(ComposeWindow())
-                        NewFilesButton(Modifier) {
+                        NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isMultipleMode = true
                             fileDialog.isVisible = true
                             files += fileDialog.files.filter { it.name.endsWith(".csv") }
                             count.value = files.size
                         }
-                        SaveButton {
+                        SaveButton(Modifier.align(Alignment.CenterVertically)) {
                             finished.value = true
                         }
                     }
-                    for (i in 0 until count.value) {
-                        Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
-                            FileButton(files[i], i, openingApplication).render()
+                    repeat(count.value) { i ->
+                        Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
+                            FileButton(files[i].name) {
+                                openingApplication.value = i
+                            }
                             DeleteFileButton {
                                 files.removeAt(i)
                                 count.value--
@@ -100,47 +109,14 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                 }
                 VerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(scrollState = scrollState)
+                    adapter = rememberScrollbarAdapter(scrollState = scrollState),
+                    style = ScrollbarStyle(
+                        hoverColor = SCROLLBAR_HOVER_C, unhoverColor = SCROLLBAR_UNHOVER_C,
+                        minimalHeight = 16.dp, thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp), hoverDurationMillis = 300,
+                    )
                 )
             }
-        }
-    }
-
-    private class CompetitionDataButton(
-        val textOfUnit: String,
-        val text: String,
-        private val onValueChange: (String) -> Unit
-    ) {
-
-        @Composable
-        fun render() {
-            Row(
-                Modifier.fillMaxWidth().height(HEIGHT),
-                Arrangement.spacedBy(MAIN_BUTTONS_GAP),
-                Alignment.CenterVertically
-            ) {
-                Text(modifier = Modifier.width(WIDTH_OF_TEXT), text = textOfUnit, color = TEXT_COLOR)
-                TextField(
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = BUTTON_COLOR,
-                        textColor = TEXT_COLOR,
-                        focusedIndicatorColor = FOCUS_COLOR,
-                        cursorColor = FOCUS_COLOR
-                    ),
-                    singleLine = true,
-                    value = text,
-                    onValueChange = onValueChange,
-                    readOnly = false
-                )
-            }
-        }
-
-        companion object {
-            var WIDTH_OF_TEXT = 200.dp
-            var HEIGHT = 50.dp
-            var CORNERS = 4.dp
-            val FOCUS_COLOR = Color(0xF12A7BF6)
-            val CURSOR_COLOR = Color(0xF12A7BF6)
         }
     }
 
@@ -160,7 +136,7 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                 height = StartWindow.HEIGHT
             ),
         ) {
-            Box(Modifier.fillMaxSize().background(StartWindow.BACKGROUND_COLOR), Alignment.CenterEnd) {
+            Box(Modifier.fillMaxSize().background(BACKGROUND_C), Alignment.CenterEnd) {
                 val tableStateVertical = rememberScrollState(0)
                 val tableStateHorizontal = rememberScrollState(0)
                 TableContent(
@@ -174,11 +150,21 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
                 )
                 HorizontalScrollbar(
                     modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
-                    adapter = rememberScrollbarAdapter(scrollState = tableStateHorizontal)
+                    adapter = rememberScrollbarAdapter(scrollState = tableStateHorizontal),
+                    style = ScrollbarStyle(
+                        hoverColor = SCROLLBAR_HOVER_C, unhoverColor = SCROLLBAR_UNHOVER_C,
+                        minimalHeight = 16.dp, thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp), hoverDurationMillis = 300,
+                    )
                 )
                 VerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(scrollState = tableStateVertical)
+                    adapter = rememberScrollbarAdapter(scrollState = tableStateVertical),
+                    style = ScrollbarStyle(
+                        hoverColor = SCROLLBAR_HOVER_C, unhoverColor = SCROLLBAR_UNHOVER_C,
+                        minimalHeight = 16.dp, thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp), hoverDurationMillis = 300,
+                    )
                 )
             }
             if (!isOpen.value) {
@@ -187,70 +173,61 @@ class ApplicationUploadingWindow(val winManager: AplUplWinManager) : IWindow(win
         }
     }
 
-    private class FileButton(file: File, val numberOfApplication: Int, val state: MutableState<Int>) : IButton {
-        var WIDTH = 500.dp
-        var HEIGHT = 50.dp
-        var CORNERS = 4.dp
-        val text: String = file.name
-
-        @Composable
-        override fun render() {
-            val interactionSource = remember { MutableInteractionSource() }
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
-                modifier = Modifier
-                    .clip(RoundedCornerShape(CORNERS))
-                    .size(WIDTH, HEIGHT)
-                    .focusable(interactionSource = interactionSource),
-                onClick = {
-                    state.value = numberOfApplication
-                }) {
-                Text(text = text, color = TEXT_COLOR)
-            }
-        }
-    }
-
-
     companion object {
         val GOR_PAD = 5.dp
         val VER_PAD = 10.dp
         val UPPL_GAP = 5.dp
         val DEL_SHIFT = 5.dp
         val MAIN_BUTTONS_GAP = 5.dp
-        val WIDTH = 1500.dp
-        val HEIGHT = 1000.dp
-        val BACKGROUND_COLOR = Color(0xF1111111)
+        val WIDTH = 1000.dp
+        val HEIGHT = 850.dp
     }
 }
 
 
-private val TEXT_COLOR = Color(0xF1dddddd)
-private val BUTTON_COLOR = Color(0xF1282828)
-private val ICON_COLOR = Color(0xF12A7BF6)
 private val BTN_HEIGHT = 50.dp
 private val BTN_WIDTH = 50.dp
-
+private val FILE_BTN_WIDTH = 500.dp
+private val CORNERS = 4.dp
 
 @Composable
-private fun SaveButton(onClick: () -> Unit) {
-    val text = "Сохранить"
+private fun FileButton(name: String, onClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
     Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
+        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
+        modifier = Modifier
+            .clip(RoundedCornerShape(CORNERS))
+            .size(FILE_BTN_WIDTH, BTN_HEIGHT)
+            .focusable(interactionSource = interactionSource),
         onClick = onClick
     ) {
-        Text(text, color = TEXT_COLOR)
+        Text(text = name, color = TEXT_C)
+    }
+}
+
+@Composable
+private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
+    val text = "Сохранить"
+    IconButton(
+        modifier = modifier,
+//        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
+        onClick = onClick
+    ) {
+        Icon(Icons.Default.ArrowForward, contentDescription = null, tint = ACCENT_C)
+//        Text(text, color = TEXT_C)
     }
 }
 
 @Composable
 private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
     val text = "Загрузить файлы"
-    Button(
+    IconButton(
         modifier = modifier,
-        colors = ButtonDefaults.buttonColors(backgroundColor = BUTTON_COLOR),
+//        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
         onClick = onClick
     ) {
-        Text(text, color = TEXT_COLOR)
+        Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C)
+//        Text(text, color = TEXT_C)
     }
 }
 
@@ -260,5 +237,36 @@ private fun DeleteFileButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
-    ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ICON_COLOR) }
+    ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ACCENT_C) }
+}
+
+var WIDTH_OF_TEXT = 200.dp
+
+@Composable
+private fun drawCompetitionDataRow(
+    textOfUnit: String,
+    text: String,
+    onValueChange: (String) -> Unit
+) {
+    Column(
+        Modifier.wrapContentSize(),
+        Arrangement.spacedBy(ApplicationUploadingWindow.MAIN_BUTTONS_GAP),
+        Alignment.CenterHorizontally
+    ) {
+
+        TextField(
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = TEXT_C,
+                focusedIndicatorColor = ACCENT_C,
+                cursorColor = ACCENT_C
+            ),
+            singleLine = true,
+            value = text,
+            onValueChange = onValueChange,
+            readOnly = false,
+            placeholder = {
+                Text(modifier = Modifier.width(WIDTH_OF_TEXT), text = textOfUnit, color = GREY_C)
+            }
+        )
+    }
 }

@@ -1,9 +1,7 @@
 package ru.emkn.kotlin.sms.view.table_view
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -16,6 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import ru.emkn.kotlin.sms.view.ColorScheme
+import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
+import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 
 enum class TableType {
     START_PROTOCOL,
@@ -24,11 +25,9 @@ enum class TableType {
     CHECKPOINT_RES,
 }
 
-private val TEXT_COLOR = Color(0xF1dddddd)
 private val ROW_HEIGHT = 50.dp
 private val BTN_HEIGHT = 50.dp
 private val BTN_WIDTH = 50.dp
-private val ICON_COLOR = Color(0xF12A7BF6)
 
 @Composable
 fun HeaderTextField(modifier: Modifier, str: String) {
@@ -38,7 +37,7 @@ fun HeaderTextField(modifier: Modifier, str: String) {
         value = str,
         onValueChange = { },
         readOnly = true,
-        textStyle = TextStyle(color = TEXT_COLOR)
+        textStyle = TextStyle(color = TEXT_C)
     )
 }
 
@@ -52,7 +51,7 @@ private fun DeleteRowButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
-    ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ICON_COLOR) }
+    ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ACCENT_C) }
 }
 
 @Composable
@@ -60,7 +59,7 @@ private fun AddRowButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
-    ) { Icon(Icons.Default.Add, contentDescription = null, tint = ICON_COLOR) }
+    ) { Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C) }
 }
 
 @Composable
@@ -68,7 +67,7 @@ private fun HomeButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
-    ) { Icon(Icons.Default.Home, contentDescription = null, tint = ICON_COLOR) }
+    ) { Icon(Icons.Default.Home, contentDescription = null, tint = ACCENT_C) }
 }
 
 @Composable
@@ -81,7 +80,11 @@ private fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<Colu
                 value = list[i].value,
                 onValueChange = { list[i].value = firstRow[i].filter(it) },
                 readOnly = false,
-                textStyle = TextStyle(color = TEXT_COLOR)
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = TEXT_C,
+                    focusedIndicatorColor = ACCENT_C,
+                    cursorColor = ACCENT_C
+                ),
             )
         } else {
             TextField(
@@ -90,7 +93,11 @@ private fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<Colu
                 value = list[i].value,
                 onValueChange = { },
                 readOnly = true,
-                textStyle = TextStyle(color = TEXT_COLOR)
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = TEXT_C,
+                    focusedIndicatorColor = ACCENT_C,
+                    cursorColor = ACCENT_C
+                ),
             )
         }
     }
@@ -142,6 +149,7 @@ val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.",
 val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
 val finishProtocolFirstRow =
     listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
+
 fun checkpointResFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("") }
 
 @Composable

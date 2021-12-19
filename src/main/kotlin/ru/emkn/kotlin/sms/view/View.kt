@@ -30,7 +30,7 @@ object View {
             )
         )
         val manager = Manager(Model(compik))
-        manager.create(Win.COMPETITION)
+        manager.create(Win.APPLICATION_UPLOADING)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {
