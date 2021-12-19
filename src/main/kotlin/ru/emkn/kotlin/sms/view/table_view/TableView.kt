@@ -23,6 +23,7 @@ enum class TableType {
     FINISH_PROTOCOL,
     APPLICATION,
     CHECKPOINT_RES,
+    COURSES,
 }
 
 private val ROW_HEIGHT = 50.dp
@@ -154,7 +155,47 @@ val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Г
 val finishProtocolFirstRow =
     listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
 
-fun checkpointResFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("") }
+fun checkpointResFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
+fun coursesFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
+
+@Composable
+fun TableContentImmutable(
+    type: TableType,
+    modifier: Modifier,
+    list: List<List<String>>,
+    saveBtnAction: () -> Unit,
+) {
+    when (type) {
+        TableType.FINISH_PROTOCOL -> {
+            TableContent(
+                modifier = modifier,
+                mutable = false,
+                drawHeader = true,
+                firstRow = finishProtocolFirstRow.map { it.toColumnType().getInfo(it) },
+                contentRows = list.toMListMListStr()
+            ) { saveBtnAction() }
+        }
+        TableType.START_PROTOCOL -> {
+            TableContent(
+                modifier = modifier,
+                mutable = false,
+                drawHeader = true,
+                firstRow = startProtocolFirstRow.map { it.toColumnType().getInfo(it) },
+                contentRows = list.toMListMListStr()
+            ) { saveBtnAction() }
+        }
+        TableType.COURSES -> {
+            TableContent(
+                modifier = modifier,
+                mutable = false,
+                drawHeader = true,
+                firstRow = checkpointResFirstRow(list.first().size),
+                contentRows = list.toMListMListStr()
+            ) { saveBtnAction() }
+        }
+        else -> throw Exception("Нужно вызвать функцию TableContent")
+    }
+}
 
 @Composable
 fun TableContent(
@@ -173,24 +214,6 @@ fun TableContent(
                 contentRows = contentRows
             ) { saveBtnAction() }
         }
-        TableType.FINISH_PROTOCOL -> {
-            TableContent(
-                modifier = modifier,
-                mutable = false,
-                drawHeader = true,
-                firstRow = finishProtocolFirstRow.map { it.toColumnType().getInfo(it) },
-                contentRows = contentRows
-            ) { saveBtnAction() }
-        }
-        TableType.START_PROTOCOL -> {
-            TableContent(
-                modifier = modifier,
-                mutable = false,
-                drawHeader = true,
-                firstRow = startProtocolFirstRow.map { it.toColumnType().getInfo(it) },
-                contentRows = contentRows
-            ) { saveBtnAction() }
-        }
         TableType.CHECKPOINT_RES -> {
             TableContent(
                 modifier = modifier,
@@ -200,6 +223,7 @@ fun TableContent(
                 contentRows = contentRows
             ) { saveBtnAction() }
         }
+        else -> throw Exception("Нужно вызвать функцию TableContentImmutable")
     }
 }
 

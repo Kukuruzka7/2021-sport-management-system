@@ -1,17 +1,15 @@
 package ru.emkn.kotlin.sms.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,7 +21,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
+import ru.emkn.kotlin.sms.view.table_view.TableContent
+import ru.emkn.kotlin.sms.view.table_view.TableType
+import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
 import java.awt.FileDialog
 import java.io.File
 
@@ -36,13 +38,14 @@ class ResultUploadingWindow(private val winManager: ResUplWinManager) : IWindow(
     private val files: MutableList<File> = mutableListOf()
     private val count = mutableStateOf(files.size)
     private val openingResult = mutableStateOf(-1)
+    private val teamApplications: MutableList<TeamApplication> = mutableListOf()
     private val finished = mutableStateOf(false)
 
     @Composable
     override fun render() {
         Window(
             onCloseRequest = { winManager.closeResUplWindow() },
-            title = "Upload results",
+            title = "Загрузка результатов",
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
             Box(
@@ -54,111 +57,154 @@ class ResultUploadingWindow(private val winManager: ResUplWinManager) : IWindow(
 
                 val scrollState = rememberScrollState()
 
-                // Smooth scroll to specified pixels on first composition
-                LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
-
                 Column(
-                    Modifier.fillMaxSize().verticalScroll(scrollState), Arrangement.spacedBy(UPPL_GAP)
+                    modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
+                    Arrangement.spacedBy(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(MAIN_BUTTONS_GAP), Alignment.Top) {
+                    Row(modifier = Modifier.fillMaxWidth(), Arrangement.SpaceEvenly, Alignment.Top) {
                         val fileDialog = FileDialog(ComposeWindow())
-                        NewFilesButton(Modifier) {
+                        NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isMultipleMode = true
                             fileDialog.isVisible = true
-                            files += fileDialog.files.filter { it.name.endsWith(".csv") }
-                            count.value = files.size
+                            teamApplications += fileDialog.files.filter { it.name.endsWith(".csv") }
+                                .mapIndexed { idx, it -> TeamApplication(it, idx + count.value) }
+                            count.value = teamApplications.size
                         }
-                        SaveButton {
+                        SaveButton(Modifier.align(Alignment.CenterVertically)) {
                             finished.value = true
                         }
                     }
-                    for (i in 0 until count.value) {
-                        Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
-                            FileButton(files[i].name) {
+                    repeat(count.value) { i ->
+                        Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
+                            FileButton(teamApplications[i].teamName) {
                                 openingResult.value = i
                             }
                             DeleteFileButton {
-                                files.removeAt(i)
+                                teamApplications.removeAt(i)
                                 count.value--
                             }
                         }
                     }
                 }
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(scrollState = scrollState),
+                    style = ScrollbarStyle(
+                        hoverColor = ColorScheme.SCROLLBAR_HOVER_C, unhoverColor = ColorScheme.SCROLLBAR_UNHOVER_C,
+                        minimalHeight = 16.dp, thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp), hoverDurationMillis = 300,
+                    )
+                )
             }
         }
     }
 
     @Composable
     private fun openResult() {
+        val isOpen = mutableStateOf(true)
+        val application = teamApplications[openingResult.value]
+        val rows = application.rows
+        val name = application.teamName
+        val tableCells = rows.toMListMListStr()
         Dialog(
             onCloseRequest = { openingResult.value = -1 },
-            title = "Tatarstan Supergut",
-            state = rememberDialogState(width = 2000.dp, height = 1080.dp)
+            title = name,
+            state = rememberDialogState(
+                width = StartWindow.WIDTH,
+                height = StartWindow.HEIGHT
+            ),
         ) {
-//            table.render()
-//            if (!table.isOpen.value) {
-//                openingResult.value = -1
-//            }
+            Box(Modifier.fillMaxSize().background(BACKGROUND_C), Alignment.CenterEnd) {
+                val tableStateVertical = rememberScrollState(0)
+                val tableStateHorizontal = rememberScrollState(0)
+                TableContent(
+                    type = TableType.APPLICATION,
+                    modifier = Modifier.wrapContentSize()
+                        .align(Alignment.TopCenter)
+                        .verticalScroll(tableStateVertical)
+                        .horizontalScroll(tableStateHorizontal),
+                    contentRows = tableCells
+                ) {
+                    teamApplications[openingResult.value] = TeamApplication(application, tableCells)
+                }
+                HorizontalScrollbar(
+                    modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+                    adapter = rememberScrollbarAdapter(scrollState = tableStateHorizontal),
+                    style = ScrollbarStyle(
+                        hoverColor = ColorScheme.SCROLLBAR_HOVER_C, unhoverColor = ColorScheme.SCROLLBAR_UNHOVER_C,
+                        minimalHeight = 16.dp, thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp), hoverDurationMillis = 300,
+                    )
+                )
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(scrollState = tableStateVertical),
+                    style = ScrollbarStyle(
+                        hoverColor = ColorScheme.SCROLLBAR_HOVER_C, unhoverColor = ColorScheme.SCROLLBAR_UNHOVER_C,
+                        minimalHeight = 16.dp, thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp), hoverDurationMillis = 300,
+                    )
+                )
+            }
+            if (!isOpen.value) {
+                openingResult.value = -1
+            }
         }
     }
 
-    companion object {
+    private companion object {
         val UPPL_GAP = 5.dp
         val DEL_SHIFT = 5.dp
         val MAIN_BUTTONS_GAP = 5.dp
         val WIDTH = 1500.dp
         val HEIGHT = 1000.dp
+        val BTN_HEIGHT = 50.dp
+        val BTN_WIDTH = 50.dp
+        val FILE_BTN_WIDTH = 500.dp
+        val CORNERS = 4.dp
     }
-}
-
-private val BTN_HEIGHT = 50.dp
-private val BTN_WIDTH = 50.dp
-private val FILE_BTN_WIDTH = 500.dp
-private val CORNERS = 4.dp
-
-@Composable
-private fun FileButton(name: String, onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = ColorScheme.FOREGROUND_C),
-        modifier = Modifier
-            .clip(RoundedCornerShape(CORNERS))
-            .size(FILE_BTN_WIDTH, BTN_HEIGHT)
-            .focusable(interactionSource = interactionSource),
-        onClick = onClick
-    ) {
-        Text(text = name, color = ColorScheme.TEXT_C)
+    @Composable
+    private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick
+        ) {
+            Icon(Icons.Default.ArrowForward, contentDescription = null, tint = ColorScheme.ACCENT_C)
+        }
     }
-}
 
-@Composable
-private fun SaveButton(onClick: () -> Unit) {
-    val text = "Сохранить"
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = ColorScheme.FOREGROUND_C),
-        onClick = onClick
-    ) {
-        Text(text, color = ColorScheme.TEXT_C)
+    @Composable
+    private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null, tint = ColorScheme.ACCENT_C)
+        }
     }
-}
 
-@Composable
-private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
-    val text = "Загрузить результаты"
-    Button(
-        modifier = modifier,
-        colors = ButtonDefaults.buttonColors(backgroundColor = ColorScheme.FOREGROUND_C),
-        onClick = onClick
-    ) {
-        Text(text, color = ColorScheme.TEXT_C)
+    @Composable
+    private fun DeleteFileButton(onClick: () -> Unit) {
+        IconButton(
+            modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
+            onClick = onClick,
+        ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ColorScheme.ACCENT_C) }
     }
-}
 
+    @Composable
+    private fun FileButton(name: String, onClick: () -> Unit) {
+        val interactionSource = remember { MutableInteractionSource() }
+        Button(
+            colors = ButtonDefaults.buttonColors(backgroundColor = ColorScheme.FOREGROUND_C),
+            modifier = Modifier
+                .clip(RoundedCornerShape(CORNERS))
+                .size(FILE_BTN_WIDTH, BTN_HEIGHT)
+                .focusable(interactionSource = interactionSource),
+            onClick = onClick
+        ) {
+            Text(text = name, color = ColorScheme.TEXT_C)
+        }
+    }
 
-@Composable
-private fun DeleteFileButton(onClick: () -> Unit) {
-    IconButton(
-        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
-        onClick = onClick,
-    ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ColorScheme.ACCENT_C) }
 }
