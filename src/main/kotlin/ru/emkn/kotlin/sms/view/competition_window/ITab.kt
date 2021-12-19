@@ -3,7 +3,10 @@ package ru.emkn.kotlin.sms.view.competition_window
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.view.Model
+import java.io.File
 
 enum class TabEnum {
     GROUPS, TEAMS, ATHLETES, START_PROTOCOLS, RESULT;
@@ -29,26 +32,41 @@ class TabFactory(private val model: Model) {
         }
         map[tab] = create(tab, modifier, model)
         return map[tab]!!
+
     }
 
     //Если уверены, что Tab уже создан
     fun get(_tabEnum: MutableState<TabEnum>): ITab = map[_tabEnum.value]!!
 
 
-    private fun create(tabEnum: TabEnum, modifier: Modifier, model: Model): ITab = when (tabEnum) {
-        TabEnum.GROUPS -> GroupsTab(
-            model.competition.groupList.map { Hyperlink(it.race.groupName.value, {}) },
-            modifier
-        )
-        TabEnum.TEAMS -> TeamsTab(
-            model.competition.teamList.map { Hyperlink(it.name, {}) },
-            modifier
-        )
-        TabEnum.ATHLETES -> AthletesTab(
-            model.competition.athleteList.map { Hyperlink(it.name.fullName, {}) },
-            modifier
-        )
-        TabEnum.START_PROTOCOLS -> StartProtocolsTab(modifier)
-        TabEnum.RESULT -> ResultsTab(modifier)
+    private fun create(tabEnum: TabEnum, modifier: Modifier, model: Model): ITab {
+        require(model.competition != null)
+        return when (tabEnum) {
+            TabEnum.GROUPS -> {
+                GroupsTab(buildRacesTable(model.competition!!.groupList), modifier)
+            }
+            TabEnum.TEAMS -> TeamsTab(
+                model.competition!!.teamList.map { Hyperlink(it.name) {} }, modifier
+            )
+            TabEnum.ATHLETES -> AthletesTab(
+                model.competition!!.athleteList.map { Hyperlink(it.name.fullName) {} }, modifier
+            )
+            TabEnum.START_PROTOCOLS -> StartProtocolsTab(
+                model.competition!!.groupList.map { Hyperlink(it.race.groupName.value) {} }, modifier
+            )
+            TabEnum.RESULT -> ResultsTab(modifier, model)
+        }
     }
+
+    fun buildRacesTable(groupList: List<Group>): List<List<String>> {
+        val races = groupList.map {
+            it.race.checkPoints.map { checkpoint -> checkpoint.name }.toMutableList()
+                .apply { add(0, it.race.groupName.value) }
+        }
+        val maxLen = races.maxOf { it.size }
+        races.forEach { it + List(maxLen - it.size) { "" } }
+        return races.map { it.toList() }
+    }
+
+
 }

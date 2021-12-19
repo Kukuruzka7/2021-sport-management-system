@@ -17,6 +17,7 @@ interface WindowManager
 class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager{
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
+
     fun open(win: Win) {
         map[win] = when (win) {
             Win.START -> StartWindow(this)
@@ -54,6 +55,10 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         open(Win.COMPETITION)
     }
 
+    override fun openCompetitionNameDialogueField(): String {
+        return "Nadeus Zarabotaet"
+    }
+
     override fun closeStartWindow() = close(Win.START)
 
     override fun closeAplUplWindow() = close(Win.APPLICATION_UPLOADING)
@@ -66,9 +71,7 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
 
     override fun closeResUplWindow() = close(Win.RESULT_UPLOADING)
 
-    override fun getCompetitionsNames(): List<String> {
-        return model.competitionsNames
-    }
+    override fun closeExceptionWindow() = close(Win.EXCEPTION)
 
     override fun saveResults(files: List<File>) {
         model.stage.value = Model.Companion.Stage.FINISHED
