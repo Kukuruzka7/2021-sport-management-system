@@ -3,7 +3,6 @@ import ru.emkn.kotlin.sms.ApplicationHasWrongFormatOnLine
 import ru.emkn.kotlin.sms.WrongCategoryInApplicationOnLine
 import ru.emkn.kotlin.sms.WrongSexInApplicationOnLine
 import ru.emkn.kotlin.sms.WrongYearInApplicationOnLine
-import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.model.application.TeamApplication.Companion.checkFormatOfApplication
 import ru.emkn.kotlin.sms.model.application.TeamApplication.Companion.checkRow
@@ -113,10 +112,10 @@ internal class TeamApplicationTests {
     @Test
     fun testProcessingRow() {
         val row1 = listOf("Розалина", "Миргалимова", "Ж", "2003", "КМС", "никуда не хочу")
-        val athlete1 = processingRow(row1, TeamName("Команда мечты"))
+        val athlete1 = processingRow(row1, "Команда мечты")
         assert(athlete1.name.fullName == "Миргалимова Розалина")
         assert(athlete1.sex == Sex.FEMALE)
-        assert(athlete1.teamName.name == "Команда мечты")
+        assert(athlete1.teamName == "Команда мечты")
         assert(athlete1.birthDate == LocalDate(2003, 1, 1))
         assert(athlete1.groupName.value == "Ж2003")
         assert(athlete1.sportCategory == Category.CANDIDATE)
@@ -128,11 +127,11 @@ internal class TeamApplicationTests {
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
         val row4 = listOf("Импостер", "Импостерович", "М", "2003", "КМС", "ПЫТАЮСЬ БЫТЬ С НИМИ")
-        val athlete1 = processingRow(row1, TeamName("Команда мечты"))
-        val athlete2 = processingRow(row2, TeamName("Команда мечты"))
-        val athlete3 = processingRow(row3, TeamName("Команда мечты"))
-        val athlete4 = processingRow(row4, TeamName("Команда мечты"))
-        val athletes = processingData(listOf(row1, row2, row3, row4), TeamName("Команда мечты"))
+        val athlete1 = processingRow(row1, "Команда мечты")
+        val athlete2 = processingRow(row2, ("Команда мечты"))
+        val athlete3 = processingRow(row3, "Команда мечты")
+        val athlete4 = processingRow(row4, "Команда мечты")
+        val athletes = processingData(listOf(row1, row2, row3, row4), "Команда мечты")
         assertEquals(athlete1, athletes[0])
         assertEquals(athlete2, athletes[1])
         assertEquals(athlete3, athletes[2])
@@ -145,9 +144,9 @@ internal class TeamApplicationTests {
         val row1 = listOf("Миргалимова", "Розалина", "Ж", "2003", "КМС", "никуда не хочу")
         val row2 = listOf("Сибгатуллин", "Данил", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Москаленко", "Тимофей", "М", "2004", "I", "никуда не хочу")
-        val athlete1 = processingRow(row1, TeamName("Команда мечты"))
-        val athlete2 = processingRow(row2, TeamName("Команда мечты"))
-        val athlete3 = processingRow(row3, TeamName("Команда мечты"))
+        val athlete1 = processingRow(row1, "Команда мечты")
+        val athlete2 = processingRow(row2, "Команда мечты")
+        val athlete3 = processingRow(row3, "Команда мечты")
         assertContentEquals(listOf(athlete1, athlete2, athlete3), teamApplication.team.athletes)
     }
 }

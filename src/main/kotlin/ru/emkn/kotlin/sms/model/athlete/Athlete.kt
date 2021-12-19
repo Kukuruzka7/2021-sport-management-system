@@ -5,10 +5,9 @@ import ru.emkn.kotlin.sms.GroupName
 import ru.emkn.kotlin.sms.Race
 import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.SportType
-import ru.emkn.kotlin.sms.model.TeamName
 import java.time.LocalTime
 
-class AthleteNumber(val value: String) {
+class AthleteNumber(val value: kotlin.String) {
     override fun toString() = value
     override fun equals(other: Any?): Boolean {
         if (other !is AthleteNumber) {
@@ -22,20 +21,20 @@ class AthleteNumber(val value: String) {
     }
 }
 
-class Name(val firstName: String, val lastName: String) {
+class Name(val firstName: kotlin.String, val lastName: kotlin.String) {
 
-    constructor (_name: String) : this(getFirstName(_name), getLastName(_name))
+    constructor (_name: kotlin.String) : this(getFirstName(_name), getLastName(_name))
 
-    val fullName: String = "$firstName $lastName"
+    val fullName: kotlin.String = "$firstName $lastName"
 
-    override fun toString(): String = fullName
+    override fun toString(): kotlin.String = fullName
 
     companion object {
-        private fun getFirstName(name: String): String {
+        private fun getFirstName(name: kotlin.String): kotlin.String {
             return name.split(" ")[0]
         }
 
-        private fun getLastName(name: String): String {
+        private fun getLastName(name: kotlin.String): kotlin.String {
             if (name.split(" ").size == 1) {
                 return ""
             }
@@ -50,7 +49,7 @@ class Athlete(
     val birthDate: LocalDate,
     val sportCategory: Category,
     private val preferredGroup: GroupName = GroupName(""),
-    val teamName: TeamName,
+    val teamName: String,
     val groupName: GroupName,
     val number: AthleteNumber
 ) {
@@ -61,16 +60,16 @@ class Athlete(
         _birthDate: LocalDate,
         _sportCategory: Category,
         _preferredGroup: GroupName = GroupName("TODO()"),
-        _teamName: TeamName,
+        _teamName: String,
         _groupName: GroupName
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
     val race = Race(groupName, SportType.RUNNING)
     lateinit var startTime: LocalTime
 
-    override fun toString(): String = "[$name, $number, $groupName]"
+    override fun toString(): kotlin.String = "[$name, $number, $groupName]"
 
-    fun extractFieldToString(field: CompetitionSerialization.Companion.Fields): String = when (field) {
+    fun extractFieldToString(field: CompetitionSerialization.Companion.Fields): kotlin.String = when (field) {
         CompetitionSerialization.Companion.Fields.NUMBER -> number.toString()
         CompetitionSerialization.Companion.Fields.NAME -> name.toString()
         CompetitionSerialization.Companion.Fields.SEX -> sex.toString()

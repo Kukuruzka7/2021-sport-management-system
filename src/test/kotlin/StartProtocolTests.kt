@@ -4,7 +4,6 @@ import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.GroupName
 import ru.emkn.kotlin.sms.Race
 import ru.emkn.kotlin.sms.model.SportType
-import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.athlete.*
 import ru.emkn.kotlin.sms.model.startprotocol.GroupStartProtocol
 import java.io.File
@@ -23,7 +22,7 @@ internal class StartProtocolTests {
             LocalDate(2002, 12, 30),
             Category.I,
             GroupName("М2002"),
-            TeamName("Б05"),
+            "Б05",
             GroupName("М2002"),
             AthleteNumber("$num")
         )

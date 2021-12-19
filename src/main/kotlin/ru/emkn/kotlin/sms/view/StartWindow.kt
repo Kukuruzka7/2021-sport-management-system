@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,6 +32,8 @@ interface StartWindowManager : WindowManager {
     fun openAplUplWindow()
 
     fun openCompetitionWindow(name: String)
+
+    fun openCompetitionNameDialogueField(): String
 
 }
 
@@ -63,13 +64,8 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.Top
                     ) {
-                        CreateButton {
-                            winManager.openAplUplWindow()
-                            winManager.closeStartWindow()
-                        }
-                        OpenButton {
-
-                        }
+                        CreateButton()
+                        OpenButton()
                     }
                 }
             }
@@ -94,15 +90,21 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
                     tint = ACCENT_C
                 )
             }
-            Text(text, color = ACCENT_C)
+            Text(text, color = TEXT_C)
         }
     }
 
     @Composable
-    private fun CreateButton(onClick: () -> Unit) = StartWindowButton("Создать", Icons.Filled.Add, onClick)
+    private fun CreateButton() = StartWindowButton("Создать", Icons.Filled.Add) {
+        winManager.openAplUplWindow()
+        winManager.closeStartWindow()
+    }
 
     @Composable
-    private fun OpenButton(onClick: () -> Unit) = StartWindowButton("Открыть", Icons.Default.PlayArrow, onClick)
+    private fun OpenButton() = StartWindowButton("Открыть", Icons.Default.PlayArrow) {
+        winManager.openCompetitionWindow(winManager.openCompetitionNameDialogueField())
+    }
+
 
     @Composable
     private fun WelcomeSign(modifier: Modifier) {

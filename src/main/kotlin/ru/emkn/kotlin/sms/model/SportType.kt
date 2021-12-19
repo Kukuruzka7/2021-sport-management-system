@@ -1,5 +1,7 @@
 package ru.emkn.kotlin.sms.model
 
+import kotlin.String
+
 
 enum class SportType() {
     RUNNING, SWIMMING, X;

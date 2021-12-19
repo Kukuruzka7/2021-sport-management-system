@@ -10,14 +10,14 @@ import java.io.File
 import java.time.LocalTime
 
 
-class CompetitionSerialization(val athletesData: List<List<String>>, val metaInfo: List<String>) {
+class CompetitionSerialization(val athletesData: List<List<kotlin.String>>, val metaInfo: List<kotlin.String>) {
 
     init {
         logger.trace { "Создание экземпляра класса CompetitionData" }
         athletesData.forEach { checkRow(it) }
     }
 
-    fun save(athletesFileName: String, metaInfoFileName: String) {
+    fun save(athletesFileName: kotlin.String, metaInfoFileName: kotlin.String) {
         logger.info { "Сохранение Competition в файл $athletesFileName" }
         try {
             csvWriter().open(athletesFileName) {
@@ -31,7 +31,7 @@ class CompetitionSerialization(val athletesData: List<List<String>>, val metaInf
     }
 
 
-    private fun saveMetaInfo(fileName: String) =
+    private fun saveMetaInfo(fileName: kotlin.String) =
         CsvWriter().writeAll(listOf(metaInfo), File(fileName))
 
 
@@ -42,7 +42,7 @@ class CompetitionSerialization(val athletesData: List<List<String>>, val metaInf
             LocalDate.parse(it[Fields.BIRTH_DATE.ordinal]),
             Category.getCategory(it[Fields.CATEGORY.ordinal]),
             GroupName(it[Fields.PREFERRED_GROUP.ordinal]),
-            TeamName(it[Fields.TEAM_NAME.ordinal]),
+            it[Fields.TEAM_NAME.ordinal],
             GroupName(it[Fields.RACE.ordinal]),
             AthleteNumber(it[Fields.NUMBER.ordinal]),
         )
@@ -53,7 +53,7 @@ class CompetitionSerialization(val athletesData: List<List<String>>, val metaInf
         { LocalTime.parse(it[Fields.START_TIME.ordinal]) })
 
 
-    private fun checkRow(row: List<String>) {
+    private fun checkRow(row: List<kotlin.String>) {
         if (row.size < Fields.values().size) {
             logger.error { CompetitionDataTooFewArgumentsInRow(row) }
             throw CompetitionDataTooFewArgumentsInRow(row)

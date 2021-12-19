@@ -5,7 +5,6 @@ import kotlinx.datetime.LocalDate
 import logger
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.model.Team
-import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.athlete.Category
 import ru.emkn.kotlin.sms.model.athlete.Name
@@ -14,20 +13,20 @@ import java.io.File
 
 //по данным из заявки получение данных об атлетах
 class TeamApplication(file: File, val numberOfApplication: Int) {
-    val rows: List<List<String>> = try {
+    val rows: List<List<kotlin.String>> = try {
         logger.trace { "Считывание данных об атлетах из ${file.name}." }
         csvReader().readAll(file)
     } catch (e: Exception) {
         logger.error { ApplicationCanNotBeRead(numberOfApplication) }
         throw ApplicationCanNotBeRead(numberOfApplication)
     }
-    val teamName: TeamName
+    val teamName: String
     val team: Team
 
     init {
         logger.trace { "Создание экземпляра класса TeamApplication(file = ${file.name})" }
         checkFormatOfApplication(numberOfApplication, rows)
-        teamName = TeamName(rows[0][0])
+        teamName = rows[0][0]
         team = Team(teamName, emptyList())
         team.athletes = processingData(rows.subList(2, rows.size), teamName)
     }
@@ -41,7 +40,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
         }
 
         // private
-         fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
+         fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<kotlin.String>>) {
             logger.trace { "Вызов checkFormatOfApplication(${numberOfApplication})" }
             if (rows.isEmpty()) {
                 logger.error { "В заявке $numberOfApplication нет данных об атлетах." }
@@ -52,7 +51,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
             }
         }
         //private
-        fun checkRow(row: List<String>, numberOfApplication: Int) {
+        fun checkRow(row: List<kotlin.String>, numberOfApplication: Int) {
             logger.trace { "Вызов checkRow(${row})" }
             if (row.size < Fields.values().size) {
                 logger.error { "В заявке $numberOfApplication в $row нехватает данных." }
@@ -72,7 +71,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
             }
         }
         //private
-        fun processingRow(row: List<String>, teamName: TeamName): Athlete {
+        fun processingRow(row: List<kotlin.String>, teamName: String): Athlete {
             logger.trace { "Вызов processingRow(row.size = ${row.size})" }
             val name = Name(firstName = row[Fields.FIRST_NAME.ordinal], lastName = row[Fields.LAST_NAME.ordinal])
             val sex = Sex.getSex(row[Fields.SEX.ordinal])
@@ -89,7 +88,7 @@ class TeamApplication(file: File, val numberOfApplication: Int) {
             )
         }
         //private
-        fun processingData(rows: List<List<String>>, teamName: TeamName): List<Athlete> {
+        fun processingData(rows: List<List<kotlin.String>>, teamName: String): List<Athlete> {
             logger.trace { "Вызов processingData(rows)" }
             return rows.map { processingRow(it, teamName) }
         }
