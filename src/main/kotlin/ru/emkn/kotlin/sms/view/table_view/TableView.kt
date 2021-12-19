@@ -163,7 +163,6 @@ fun TableContentImmutable(
     type: TableType,
     modifier: Modifier,
     list: List<List<String>>,
-    saveBtnAction: () -> Unit = {},
 ) {
     when (type) {
         TableType.FINISH_PROTOCOL -> {
@@ -173,7 +172,7 @@ fun TableContentImmutable(
                 drawHeader = true,
                 firstRow = finishProtocolFirstRow.map { it.toColumnType().getInfo(it) },
                 contentRows = list.toMListMListStr()
-            ) { saveBtnAction() }
+            ) {}
         }
         TableType.START_PROTOCOL -> {
             TableContent(
@@ -182,16 +181,16 @@ fun TableContentImmutable(
                 drawHeader = true,
                 firstRow = startProtocolFirstRow.map { it.toColumnType().getInfo(it) },
                 contentRows = list.toMListMListStr()
-            ) { saveBtnAction() }
+            ) {}
         }
         TableType.COURSES -> {
             TableContent(
                 modifier = modifier,
                 mutable = false,
                 drawHeader = true,
-                firstRow = checkpointResFirstRow(list.first().size),
+                firstRow = coursesFirstRow(list.first().size),
                 contentRows = list.toMListMListStr()
-            ) { saveBtnAction() }
+            ) {}
         }
         else -> throw Exception("Нужно вызвать функцию TableContent")
     }
@@ -202,7 +201,7 @@ fun TableContent(
     type: TableType,
     modifier: Modifier,
     contentRows: MutableList<MutableList<MutableState<String>>>,
-    saveBtnAction: () -> Unit,
+    saveBtnAction: () -> Unit = { },
 ) {
     when (type) {
         TableType.APPLICATION -> {
