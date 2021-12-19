@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
@@ -21,18 +22,15 @@ import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import java.io.File
 
-interface ExceptionWindowManager : WindowManager {
-    fun closeExceptionWindow()
-    fun saveResults(files: List<File>)
-}
 
-class ExceptionWindow(val winManager: ExceptionWindowManager) : IWindow(winManager) {
+class ExceptionWindow(val winManager: WindowManager) : IWindow(winManager) {
     var e: Exception? = null
+    val finished = mutableStateOf(false)
 
     @Composable
     override fun render() {
         Dialog(
-            onCloseRequest = { winManager.closeExceptionWindow() },
+            onCloseRequest = { finished.value = true },
             title = "Ошибка"
         ) {
             Box(modifier = Modifier.background(BACKGROUND_C).fillMaxSize(), Alignment.Center) {
@@ -46,7 +44,7 @@ class ExceptionWindow(val winManager: ExceptionWindowManager) : IWindow(winManag
                             ?: "Во время инициализации программы произошла сурьезная ошибка.\n Либо не хватает памяти, либо не читается диск, либо вы стерли из каталога пару важных файлов.\n Короче говоря не судьба.",
                         color = TEXT_C
                     )
-                    AgreeButton(Modifier) { winManager.closeExceptionWindow() }
+                    AgreeButton(Modifier) { finished.value = true }
                 }
             }
         }

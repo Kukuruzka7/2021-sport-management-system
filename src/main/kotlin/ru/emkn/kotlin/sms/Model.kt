@@ -10,6 +10,7 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
     lateinit var competition: Competition
     val competitionBuilder = CompetitionBuilder()
     var stage: MutableState<Stage> = mutableStateOf(Stage.ONGOING)
+    val competitionsNames: MutableList<String> = mutableListOf()
 
     init {
         competitionBuilder.info(_info).application(_application)

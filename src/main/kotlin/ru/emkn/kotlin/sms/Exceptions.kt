@@ -15,7 +15,7 @@ class InvalidDateFormatInFile(fileName: String, date: String) :
 class InvalidDateFormat(date: String) : Exception("Некорректный формат даты: $date")
 
 class ApplicationCanNotBeRead(numberOfApplication: Int) :
-    Exception("Заявку номер $numberOfApplication невозможно прочитать.")
+    Exception("Заявку номер $numberOfApplication невозможно прочитать")
 
 class ApplicationHasWrongFormat(numberOfApplication: Int) :
     Exception("Заявка номер $numberOfApplication неправильного формата. Ожидается:\n${TeamApplication.APPLICATION_FORMAT}")
@@ -70,4 +70,8 @@ class MetaInfoTooFewArguments(actual: Int) :
     Exception("Слишком мало аргументов для создания MetaInfo: ожидалось ${MetaInfo.Companion.Fields.values().size}, на самом деле $actual")
 
 class InvalidSportType(sportType: String) : Exception("Некорректный вид спорта $sportType")
+
+class InvalidCompetitionName(name: String) : Exception("Некорректное название соревнования")
+
+class CompetitionAlreadyExist(name: String) : Exception("Соревнование с названием $name уже существует")
 
