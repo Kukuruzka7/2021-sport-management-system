@@ -52,7 +52,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val teamApplications: MutableList<TeamApplication> = mutableListOf()
     private val count = mutableStateOf(teamApplications.size)
     private val openingApplication = mutableStateOf(-1)
-    var finished = mutableStateOf(false)
+    private val finished = mutableStateOf(false)
 
     @Composable
     override fun render() {
@@ -176,89 +176,88 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         }
     }
 
-    companion object {
+    private companion object {
         val DEL_SHIFT = 5.dp
         val MAIN_BUTTONS_GAP = 5.dp
         val WIDTH = 1000.dp
         val HEIGHT = 850.dp
+
+        val BTN_HEIGHT = 50.dp
+        val BTN_WIDTH = 50.dp
+        val FILE_BTN_WIDTH = 500.dp
+        val CORNERS = 4.dp
+        val WIDTH_OF_TEXT = 200.dp
     }
-}
 
-private val BTN_HEIGHT = 50.dp
-private val BTN_WIDTH = 50.dp
-private val FILE_BTN_WIDTH = 500.dp
-private val CORNERS = 4.dp
-private val WIDTH_OF_TEXT = 200.dp
-
-@Composable
-private fun FileButton(name: String, onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
-        modifier = Modifier
-            .clip(RoundedCornerShape(CORNERS))
-            .size(FILE_BTN_WIDTH, BTN_HEIGHT)
-            .focusable(interactionSource = interactionSource),
-        onClick = onClick
-    ) {
-        Text(text = name, color = TEXT_C)
+    @Composable
+    private fun FileButton(name: String, onClick: () -> Unit) {
+        val interactionSource = remember { MutableInteractionSource() }
+        Button(
+            colors = ButtonDefaults.buttonColors(backgroundColor = FOREGROUND_C),
+            modifier = Modifier
+                .clip(RoundedCornerShape(CORNERS))
+                .size(FILE_BTN_WIDTH, BTN_HEIGHT)
+                .focusable(interactionSource = interactionSource),
+            onClick = onClick
+        ) {
+            Text(text = name, color = TEXT_C)
+        }
     }
-}
 
-@Composable
-private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick
-    ) {
-        Icon(Icons.Default.ArrowForward, contentDescription = null, tint = ACCENT_C)
+    @Composable
+    private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick
+        ) {
+            Icon(Icons.Default.ArrowForward, contentDescription = null, tint = ACCENT_C)
+        }
     }
-}
 
-@Composable
-private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick
-    ) {
-        Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C)
+    @Composable
+    private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C)
+        }
     }
-}
 
+    @Composable
+    private fun DeleteFileButton(onClick: () -> Unit) {
+        IconButton(
+            modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
+            onClick = onClick,
+        ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ACCENT_C) }
+    }
 
-@Composable
-private fun DeleteFileButton(onClick: () -> Unit) {
-    IconButton(
-        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
-        onClick = onClick,
-    ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ACCENT_C) }
-}
-
-@Composable
-private fun drawCompetitionDataRow(
-    textOfUnit: String,
-    text: String,
-    onValueChange: (String) -> Unit
-) {
-    Column(
-        Modifier.wrapContentSize(),
-        Arrangement.spacedBy(ApplicationUploadingWindow.MAIN_BUTTONS_GAP),
-        Alignment.CenterHorizontally
+    @Composable
+    private fun drawCompetitionDataRow(
+        textOfUnit: String,
+        text: String,
+        onValueChange: (String) -> Unit
     ) {
+        Column(
+            Modifier.wrapContentSize(),
+            Arrangement.spacedBy(MAIN_BUTTONS_GAP),
+            Alignment.CenterHorizontally
+        ) {
 
-        TextField(
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = TEXT_C,
-                focusedIndicatorColor = ACCENT_C,
-                cursorColor = ACCENT_C
-            ),
-            singleLine = true,
-            value = text,
-            onValueChange = onValueChange,
-            readOnly = false,
-            placeholder = {
-                Text(modifier = Modifier.width(WIDTH_OF_TEXT), text = textOfUnit, color = GREY_C)
-            }
-        )
+            TextField(
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = TEXT_C,
+                    focusedIndicatorColor = ACCENT_C,
+                    cursorColor = ACCENT_C
+                ),
+                singleLine = true,
+                value = text,
+                onValueChange = onValueChange,
+                readOnly = false,
+                placeholder = {
+                    Text(modifier = Modifier.width(WIDTH_OF_TEXT), text = textOfUnit, color = GREY_C)
+                }
+            )
+        }
     }
 }

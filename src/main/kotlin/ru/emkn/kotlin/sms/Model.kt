@@ -5,9 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
+import java.io.File
 
 class Model(_info: MetaInfo? = null, _application: Application? = null) {
-    lateinit var competition: Competition
+    var competition: Competition? = null
     val competitionBuilder = CompetitionBuilder()
     var stage: MutableState<Stage> = mutableStateOf(Stage.ONGOING)
 
@@ -27,6 +28,13 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
             ONGOING, FINISHED;
         }
     }
+
+    fun getFinishProtocolByGroupName(name: String): String {
+        require(competition != null)
+        return "src/main/resources/competitions/${competition!!.info.name}/finishProtocol/groups/$name.csv"
+    }
+
+    //class CompetitionHasNotBeenCreated() : Exception("CompetitionHasNotBeenCreated")
 }
 
 class CompetitionBuilder {

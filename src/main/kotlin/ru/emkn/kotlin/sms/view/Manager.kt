@@ -24,7 +24,7 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
             Win.START -> StartWindow(this)
             Win.APPLICATION_UPLOADING -> ApplicationUploadingWindow(this)
             Win.COMPETITION -> CompetitionWindow(model, this)
-            Win.RESULT_UPLOADING -> ResultUploadingWindow(this)
+            Win.RESULT_UPLOADING -> ResultUploadingWindow(model, this, TODO())
             Win.EXCEPTION -> ExceptionWindow(this)
         }
         map[win]?.state?.value = true

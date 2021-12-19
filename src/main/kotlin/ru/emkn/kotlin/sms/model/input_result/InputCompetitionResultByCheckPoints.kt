@@ -13,7 +13,7 @@ import java.io.File
 class InputCompetitionResultByCheckPoints(override val fileName: String, private val competition: Competition) :
     InputCompetitionResult() {
 
-    private val rows = csvReader().readAll(File(fileName).readText())
+    override val rows = csvReader().readAll(File(fileName).readText())
 
     //по названию чекпоинта получаем результат атлетов на этом чекпоинте, достается из competition
     private val checkpointNameMap: Map<String, InputCheckpointResults> = buildCheckpointMap()
