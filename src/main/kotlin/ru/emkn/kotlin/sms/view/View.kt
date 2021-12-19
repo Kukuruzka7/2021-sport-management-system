@@ -19,7 +19,7 @@ object View {
             )
         )
         val manager = Manager(Model(info, application))
-        manager.open(Win.APPLICATION_UPLOADING)
+        manager.open(Win.START)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {
