@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms.view
 
 import androidx.compose.ui.window.application
 import kotlinx.datetime.LocalDate
+import ru.emkn.kotlin.sms.CompetitionAlreadyExist
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.application.Application
@@ -19,7 +20,7 @@ object View {
             )
         )
         val manager = Manager(Model(info, application))
-        manager.open(Win.COMPETITION)
+        manager.open(Win.APPLICATION_UPLOADING)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {

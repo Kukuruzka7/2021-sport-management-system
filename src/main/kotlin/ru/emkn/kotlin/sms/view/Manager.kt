@@ -14,8 +14,7 @@ enum class Win {
 
 interface WindowManager
 
-class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager,
-    ExceptionWindowManager {
+class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
 
@@ -31,8 +30,10 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
     }
 
     fun close(win: Win) {
-        //require бы написать (ДС)
-        map[win]?.state?.value = false
+        val closeWin = map[win]
+        if (closeWin != null) {
+            closeWin.state.value = false
+        }
         map[win] = null
     }
 
@@ -47,6 +48,10 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         model.checkBuilder()
     }
 
+    override fun getCompetitionsNames(): List<String> {
+        TODO("Not yet implemented")
+    }
+
     override fun openAplUplWindow() {
         map[Win.APPLICATION_UPLOADING] = ApplicationUploadingWindow(this)
         map[Win.APPLICATION_UPLOADING]!!.state.value = true
@@ -54,10 +59,6 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
 
     override fun openCompetitionWindow(name: String) {
         open(Win.COMPETITION)
-    }
-
-    override fun openCompetitionNameDialogueField(): String {
-        return "Nadeus Zarabotaet"
     }
 
     override fun closeStartWindow() = close(Win.START)
@@ -71,8 +72,6 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
     }
 
     override fun closeResUplWindow() = close(Win.RESULT_UPLOADING)
-
-    override fun closeExceptionWindow() = close(Win.EXCEPTION)
 
     override fun saveResults(files: List<File>) {
         model.stage.value = Model.Companion.Stage.FINISHED
