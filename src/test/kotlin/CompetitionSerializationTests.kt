@@ -1,6 +1,5 @@
 import org.junit.Test
 import ru.emkn.kotlin.sms.model.CompetitionSerialization
-import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.application.TeamApplication
 import kotlin.test.assertContentEquals
 
@@ -72,18 +71,17 @@ internal class CompetitionSerializationTests {
                 "12:00:03"
             )
         val athlete1 = TeamApplication.processingRow(
-            listOf("Миргалимова", "Розалина", "Ж", "2003", "КМС", "никуда не хочу"),
-            TeamName("A")
+            listOf("Миргалимова", "Розалина", "Ж", "2003", "КМС", "никуда не хочу"), "A"
         )
         val athlete2 =
-            TeamApplication.processingRow(listOf("Сибгатуллин", "Данил", "М", "2002", "МС", "не знаю"), TeamName("B"))
+            TeamApplication.processingRow(
+                listOf("Сибгатуллин", "Данил", "М", "2002", "МС", "не знаю"), "B"
+            )
         val athlete3 = TeamApplication.processingRow(
-            listOf("Москаленко", "Тимофей", "М", "2004", "I", "никуда не хочу"),
-            TeamName("C")
+            listOf("Москаленко", "Тимофей", "М", "2004", "I", "никуда не хочу"), "C"
         )
         val athlete4 = TeamApplication.processingRow(
-            listOf("Импостерович", "Импостер", "М", "2003", "КМС", "ПЫТАЮСЬ БЫТЬ С НИМИ"),
-            TeamName("D")
+            listOf("Импостерович", "Импостер", "М", "2003", "КМС", "ПЫТАЮСЬ БЫТЬ С НИМИ"), "D"
         )
         assertContentEquals(
             CompetitionSerialization(

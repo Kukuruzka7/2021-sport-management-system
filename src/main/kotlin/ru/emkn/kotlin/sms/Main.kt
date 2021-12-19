@@ -257,6 +257,17 @@ private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competitio
     }
 }
 
+private fun getCompetition(name: String): Competition? {
+    logger.info { "Проверка на существование соревнования." }
+    if (checkCompetitionExist(name)) return null
+    logger.info { "Получение результатов по контрольным точкам." }
+    val data: List<List<String>> = getData(name) ?: return null
+    logger.info { "Результаты получены." }
+    val info: MetaInfo = getMetaInfo(name) ?: return null
+    logger.info { "Создание Competition." }
+    return getCompetition(data, info)
+}
+
 private fun getData(name: String): List<List<String>>? {
     return try {
         csvReader().readAll(File("$dir$name/competitionData.csv"))

@@ -9,7 +9,7 @@ import java.io.File
 class TeamProtocol(private val team: Team, private val protocol: List<AthleteProtocol>) {
     fun toCSV(dirName: String) {
         //Пытаемся создать файл с названием fileName
-        val fileName = "$dirName${team.teamName}.csv"
+        val fileName = "$dirName${team.name}.csv"
         try {
             logger.trace { "Пытаемся создать файл с названием $fileName" }
             File(fileName).createNewFile()
@@ -20,7 +20,7 @@ class TeamProtocol(private val team: Team, private val protocol: List<AthletePro
         //Заполняем файл с командным протоколом
         CsvWriter().open(fileName) {
             //Пишем названием команды и первую строчку ("№ п/п", "Номер",  "Фамилия" и т.д.)
-            writeRow(team.teamName,"","","","","","","","","")
+            writeRow(team.name,"","","","","","","","","")
             writeInfoRow()
             //Пишем собственно результаты атлетов
             protocol.sortedBy { it.athlete.groupName.value }.forEach { writeAthleteProtocol(it) }

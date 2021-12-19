@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.InvalidDateFormat
 import ru.emkn.kotlin.sms.InvalidSportType
 import ru.emkn.kotlin.sms.MetaInfoTooFewArguments
+import kotlin.String
 
 data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType) {
     override fun toString() = "[$name, $date, $sport]"

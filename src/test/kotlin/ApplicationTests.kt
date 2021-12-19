@@ -16,7 +16,7 @@ internal class ApplicationTests {
                 File("src/test/testFiles/testTeamApplication/teamApplication2.csv")
             )
         )
-        assertContentEquals(application.teamApplicationsList[0].team.athletes, teamApplication1.team.athletes)
-        assertContentEquals(application.teamApplicationsList[1].team.athletes, teamApplication2.team.athletes)
+        assertContentEquals(application.teamApplications[0].team.athletes, teamApplication1.team.athletes)
+        assertContentEquals(application.teamApplications[1].team.athletes, teamApplication2.team.athletes)
     }
 }

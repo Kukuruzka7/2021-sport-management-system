@@ -3,7 +3,6 @@ import org.junit.Test
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
-import ru.emkn.kotlin.sms.model.TeamName
 import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.model.application.TeamApplication
 import java.io.File
@@ -17,13 +16,13 @@ internal class CompetitionTests {
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
         val row4 = listOf("Импостер", "Импостерович", "М", "2003", "КМС", "ПЫТАЮСЬ БЫТЬ С НИМИ")
-        val athlete1 = TeamApplication.processingRow(row1, TeamName("Команда мечты"))
-        val athlete2 = TeamApplication.processingRow(row2, TeamName("A"))
-        val athlete3 = TeamApplication.processingRow(row3, TeamName("B"))
-        val athlete4 = TeamApplication.processingRow(row4, TeamName("C"))
+        val athlete1 = TeamApplication.processingRow(row1, "Команда мечты")
+        val athlete2 = TeamApplication.processingRow(row2, "A")
+        val athlete3 = TeamApplication.processingRow(row3, "B")
+        val athlete4 = TeamApplication.processingRow(row4, "C")
         val athletes = listOf(athlete1, athlete2, athlete3, athlete4)
         assertContentEquals(
-            Competition.generateTeamListByAthleteList(athletes).map { it.teamName.name },
+            Competition.generateTeamListByAthleteList(athletes).map { it.name },
             listOf("Команда мечты", "A", "B", "C")
         )
     }
@@ -34,10 +33,10 @@ internal class CompetitionTests {
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
         val row4 = listOf("Импостер", "Импостерович", "М", "2003", "КМС", "ПЫТАЮСЬ БЫТЬ С НИМИ")
-        val athlete1 = TeamApplication.processingRow(row1, TeamName("Команда мечты"))
-        val athlete2 = TeamApplication.processingRow(row2, TeamName("A"))
-        val athlete3 = TeamApplication.processingRow(row3, TeamName("B"))
-        val athlete4 = TeamApplication.processingRow(row4, TeamName("C"))
+        val athlete1 = TeamApplication.processingRow(row1, "Команда мечты")
+        val athlete2 = TeamApplication.processingRow(row2, "A")
+        val athlete3 = TeamApplication.processingRow(row3, "B")
+        val athlete4 = TeamApplication.processingRow(row4, "C")
         val athletes = listOf(athlete1, athlete2, athlete3, athlete4)
         assertContentEquals(
             Competition.generateGroupListByAthleteList(athletes, SportType.RUNNING).map { it.race.groupName.value },
@@ -51,10 +50,10 @@ internal class CompetitionTests {
         val row2 = listOf("Данил", "Сибгатуллин", "М", "2002", "МС", "не знаю")
         val row3 = listOf("Тимофей", "Москаленко", "М", "2004", "I", "никуда не хочу")
         val row4 = listOf("Импостер", "Импостерович", "М", "2003", "КМС", "ПЫТАЮСЬ БЫТЬ С НИМИ")
-        val athlete1 = TeamApplication.processingRow(row1, TeamName("Команда мечты"))
-        val athlete2 = TeamApplication.processingRow(row2, TeamName("A"))
-        val athlete3 = TeamApplication.processingRow(row3, TeamName("B"))
-        val athlete4 = TeamApplication.processingRow(row4, TeamName("C"))
+        val athlete1 = TeamApplication.processingRow(row1, "Команда мечты")
+        val athlete2 = TeamApplication.processingRow(row2, "A")
+        val athlete3 = TeamApplication.processingRow(row3, "B")
+        val athlete4 = TeamApplication.processingRow(row4, "C")
         val athletes = listOf(athlete1, athlete2, athlete3, athlete4)
         assertContentEquals(
             Competition.groupDivision(athletes, SportType.RUNNING).map { it.race.groupName.value },

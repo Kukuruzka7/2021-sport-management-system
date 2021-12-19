@@ -113,7 +113,7 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
         teams.map { team ->
             TeamProtocol(
                 team,
-                athleteProtocols.filter { it.athlete.teamName.name == team.teamName.name })
+                athleteProtocols.filter { it.athlete.teamName == team.name })
         }
 
     private fun generateCSVbyGroups() {
