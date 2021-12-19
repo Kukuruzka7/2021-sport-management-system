@@ -107,12 +107,17 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isMultipleMode = true
                             fileDialog.isVisible = true
-                            teamApplications += fileDialog.files.filter { it.name.endsWith(".csv") }
-                                .mapIndexed { idx, it -> TeamApplication(it, idx + count.value) }
+                            teamApplications += getTeamApplicationsFromUser(fileDialog) ?: listOf()
                             count.value = teamApplications.size
                         }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
-                            finished.value = true
+                            val e = checkCompetitionData()
+                            if (e == null) {
+                                finished.value = true
+                            } else {
+                                eWindow.finished.value = false
+                                openingException.value = e
+                            }
                         }
                     }
                     repeat(count.value) { i ->
@@ -243,13 +248,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         val CORNERS = 4.dp
         val WIDTH_OF_TEXT = 200.dp
     }
-}
-
-private val BTN_HEIGHT = 50.dp
-private val BTN_WIDTH = 50.dp
-private val FILE_BTN_WIDTH = 500.dp
-private val CORNERS = 4.dp
-private val WIDTH_OF_TEXT = 200.dp
 
     @Composable
     private fun FileButton(name: String, onClick: () -> Unit) {
