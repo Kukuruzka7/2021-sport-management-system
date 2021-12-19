@@ -8,7 +8,7 @@ import ru.emkn.kotlin.sms.model.application.Application
 import java.io.File
 
 
-object View {
+class View {
     fun render() {
         val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.RUNNING)
         val application = Application(
@@ -19,7 +19,7 @@ object View {
             )
         )
         val manager = Manager(Model(info, application))
-        manager.open(Win.START)
+        manager.open(Win.COMPETITION)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {

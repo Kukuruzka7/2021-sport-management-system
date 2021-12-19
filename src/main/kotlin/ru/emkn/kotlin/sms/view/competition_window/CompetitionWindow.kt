@@ -44,9 +44,10 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
 
     @Composable
     override fun render() {
-        val info = model.competition.info
+        require(model.competition != null)
+        val info = model.competition!!.info
         Window(
-            onCloseRequest = { winManager.closeCompWindow() }, title = "lel", state = WindowState(
+            onCloseRequest = { winManager.closeCompWindow() }, title = info.name, state = WindowState(
                 width = WIDTH, height = HEIGHT
             )
         ) {
