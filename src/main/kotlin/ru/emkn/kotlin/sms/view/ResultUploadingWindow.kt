@@ -61,10 +61,12 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
             Box(
                 Modifier.background(BACKGROUND_C).fillMaxSize().padding(10.dp)
             ) {
+                //открытие сообщения об ошибке
                 if (openingException.value != null) {
                     eWindow.e = openingException.value
                     eWindow.render()
                     if (eWindow.finished.value) {
+                        eWindow.finished.value = false
                         openingException.value = null
                     }
                 }
@@ -88,7 +90,6 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                                 }
                                 openingResult.value = true
                             } catch (e: Exception) {
-                                eWindow.finished.value = false
                                 openingException.value = e
                             }
                         }
@@ -123,6 +124,7 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
         }
     }
 
+    //проверка на то, что хотя бы что-то загружено
     private fun checkFileDownload(): Exception? {
         if (result.value == null) {
             return FileDoNotDownload()
@@ -163,7 +165,6 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                         }
                     }
                 } catch (e: Exception) {
-                    eWindow.finished.value = false
                     openingException.value = e
                 }
             }

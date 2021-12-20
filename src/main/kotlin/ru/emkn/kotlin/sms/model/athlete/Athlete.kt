@@ -63,7 +63,7 @@ class Athlete(
         _groupName: String
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
 
-    val race = Race(groupName, SportType.ORIENTEERING) //TODO()
+    val race = Race(groupName, SportType.RUNNING) //TODO()
     lateinit var startTime: LocalTime
 
     override fun toString(): String = "[$name, $number, $groupName]"
