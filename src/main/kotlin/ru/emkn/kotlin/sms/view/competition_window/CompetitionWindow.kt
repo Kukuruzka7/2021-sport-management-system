@@ -27,9 +27,8 @@ import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 
-interface CompetitionWindowsManager : WindowManager {
+interface CompetitionWindowsManager : ResultsTabManager, WindowManager {
     fun closeCompWindow()
-    fun openCSV(fileName: String)
 }
 
 
@@ -58,7 +57,7 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
                 ) {
                     CompetitionName(info.name)
                     InfoBlock(info, model.stage.value).render()
-                    MainBlock(model).render()
+                    MainBlock(model, winManager).render()
                 }
             }
         }
@@ -124,9 +123,9 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
         }
     }
 
-    class MainBlock(val model: Model) {
+    class MainBlock(model: Model, winManager: CompetitionWindowsManager) {
         val tabState = mutableStateOf(TabEnum.GROUPS)
-        private val tabFactory = TabFactory(model)
+        private val tabFactory = TabFactory(model, winManager)
 
         @Composable
         fun render() {
@@ -171,15 +170,13 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
             ) {
                 TabEnum.values().forEach { tabEnum ->
                     val style = SpanStyle(
-                        fontSize = FONT_SIZE,
-                        color = if (tabEnum == tabState.value) {
+                        fontSize = FONT_SIZE, color = if (tabEnum == tabState.value) {
                             ACCENT_C
                         } else {
                             TEXT_C
                         }
                     )
-                    ClickableTexxxt(
-                        modifier = Modifier.padding(vertical = VERTICAL_PADDING),
+                    ClickableTexxxt(modifier = Modifier.padding(vertical = VERTICAL_PADDING),
                         text = tabToRussian(tabEnum),
                         style = style,
                         onClick = { tabState.value = tabEnum })

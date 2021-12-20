@@ -36,12 +36,12 @@ interface ResUplWinManager : WindowManager {
     fun getCompetitionsNames(): List<String>
 }
 
-enum class ResType {
+enum class ResultType {
     BY_CHECKPOINTS,
     BY_ATHLETES,
 }
 
-class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManager, private val resType: ResType) :
+class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManager, private val resultType: ResultType) :
     IWindow(winManager) {
     private val openingResult = mutableStateOf(false)
     private val result: MutableState<InputCompetitionResult?> = mutableStateOf(null)
@@ -80,11 +80,11 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                         NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isVisible = true
                             try {
-                                result.value = when (resType) {
-                                    ResType.BY_ATHLETES -> {
+                                result.value = when (resultType) {
+                                    ResultType.BY_ATHLETES -> {
                                         InputCompetitionResultByAthletes(fileDialog.files.first().path)
                                     }
-                                    ResType.BY_CHECKPOINTS -> {
+                                    ResultType.BY_CHECKPOINTS -> {
                                         InputCompetitionResultByCheckPoints(fileDialog.files.first().path, competition)
                                     }
                                 }
@@ -94,11 +94,11 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                             }
                         }
                         CreateButton(Modifier.align(Alignment.CenterVertically)) {
-                            result.value = when (resType) {
-                                ResType.BY_ATHLETES -> {
+                            result.value = when (resultType) {
+                                ResultType.BY_ATHLETES -> {
                                     InputCompetitionResultByAthletes(listOf(listOf("")))
                                 }
-                                ResType.BY_CHECKPOINTS -> {
+                                ResultType.BY_CHECKPOINTS -> {
                                     InputCompetitionResultByCheckPoints(listOf(listOf("")), competition)
                                 }
                             }
@@ -144,9 +144,9 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
             val tableStateVertical = rememberScrollState(0)
             val tableStateHorizontal = rememberScrollState(0)
             TableContent(
-                type = when (resType) {
-                    ResType.BY_CHECKPOINTS -> TableType.CHECKPOINT_RES
-                    ResType.BY_ATHLETES -> TableType.ATHLETE_RES
+                type = when (resultType) {
+                    ResultType.BY_CHECKPOINTS -> TableType.CHECKPOINT_RES
+                    ResultType.BY_ATHLETES -> TableType.ATHLETE_RES
                 },
                 modifier = Modifier.wrapContentSize()
                     .align(Alignment.TopCenter)
@@ -156,11 +156,11 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                 columnsCnt = columnsCnt,
             ) {
                 try {
-                    result.value = when (resType) {
-                        ResType.BY_ATHLETES -> {
+                    result.value = when (resultType) {
+                        ResultType.BY_ATHLETES -> {
                             InputCompetitionResultByAthletes(tableCells.toListListStr())
                         }
-                        ResType.BY_CHECKPOINTS -> {
+                        ResultType.BY_CHECKPOINTS -> {
                             InputCompetitionResultByCheckPoints(tableCells.toListListStr(), competition)
                         }
                     }

@@ -9,8 +9,9 @@ import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
-import ru.emkn.kotlin.sms.model.SportType.Companion.getSportType
+import ru.emkn.kotlin.sms.model.SportType.Companion.get
 import ru.emkn.kotlin.sms.model.application.Application
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.model.finishprotocol.FinishProtocol
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
@@ -50,7 +51,7 @@ const val dir = "src/main/resources/competitions/"
 fun main() {
     logger.info { "Начало работы программы." }
     val info = MetaInfo("NadeusZarabotaet", LocalDate(2021, 12, 15), SportType.RUNNING)
-    val application = Application(
+    val application = Application.create(
         listOf(
             File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),
             File("src/test/testFiles/testTeamApplication/teamApplication2.csv"),
@@ -76,7 +77,7 @@ fun start(inputData: Array<String>) {
     logger.info { "Вызов функции start. Обработка входных данных." }
     if (checkForEmptyInputStart(inputData)) return
     val name = inputData[FieldsStart.NAME.ordinal]
-    val sport = getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal])
+    val sport = get(inputData[FieldsStart.SPORT_TYPE.ordinal])
     if (checkSportType(inputData)) return
     val dateString = inputData[FieldsStart.DATE.ordinal]
     val fileName = inputData[FieldsStart.FILE_NAME_OF_APPLICATION.ordinal]
@@ -163,9 +164,7 @@ fun finishByCheckPoints(inputData: Array<String>) {
 
 private fun getApplication(teamApplicationNames: List<String>): Application? {
     return try {
-        Application(teamApplicationNames.map {
-            File(it)
-        })
+        Application.create(teamApplicationNames.map { File(it) })
     } catch (e: Exception) {
         println(e.message)
         null
@@ -191,7 +190,7 @@ private fun getDate(dateString: String): LocalDate? {
 }
 
 private fun checkSportType(inputData: Array<String>): Boolean {
-    if (getSportType(inputData[FieldsStart.SPORT_TYPE.ordinal]) == SportType.X) {
+    if (get(inputData[FieldsStart.SPORT_TYPE.ordinal]) == SportType.X) {
         println("Спорт ${inputData[FieldsStart.SPORT_TYPE.ordinal]} наша система не поддерживает.")
         return true
     }

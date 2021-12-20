@@ -25,6 +25,6 @@ enum class SportType() {
                     ).associateWith { ORIENTEERING })
             }.toMap()
 
-        fun getSportType(value: String) = sportTypeMap[value.lowercase()] ?: X
+        fun get(value: String) = sportTypeMap[value.lowercase()] ?: X
     }
 }

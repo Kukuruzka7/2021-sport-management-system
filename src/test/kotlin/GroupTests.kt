@@ -14,7 +14,7 @@ internal class GroupTests {
     fun testRace() {
         val teamApplication1 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication1.csv"), 0)
         val teamApplication2 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication2.csv"), 0)
-        val application = Application(
+        val application = Application.create(
             listOf(
                 File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),
                 File("src/test/testFiles/testTeamApplication/teamApplication2.csv")
