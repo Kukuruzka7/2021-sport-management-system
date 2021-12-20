@@ -23,7 +23,7 @@ fun getRows(file: File, indexOfApplication: Int): List<List<String>> =
     }
 
 //по данным из заявки получение данных об атлетах
-class TeamApplication(val teamName: String, val rows: List<List<String>>, private val indexOfApplication: Int) {
+class TeamApplication(var teamName: String, val rows: List<List<String>>, private val indexOfApplication: Int) {
 
     val team: Team
 
