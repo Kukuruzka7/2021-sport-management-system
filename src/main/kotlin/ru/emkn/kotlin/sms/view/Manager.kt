@@ -1,5 +1,9 @@
 package ru.emkn.kotlin.sms.view
 
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import ru.emkn.kotlin.sms.dir
+import ru.emkn.kotlin.sms.model.Competition
+import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.view.application_view.AplUplWinManager
@@ -9,12 +13,12 @@ import ru.emkn.kotlin.sms.view.competition_window.CompetitionWindowsManager
 import java.io.File
 
 enum class Win {
-    START, APPLICATION_UPLOADING, COMPETITION, RESULT_UPLOADING, EXCEPTION;
+    START, APPLICATION_UPLOADING, COMPETITION, RESULT_UPLOADING;
 }
 
 interface WindowManager
 
-class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager{
+class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
 
@@ -24,7 +28,6 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
             Win.APPLICATION_UPLOADING -> ApplicationUploadingWindow(this)
             Win.COMPETITION -> CompetitionWindow(model, this)
             Win.RESULT_UPLOADING -> ResultUploadingWindow(model, this, ResType.BY_CHECKPOINTS)
-            Win.EXCEPTION -> ExceptionWindow(this)
         }
         map[win]?.state?.value = true
     }
@@ -51,8 +54,7 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
     override fun getCompetitionsNames(): List<String> = model.competitionsNames
 
     override fun giveCompetitionNameToModel(name: String) {
-       // model.competition = TODO()
-        println("надо сделать что-то")
+        model.competition = getCompetition(name)
     }
 
     override fun addCompetitionName(name: String) {
@@ -85,4 +87,38 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         model.stage.value = Model.Companion.Stage.FINISHED
         TODO("Not yet implemented")
     }
+
+    private fun getCompetition(name: String): Competition {
+        require(checkCompetitionExist(name))
+        val data: List<List<String>>? = getData(name) //получение Competition data
+        val info: MetaInfo? = getMetaInfo(name) // получение мета информации
+        require(data != null)
+        require(info != null)
+        return getCompetition(data, info) //создание соревнования
+    }
+
+    private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competition =
+        Competition(CompetitionSerialization(data, info.toStringList()))
+
+    private fun getData(name: String): List<List<String>>? {
+        return try {
+            csvReader().readAll(File("$dir$name/competitionData.csv"))
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun getMetaInfo(name: String): MetaInfo? = try {
+        MetaInfo(csvReader().readAll(File("$dir$name/competitionInfo.csv"))[0])
+    } catch (e: Exception) {
+        null
+    }
+
+    private fun checkCompetitionExist(name: String): Boolean {
+        if (!File("$dir$name/competitionData.csv").exists()) {
+            return true
+        }
+        return false
+    }
+
 }
