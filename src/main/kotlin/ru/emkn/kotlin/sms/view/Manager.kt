@@ -48,8 +48,10 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         model.checkBuilder()
     }
 
-    override fun getCompetitionsNames(): List<String> {
-        TODO("Not yet implemented")
+    override fun getCompetitionsNames(): List<String> = model.competitionsNames
+
+    override fun addCompetitionName(name: String) {
+        model.competitionsNames.add(name)
     }
 
     override fun openAplUplWindow() {

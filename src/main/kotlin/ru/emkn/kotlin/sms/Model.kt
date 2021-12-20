@@ -2,6 +2,8 @@ package ru.emkn.kotlin.sms.view
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
@@ -11,7 +13,10 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
     var competition: Competition? = null
     val competitionBuilder = CompetitionBuilder()
     var stage: MutableState<Stage> = mutableStateOf(Stage.ONGOING)
-    val competitionsNames: MutableList<String> = mutableListOf()
+    val competitionsNames: MutableList<String> = getAlreadyExistsCompetitions()
+
+    private fun getAlreadyExistsCompetitions(): MutableList<String> =
+        csvReader().readAll(File("src/main/resources/competitions/competitionsNames.csv")).map { it[0] }.toMutableList()
 
     init {
         competitionBuilder.info(_info).application(_application)
@@ -35,7 +40,17 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
         return "src/main/resources/competitions/${competition!!.info.name}/finishProtocol/groups/$name.csv"
     }
 
-    //class CompetitionHasNotBeenCreated() : Exception("CompetitionHasNotBeenCreated")
+    fun saveCompetitionsNames() {
+        csvWriter().writeAll(
+            List(competitionsNames.size) {  listOf(competitionsNames[it]) },
+            File("src/main/resources/competitions/competitionsNames.csv")
+        )
+    }
+
+    fun save(){
+        saveCompetitionsNames()
+    }
+
 }
 
 class CompetitionBuilder {
@@ -60,6 +75,5 @@ class CompetitionBuilder {
 
     class CompetitionIsNotReadyException(property: String) :
         Exception("Property $property has not been initialized yet")
-
 
 }

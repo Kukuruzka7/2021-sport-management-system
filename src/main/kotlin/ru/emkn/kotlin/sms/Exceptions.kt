@@ -9,7 +9,6 @@ import ru.emkn.kotlin.sms.model.input_result.InputCheckpointResults
 
 class WeHaveAProblem(problem: String) : Exception(problem)
 
-
 class InvalidDateFormat(date: String) : Exception("Файл содержит некорректный формат даты: $date")
 
 class ApplicationCanNotBeRead(numberOfApplication: Int) :
