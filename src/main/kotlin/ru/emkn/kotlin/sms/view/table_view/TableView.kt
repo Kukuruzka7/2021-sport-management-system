@@ -233,6 +233,7 @@ fun TableContent(
                 modifier = modifier,
                 mutable = false,
                 drawHeader = true,
+                columnsCnt = mutableStateOf(10),
                 firstRowFunc = { _: Int -> (finishProtocolFirstRow.map { it.toColumnType().getInfo(it) }) },
                 contentRows = list.toMListMListStr()
             ) {}
@@ -242,6 +243,7 @@ fun TableContent(
                 modifier = modifier,
                 mutable = false,
                 drawHeader = true,
+                columnsCnt = mutableStateOf(6),
                 firstRowFunc = { _: Int -> startProtocolFirstRow.map { it.toColumnType().getInfo(it) } },
                 contentRows = list.toMListMListStr()
             ) {}
@@ -273,6 +275,7 @@ fun TableContent(
                 modifier = modifier,
                 mutable = true,
                 drawHeader = true,
+                columnsCnt = mutableStateOf(5),
                 firstRowFunc = { _: Int -> applicationFirstRow.map { it.toColumnType().getInfo(it) } },
                 contentRows = contentRows
             ) { saveBtnAction() }
