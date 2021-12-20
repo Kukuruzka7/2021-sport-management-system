@@ -17,7 +17,7 @@ fun ColumnType.getInfo(str: String): ColumnInfo = when (this) {
     ColumnType.FirstName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
     ColumnType.LastName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
     ColumnType.BirthYear -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
-    ColumnType.SportCategory -> ColumnInfo(str, 70.dp)
+    ColumnType.SportCategory -> ColumnInfo(str, 80.dp)
     ColumnType.StartTime -> ColumnInfo(str, 100.dp, ::timeFilter)
     ColumnType.Num -> ColumnInfo(str, 70.dp, ::onlyDigitsFilter)
     ColumnType.Team -> ColumnInfo(str, 200.dp)
@@ -49,7 +49,7 @@ fun String.toColumnType() = when (this) {
     "Имя" -> ColumnType.FirstName
     "Год рождения", "Г.р." -> ColumnType.BirthYear
     "Разряд", "Разр." -> ColumnType.SportCategory
-    "Время старта" -> ColumnType.StartTime
+    "Время старта", "Старт" -> ColumnType.StartTime
 
     "№ п/п" -> ColumnType.Num
     "Номер" -> ColumnType.AthleteNum

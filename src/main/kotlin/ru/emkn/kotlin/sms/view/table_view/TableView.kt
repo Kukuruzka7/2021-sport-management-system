@@ -191,7 +191,7 @@ fun TableContent(
 }
 
 val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.", "Разряд")
-val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
+val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Г.р.", "Разряд", "Старт")
 val finishProtocolFirstRow =
     listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
 

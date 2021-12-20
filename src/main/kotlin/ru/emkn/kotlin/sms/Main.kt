@@ -48,7 +48,7 @@ const val dir = "src/main/resources/competitions/"
 
 fun main() {
     logger.info { "Начало работы программы." }
-    val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.RUNNING)
+    val info = MetaInfo("NadeusZarabotaet", LocalDate(2021, 12, 15), SportType.RUNNING)
     val application = Application(
         listOf(
             File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),

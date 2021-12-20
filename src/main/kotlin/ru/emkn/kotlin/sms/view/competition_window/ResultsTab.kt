@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms.view.competition_window
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
@@ -17,18 +18,28 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.readCSV
+import ru.emkn.kotlin.sms.view.ColorScheme
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import ru.emkn.kotlin.sms.view.Model
-import ru.emkn.kotlin.sms.view.StartWindow
+import ru.emkn.kotlin.sms.view.table_view.TableContent
+import ru.emkn.kotlin.sms.view.table_view.TableType
 
-class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier) {
+class ResultsTab(
+    _modifier: Modifier,
+    private val groupList: List<Group>,
+    private val stage: MutableState<Model.Companion.Stage>,
+    private val fileNameBuilder: (String) -> String
+) :
+    ITab(_modifier) {
 
     @Composable
     override fun render() {
-        require(model.competition != null)
-        when (model.stage.value) {
-            Model.Companion.Stage.FINISHED -> WithResultTab(model.competition!!.groupList, modifier).render()
+        when (stage.value) {
+            Model.Companion.Stage.FINISHED -> WithResultTab(
+                groupList, modifier, fileNameBuilder
+            ).render()
             Model.Companion.Stage.ONGOING -> NoResultTab(modifier).render()
         }
     }
@@ -86,7 +97,11 @@ class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier
     }
 
 
-    private class WithResultTab(val groupList: List<Group>, _modifier: Modifier) :
+    private class WithResultTab(
+        val groupList: List<Group>,
+        _modifier: Modifier,
+        private val fileNameBuilder: (String) -> String
+    ) :
         TabLetka<Group>(_modifier, groupList) {
         private val dialog: MutableState<String?> = mutableStateOf(null)
         override fun split(): List<List<Group>> = groupList.groupBy { it.race.groupName[0] }.values.toList().reversed()
@@ -100,10 +115,21 @@ class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier
                     onCloseRequest = { dialog.value = null },
                     title = dialog.value.toString(),
                     state = rememberDialogState(
-                        width = StartWindow.WIDTH, height = StartWindow.HEIGHT
+                        width = DIALOG_WIDTH, height = DIALOG_HEIGHT
+
                     ),
-                ) {}
+                ) {
+                    Box(Modifier.fillMaxSize().background(color = ColorScheme.BACKGROUND_C).padding(DIALOG_PADDING)) {
+                        TableContent(TableType.FINISH_PROTOCOL, Modifier, readCSV(fileNameBuilder(dialog.value!!)))
+                    }
+                }
             }
+        }
+
+        private companion object {
+            val DIALOG_WIDTH = 750.dp
+            val DIALOG_HEIGHT = 500.dp
+            val DIALOG_PADDING = 20.dp
         }
 
         @Composable
