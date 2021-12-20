@@ -12,10 +12,7 @@ import java.io.File
 
 class InputCompetitionResultByCheckPoints(override val rows: List<List<String>>, private val competition: Competition) :
     InputCompetitionResult() {
-    constructor(fileName: String, competition: Competition) : this(
-        csvReader().readAll(File(fileName).readText()),
-        competition
-    )
+    constructor(fileName: String, competition: Competition) : this(readText(fileName), competition)
 
     //по названию чекпоинта получаем результат атлетов на этом чекпоинте, достается из competition
     private val checkpointNameMap: Map<String, InputCheckpointResults> = buildCheckpointMap()

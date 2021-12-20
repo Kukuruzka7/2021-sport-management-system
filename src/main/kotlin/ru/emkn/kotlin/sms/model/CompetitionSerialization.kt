@@ -17,7 +17,7 @@ class CompetitionSerialization(val athletesData: List<List<kotlin.String>>, val 
         athletesData.forEach { checkRow(it) }
     }
 
-    fun save(athletesFileName: kotlin.String, metaInfoFileName: kotlin.String) {
+    fun save(athletesFileName: String, metaInfoFileName: String) {
         logger.info { "Сохранение Competition в файл $athletesFileName" }
         try {
             csvWriter().open(athletesFileName) {

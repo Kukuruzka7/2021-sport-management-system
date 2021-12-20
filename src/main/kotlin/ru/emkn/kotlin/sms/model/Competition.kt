@@ -8,6 +8,7 @@ import ru.emkn.kotlin.sms.WeHaveAProblem
 import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.athlete.AthleteNumber
+import ru.emkn.kotlin.sms.model.athlete.toStringList
 import ru.emkn.kotlin.sms.model.result_data.Checkpoint
 
 
@@ -71,9 +72,7 @@ class Competition {
 
     fun toCompetitionSerialization(): CompetitionSerialization {
         logger.info { "Вызов функции toCompetitionData()" }
-        return CompetitionSerialization(athleteList.map { athlete ->
-            (CompetitionSerialization.Companion.Fields.values().map { athlete.extractFieldToString(it) })
-        }, info.toStringList())
+        return CompetitionSerialization(athleteList.map { it.toStringList() }, info.toStringList())
     }
 
     fun getCheckPoint(groupName: GroupName): List<kotlin.String> {

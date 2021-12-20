@@ -94,4 +94,6 @@ class Athlete(
     }
 }
 
+fun Athlete.toStringList() =
+    CompetitionSerialization.Companion.Fields.values().map { this.extractFieldToString(it) }
 
