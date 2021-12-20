@@ -1,18 +1,17 @@
 package ru.emkn.kotlin.sms.model.input_result
 
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
 import ru.emkn.kotlin.sms.InputCheckpointResultIsAbsent
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.result_data.CheckpointRes
 import ru.emkn.kotlin.sms.model.result_data.Table
-import java.io.File
+import ru.emkn.kotlin.sms.readCSV
 
 
 class InputCompetitionResultByCheckPoints(override val rows: List<List<String>>, private val competition: Competition) :
     InputCompetitionResult() {
-    constructor(fileName: String, competition: Competition) : this(readText(fileName), competition)
+    constructor(fileName: String, competition: Competition) : this(readCSV(fileName), competition)
 
     //по названию чекпоинта получаем результат атлетов на этом чекпоинте, достается из competition
     private val checkpointNameMap: Map<String, InputCheckpointResults> = buildCheckpointMap()

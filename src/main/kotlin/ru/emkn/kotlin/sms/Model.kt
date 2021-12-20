@@ -40,17 +40,21 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
         return "src/main/resources/competitions/${competition!!.info.name}/finishProtocol/groups/$name.csv"
     }
 
+    fun getStartProtocolByGroupName(name: String): String {
+        require(competition != null)
+        return "src/main/resources/competitions/${competition!!.info.name}/startProtocol/$name.csv"
+    }
+
     fun saveCompetitionsNames() {
         csvWriter().writeAll(
-            List(competitionsNames.size) {  listOf(competitionsNames[it]) },
+            List(competitionsNames.size) { listOf(competitionsNames[it]) },
             File("src/main/resources/competitions/competitionsNames.csv")
         )
     }
 
-    fun save(){
+    fun save() {
         saveCompetitionsNames()
     }
-
 }
 
 class CompetitionBuilder {

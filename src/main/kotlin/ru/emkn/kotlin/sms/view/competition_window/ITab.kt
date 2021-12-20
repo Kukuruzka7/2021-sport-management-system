@@ -38,21 +38,18 @@ class TabFactory(private val model: Model) {
 
 
     private fun create(tabEnum: TabEnum, modifier: Modifier, model: Model): ITab {
-        require(model.competition != null)
+        val competition = model.competition
+        require(competition != null)
         return when (tabEnum) {
             TabEnum.GROUPS -> {
-                GroupsTab(buildRacesTable(model.competition!!.groupList), modifier)
+                GroupsTab(buildRacesTable(competition.groupList), modifier)
             }
-            TabEnum.TEAMS -> TeamsTab(
-                model.competition!!.teamList, modifier
-            )
-            TabEnum.ATHLETES -> AthletesTab(
-                model.competition!!.athleteList, modifier
-            )
-            TabEnum.START_PROTOCOLS -> StartProtocolsTab(
-                model.competition!!.groupList, modifier
-            )
-            TabEnum.RESULT -> ResultsTab(modifier, model)
+            TabEnum.TEAMS -> TeamsTab(competition.teamList, modifier)
+            TabEnum.ATHLETES -> AthletesTab(competition.athleteList, modifier)
+            TabEnum.START_PROTOCOLS -> StartProtocolsTab(competition.groupList, modifier)
+            { model.getStartProtocolByGroupName(it) }
+            TabEnum.RESULT -> ResultsTab(modifier, model.competition!!.groupList, model.stage)
+            { model.getFinishProtocolByGroupName(model.competition!!.info.name) }
         }
     }
 
