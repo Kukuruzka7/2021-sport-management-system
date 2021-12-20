@@ -11,8 +11,8 @@ fun onlyLettersFilter(str: String): String =
 fun timeFilter(str: String): String = str.filter { (('0'..'9') + ':').contains(it) }
 fun delayFilter(str: String): String = str.filter { (('0'..'9') + ':' + '+').contains(it) }
 
-fun ColumnType.getInfo(str: String): ColumnInfo {
-    return when (this) {
+fun ColumnType.getInfo(str: String): ColumnInfo =
+    when (this) {
         ColumnType.AthleteNum -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
         ColumnType.FirstName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
         ColumnType.LastName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
@@ -26,7 +26,7 @@ fun ColumnType.getInfo(str: String): ColumnInfo {
         ColumnType.Delay -> ColumnInfo(str, 100.dp, ::delayFilter)
         ColumnType.Sex -> ColumnInfo(str, 70.dp, ::onlyLettersFilter)
     }
-}
+
 
 enum class ColumnType {
     AthleteNum,

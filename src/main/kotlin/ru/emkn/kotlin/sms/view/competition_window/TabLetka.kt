@@ -11,7 +11,6 @@ import ru.emkn.kotlin.sms.model.Team
 import ru.emkn.kotlin.sms.model.athlete.toStringList
 import ru.emkn.kotlin.sms.view.ClickableText
 import ru.emkn.kotlin.sms.view.ColorScheme
-import ru.emkn.kotlin.sms.view.table_view.TableContentImmutable
 import ru.emkn.kotlin.sms.view.table_view.TableType
 
 data class Hyperlink(val name: String, val onClick: () -> Unit)
@@ -38,7 +37,7 @@ abstract class TabLetka(private val links: List<Hyperlink>, _modifier: Modifier)
             verticalArrangement = Arrangement.spacedBy(SPACING),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            list.forEach() {
+            list.forEach {
                 ClickableText(Modifier, it.name, style, it.onClick)
             }
         }

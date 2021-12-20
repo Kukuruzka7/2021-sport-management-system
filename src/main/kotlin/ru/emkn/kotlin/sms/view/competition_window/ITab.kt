@@ -3,10 +3,8 @@ package ru.emkn.kotlin.sms.view.competition_window
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.view.Model
-import java.io.File
 
 enum class TabEnum {
     GROUPS, TEAMS, ATHLETES, START_PROTOCOLS, RESULT;
