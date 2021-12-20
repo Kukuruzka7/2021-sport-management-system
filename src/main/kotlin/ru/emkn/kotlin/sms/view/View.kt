@@ -8,7 +8,7 @@ import ru.emkn.kotlin.sms.model.application.Application
 import java.io.File
 
 
-object View {
+class View {
     fun render() {
         val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.RUNNING)
         val application = Application(

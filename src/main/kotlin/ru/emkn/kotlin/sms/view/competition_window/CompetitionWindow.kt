@@ -140,7 +140,7 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
                 ) {
                     TopPanel(tabState)
                     Divider(color = GREY_C, thickness = DIVIDER_THICKNESS)
-                    tabFactory.get(tabState, Modifier.fillMaxSize()).render()
+                    tabFactory.get(tabState, Modifier.align(Alignment.CenterHorizontally)).render()
                 }
                 VerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
