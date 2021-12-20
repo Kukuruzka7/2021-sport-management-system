@@ -155,7 +155,18 @@ val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Г
 val finishProtocolFirstRow =
     listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
 
-fun checkpointResFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
+fun checkpointResFirstRow(n: Int): List<ColumnInfo> =
+    listOf(ColumnInfo("", 80.dp, ::onlyDigitsFilter)) + List(n - 1) {
+        when (it % 2) {
+            1 -> {
+                ColumnInfo("", 95.dp, ::timeFilter)
+            }
+            else -> {
+                ColumnInfo("", 70.dp)
+            }
+        }
+    }
+
 fun coursesFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
 
 @Composable
