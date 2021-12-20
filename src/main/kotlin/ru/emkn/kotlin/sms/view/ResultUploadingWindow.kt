@@ -47,7 +47,7 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
     private val openingResult = mutableStateOf(false)
     private val result: MutableState<InputCompetitionResult?> = mutableStateOf(null)
     private val openingException = mutableStateOf<Exception?>(null)
-    var finished = mutableStateOf(false)
+    val finished = mutableStateOf(false)
     val eWindow = ExceptionWindow(winManager)
     private val competition: Competition =
         model.competition ?: throw Exception("ResultUploadingWindow получил model без competition")

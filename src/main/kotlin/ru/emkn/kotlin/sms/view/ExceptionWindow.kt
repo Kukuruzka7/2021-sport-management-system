@@ -23,7 +23,7 @@ import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import java.io.File
 
 
-class ExceptionWindow(val winManager: WindowManager) : IWindow(winManager) {
+class ExceptionWindow( winManager: WindowManager) : IWindow(winManager) {
     var e: Exception? = null
     val finished = mutableStateOf(false)
 

@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,9 +34,15 @@ interface StartWindowManager : WindowManager {
 
     fun openCompetitionWindow(name: String)
 
+    fun getCompetitionsNames(): List<String>
+
+    fun giveCompetitionNameToModel(name: String)
+
 }
 
 class StartWindow(private val winManager: StartWindowManager) : IWindow(winManager) {
+    val openingCompOpenWin = mutableStateOf(false)
+    val compOpenWin = CompetitionOpeningWindow(winManager)
 
     companion object {
         val WIDTH = 700.dp
@@ -48,13 +55,22 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
     override fun render() {
         Window(
             onCloseRequest = { winManager.closeStartWindow() },
-            title = "kek",
             state = WindowState(
                 width = WIDTH,
                 height = HEIGHT
             )
         ) {
+
             Box(Modifier.fillMaxSize().background(BACKGROUND_C)) {
+
+                if (openingCompOpenWin.value) {
+                    compOpenWin.render()
+                    if (compOpenWin.finished.value) {
+                        openingCompOpenWin.value = false
+                        compOpenWin.finished.value = false
+                    }
+                }
+
                 Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                     WelcomeSign(Modifier.padding(vertical = WELCOME_SIGN_PADDING))
                     Row(
@@ -100,7 +116,7 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
 
     @Composable
     private fun OpenButton() = StartWindowButton("Открыть", Icons.Default.PlayArrow) {
-        winManager.openCompetitionWindow("TODO()")
+        openingCompOpenWin.value = true
     }
 
 

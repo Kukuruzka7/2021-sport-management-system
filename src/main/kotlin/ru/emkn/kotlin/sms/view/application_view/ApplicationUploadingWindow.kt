@@ -60,7 +60,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val count = mutableStateOf(teamApplications.size)
     private val openingApplication = mutableStateOf(-1)
     private val openingException = mutableStateOf<Exception?>(null)
-    var finished = mutableStateOf(false)
+    val finished = mutableStateOf(false)
     private val eWindow = ExceptionWindow(winManager)
 
     @Composable

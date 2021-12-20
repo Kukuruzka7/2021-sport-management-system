@@ -14,7 +14,7 @@ enum class Win {
 
 interface WindowManager
 
-class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
+class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager{
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
 
@@ -50,6 +50,11 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
 
     override fun getCompetitionsNames(): List<String> = model.competitionsNames
 
+    override fun giveCompetitionNameToModel(name: String) {
+       // model.competition = TODO()
+        println("надо сделать что-то")
+    }
+
     override fun addCompetitionName(name: String) {
         model.competitionsNames.add(name)
     }
@@ -60,6 +65,7 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
     }
 
     override fun openCompetitionWindow(name: String) {
+        giveCompetitionNameToModel(name)
         open(Win.COMPETITION)
     }
 

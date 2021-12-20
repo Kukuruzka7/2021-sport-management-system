@@ -10,7 +10,7 @@ import java.io.File
 
 class View(val model: Model, val manager: Manager) {
     fun render() {
-        manager.open(Win.APPLICATION_UPLOADING)
+        manager.open(Win.START)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {
