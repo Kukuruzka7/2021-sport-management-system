@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -120,6 +117,11 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             competitionSportType.value = it
                         }
                         val fileDialog = FileDialog(ComposeWindow())
+                        CreateFileButton(Modifier.align(Alignment.CenterVertically)) {
+                            teamApplications += TeamApplication("", emptyList(), 1)
+                            teamApplicationsNames += ""
+                            count.value = teamApplications.size
+                        }
                         DownloadFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isMultipleMode = true
                             fileDialog.isVisible = true
@@ -146,7 +148,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         repeat(count.value) { i ->
                             Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
                                 val teamN = mutableStateOf(teamApplications[i].teamName)
-                                FileField(teamN, Modifier.size(FILE_FIELD_WIDTH, BTN_HEIGHT)) {
+                                FileField(teamN, Modifier.height(BTN_HEIGHT).width(FILE_FIELD_WIDTH)) {
                                     teamN.value = it
                                     teamApplications[i].teamName = it
                                 }
@@ -239,6 +241,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                     contentRows = tableCells
                 ) {
                     teamApplications[openingApplication.value] = TeamApplication(application, tableCells)
+                    openingApplication.value = -1
                 }
                 HorizontalScrollbar(
                     modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
@@ -313,6 +316,16 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
 
     @Composable
     private fun DownloadFilesButton(modifier: Modifier, onClick: () -> Unit) {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick
+        ) {
+            Icon(Icons.Default.Search, contentDescription = null, tint = ACCENT_C)
+        }
+    }
+
+    @Composable
+    private fun CreateFileButton(modifier: Modifier, onClick: () -> Unit) {
         IconButton(
             modifier = modifier,
             onClick = onClick
