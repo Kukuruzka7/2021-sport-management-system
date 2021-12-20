@@ -9,17 +9,14 @@ import ru.emkn.kotlin.sms.model.input_result.InputCheckpointResults
 
 class WeHaveAProblem(problem: String) : Exception(problem)
 
-class InvalidDateFormatInFile(fileName: String, date: String) :
-    Exception("В файле $fileName некорректный формат даты: $date")
 
-class InvalidDateFormat(date: String) : Exception("Некорректный формат даты: $date")
+class InvalidDateFormat(date: String) : Exception("Файл содержит некорректный формат даты: $date")
 
 class ApplicationCanNotBeRead(numberOfApplication: Int) :
     Exception("Заявку номер $numberOfApplication невозможно прочитать")
 
 class ApplicationHasWrongFormat(numberOfApplication: Int) :
     Exception("Заявка номер $numberOfApplication неправильного формата. Ожидается:\n${TeamApplication.APPLICATION_FORMAT}")
-
 
 class ApplicationHasWrongFormatOnLine(numberOfApplication: Int, line: String) :
     Exception("Заявка номер $numberOfApplication неправильного формата. Ожидается:\n${TeamApplication.APPLICATION_FORMAT}\n В реальности:\n$line")
@@ -33,15 +30,11 @@ class WrongYearInApplicationOnLine(numberOfApplication: Int, year: String) :
 class WrongCategoryInApplicationOnLine(numberOfApplication: Int, year: String) :
     Exception("Заявка номер $numberOfApplication содержит спортсмена с неопределенной категорией. Ожидается число.\n В реальности:\n$year")
 
-class WrongAthleteNameInResults(athleteName: Name) : Exception("Спортсмен с именем ${athleteName.fullName}")
-
-class ResultCanNotBeRead(fileName: String) : Exception("Результат в файле $fileName не может быть прочитан")
-
 class ResultMissesAthleteNumber(list: List<String>) :
-    Exception("Отсутствует номер спортсмена на первой строке: $list")
+    Exception("Отсутствует номер спортсмена в строке: $list")
 
 class ResultByAthleteInvalidRow(line: List<String>) :
-    Exception("Некорректная информация от прохожднии. Ожидается \n${InputAthleteResults.ATHLETE_RESULT_FORMAT}\n В реальность\n $line")
+    Exception("Некорректная информация о прохождении. Ожидается \n${InputAthleteResults.ATHLETE_RESULT_FORMAT}\n В реальность\n $line")
 
 class ResultMissesCheckPointName(list: List<String>) :
     Exception("В строке $list отсутствует название контрольного пункта на первой строке")
@@ -75,3 +68,4 @@ class InvalidCompetitionName(name: String) : Exception("Некорректное
 
 class CompetitionAlreadyExist(name: String) : Exception("Соревнование с названием $name уже существует")
 
+class FileDoNotDownload(): Exception("Загрузите файл с результатами")
