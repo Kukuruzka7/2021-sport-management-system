@@ -46,7 +46,7 @@ class TabFactory(private val model: Model) {
                 GroupsTab(buildRacesTable(model.competition!!.groupList), modifier)
             }
             TabEnum.TEAMS -> TeamsTab(
-                model.competition!!.teamList.map { Hyperlink(it.name) {} }, modifier
+                model.competition!!.teamList, modifier
             )
             TabEnum.ATHLETES -> AthletesTab(
                 model.competition!!.athleteList.map { Hyperlink(it.name.fullName) {} }, modifier
@@ -64,9 +64,6 @@ class TabFactory(private val model: Model) {
                 .apply { add(0, it.race.groupName.value) }
         }
         val maxLen = races.maxOf { it.size }
-        races.forEach { it + List(maxLen - it.size) { "" } }
-        return races.map { it.toList() }
+        return races.map { it + List(maxLen - it.size) { "" } }
     }
-
-
 }

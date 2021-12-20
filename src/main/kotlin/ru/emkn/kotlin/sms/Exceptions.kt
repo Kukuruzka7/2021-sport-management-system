@@ -67,4 +67,6 @@ class InvalidCompetitionName(name: String) : Exception("Некорректное
 
 class CompetitionAlreadyExist(name: String) : Exception("Соревнование с названием $name уже существует")
 
-class FileDoNotDownload(): Exception("Загрузите файл с результатами")
+class FileDoNotDownload() : Exception("Загрузите файл с результатами")
+
+class InvalidCSV(fileName: String) : Exception("$fileName не удовлевтворяет нужному формату (csv-таблица)")
