@@ -20,6 +20,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.model.MetaInfo
@@ -37,12 +38,12 @@ import ru.emkn.kotlin.sms.view.table_view.TableContent
 import ru.emkn.kotlin.sms.view.table_view.TableType
 import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
 import java.awt.FileDialog
-import java.io.File
 import java.util.*
 
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
-    fun saveApplication(files: List<File>)
+    fun openCompetitionWindow()
+    fun saveApplication(applications: List<TeamApplication>)
     fun saveMetaInfo(info: MetaInfo)
     fun getCompetitionsNames(): List<String>
     fun addCompetitionName(name: String)
@@ -128,18 +129,26 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             }
                         }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
-                            if(!competitionIsDone.value) {
+                            if (!competitionIsDone.value) {
                                 val e = checkCompetitionData()
                                 if (e == null) {
                                     winManager.addCompetitionName(competitionName.value)
                                     competitionIsDone.value = true
-                                    winManager.saveMetaInfo(TODO())
+                                    winManager.saveMetaInfo(
+                                        MetaInfo(
+                                            competitionName.value,
+                                            LocalDate.parse(competitionDate.value),
+                                            SportType.get(competitionSportType.value)
+                                        )
+                                    )
                                 } else {
                                     eWindow.finished.value = false
                                     openingException.value = e
                                 }
                             } else {
-                                TODO("После того, как всё заработало" )
+                                winManager.saveApplication(teamApplications.toList())
+                                winManager.openCompetitionWindow()
+                                winManager.closeAplUplWindow()
                             }
                         }
                     }
@@ -196,7 +205,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
 
 
     private fun checkCompetitionData(): Exception? {
-        if (SportType.getSportType(competitionSportType.value) == SportType.X) {
+        if (SportType.get(competitionSportType.value) == SportType.X) {
             return InvalidSportType(competitionSportType.value)
         }
 
@@ -315,12 +324,14 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             modifier = modifier,
             onClick = onClick
         ) {
-            Icon(Icons.Default.Search, contentDescription = null, tint =
-            if (competitionIsDone.value) {
-                ACCENT_C
-            } else {
-                GREY_C
-            })
+            Icon(
+                Icons.Default.Search, contentDescription = null, tint =
+                if (competitionIsDone.value) {
+                    ACCENT_C
+                } else {
+                    GREY_C
+                }
+            )
         }
     }
 

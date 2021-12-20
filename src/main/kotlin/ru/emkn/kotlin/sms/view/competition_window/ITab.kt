@@ -19,7 +19,7 @@ abstract class ITab(protected val modifier: Modifier) {
 /**
  * Это фабрика, производящая Табы. Она нужна для того, чтобы не создавать новые экземплеры ITab каждый раз, когда пользовательно открывает вкладку
  */
-class TabFactory(private val model: Model) {
+class TabFactory(private val model: Model, private val winManager: CompetitionWindowsManager) {
     private val map: MutableMap<TabEnum, ITab> = mutableMapOf()
 
     //Если не уверены, что Tab уже создан
@@ -48,8 +48,8 @@ class TabFactory(private val model: Model) {
             TabEnum.ATHLETES -> AthletesTab(competition.athleteList, modifier)
             TabEnum.START_PROTOCOLS -> StartProtocolsTab(competition.groupList, modifier)
             { model.getStartProtocolByGroupName(it) }
-            TabEnum.RESULT -> ResultsTab(modifier, model.competition!!.groupList, model.stage)
-            { model.getFinishProtocolByGroupName(model.competition!!.info.name) }
+            TabEnum.RESULT -> ResultsTab(modifier, winManager, competition.groupList, model.stage)
+            { model.getFinishProtocolByGroupName(competition.info.name) }
         }
     }
 

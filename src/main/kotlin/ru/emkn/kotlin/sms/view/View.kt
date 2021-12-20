@@ -5,7 +5,7 @@ import androidx.compose.ui.window.application
 
 class View(val model: Model, val manager: Manager) {
     fun render() {
-        manager.open(Win.COMPETITION)
+        manager.open(Win.START)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {

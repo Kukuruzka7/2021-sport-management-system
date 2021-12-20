@@ -2,7 +2,11 @@ package ru.emkn.kotlin.sms.model.application
 
 import java.io.File
 
-class Application(csvList: List<File>) {
+class Application(val teamApplications: List<TeamApplication>) {
+
     //создание списка заявок команд
-    val teamApplications: List<TeamApplication> = List(csvList.size) { TeamApplication(csvList[it], it) }
+    companion object {
+        fun create(csvList: List<File>): Application =
+            Application(List(csvList.size) { TeamApplication(csvList[it], it) })
+    }
 }

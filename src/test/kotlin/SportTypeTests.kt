@@ -5,9 +5,9 @@ internal class SportTypeTests {
 
     @Test
     fun testSportType() {
-        assert(SportType.RUNNING == SportType.getSportType("бег"))
-        assert(SportType.X == SportType.getSportType("буг"))
-        assert(SportType.RUNNING == SportType.getSportType("running"))
-        assert(SportType.SWIMMING == SportType.getSportType("swimming"))
+        assert(SportType.RUNNING == SportType.get("бег"))
+        assert(SportType.X == SportType.get("буг"))
+        assert(SportType.RUNNING == SportType.get("running"))
+        assert(SportType.SWIMMING == SportType.get("swimming"))
     }
 }

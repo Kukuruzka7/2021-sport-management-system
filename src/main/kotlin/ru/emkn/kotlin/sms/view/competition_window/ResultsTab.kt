@@ -23,11 +23,18 @@ import ru.emkn.kotlin.sms.view.ColorScheme
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import ru.emkn.kotlin.sms.view.Model
+import ru.emkn.kotlin.sms.view.ResultType
+import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.table_view.TableContent
 import ru.emkn.kotlin.sms.view.table_view.TableType
 
+interface ResultsTabManager : WindowManager {
+    fun openResUplWindow(resultType: ResultType)
+}
+
 class ResultsTab(
     _modifier: Modifier,
+    private val winManager: ResultsTabManager,
     private val groupList: List<Group>,
     private val stage: MutableState<Model.Companion.Stage>,
     private val fileNameBuilder: (String) -> String

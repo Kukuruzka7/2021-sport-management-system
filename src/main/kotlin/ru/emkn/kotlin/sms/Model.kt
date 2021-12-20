@@ -52,6 +52,10 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
         )
     }
 
+    fun setCompetition(competitionName: String) {
+
+    }
+
     fun save() {
         saveCompetitionsNames()
     }

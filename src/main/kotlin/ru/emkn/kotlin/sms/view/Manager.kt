@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms.view
 
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
+import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.view.application_view.AplUplWinManager
 import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
 import ru.emkn.kotlin.sms.view.competition_window.CompetitionWindow
@@ -14,22 +15,29 @@ enum class Win {
 
 interface WindowManager
 
-class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager{
+class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
 
+    //Создает новое окно (работает со START, APPLICATION_UPLOADING, COMPETITION, EXCEPTION)
     fun open(win: Win) {
         map[win] = when (win) {
             Win.START -> StartWindow(this)
             Win.APPLICATION_UPLOADING -> ApplicationUploadingWindow(this)
             Win.COMPETITION -> CompetitionWindow(model, this)
-            Win.RESULT_UPLOADING -> ResultUploadingWindow(model, this, ResType.BY_CHECKPOINTS)
             Win.EXCEPTION -> ExceptionWindow(this)
+            else -> map[win]
         }
         map[win]?.state?.value = true
     }
 
-    fun close(win: Win) {
+
+    private fun open(win: Win, window: IWindow) {
+        map[win] = window
+        window.state.value = true
+    }
+
+    private fun close(win: Win) {
         val closeWin = map[win]
         if (closeWin != null) {
             closeWin.state.value = false
@@ -37,10 +45,8 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         map[win] = null
     }
 
-    override fun saveApplication(files: List<File>) {
-        val application: Application = TODO()
-        model.competitionBuilder.application(application)
-        model.checkBuilder()
+    override fun saveApplication(applications: List<TeamApplication>) {
+        model.competitionBuilder.application(Application(applications))
     }
 
     override fun saveMetaInfo(info: MetaInfo) {
@@ -51,8 +57,7 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
     override fun getCompetitionsNames(): List<String> = model.competitionsNames
 
     override fun giveCompetitionNameToModel(name: String) {
-       // model.competition = TODO()
-        println("надо сделать что-то")
+        model.setCompetition(name)
     }
 
     override fun addCompetitionName(name: String) {
@@ -69,14 +74,20 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         open(Win.COMPETITION)
     }
 
+    override fun openCompetitionWindow() {
+        open(Win.COMPETITION)
+    }
+
     override fun closeStartWindow() = close(Win.START)
 
     override fun closeAplUplWindow() = close(Win.APPLICATION_UPLOADING)
 
+
+
     override fun closeCompWindow() = close(Win.COMPETITION)
 
-    override fun openCSV(fileName: String) {
-        TODO("Not yet implemented")
+    override fun openResUplWindow(resultType: ResultType) {
+        open(Win.RESULT_UPLOADING, ResultUploadingWindow(model, this, resultType))
     }
 
     override fun closeResUplWindow() = close(Win.RESULT_UPLOADING)

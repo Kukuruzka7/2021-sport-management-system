@@ -30,7 +30,7 @@ data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
             return MetaInfo(
                 args[Fields.NAME.ordinal],
                 LocalDate.parse(args[Fields.DATE.ordinal]),
-                SportType.getSportType(args[Fields.SPORT_TYPE.ordinal])
+                SportType.get(args[Fields.SPORT_TYPE.ordinal])
             )
         }
         //private
@@ -43,7 +43,7 @@ data class MetaInfo(val name: String, val date: LocalDate, val sport: SportType)
             } catch (_: Exception) {
                 throw InvalidDateFormat(args[Fields.DATE.ordinal])
             }
-            if (SportType.getSportType(args[Fields.SPORT_TYPE.ordinal]) == SportType.X) {
+            if (SportType.get(args[Fields.SPORT_TYPE.ordinal]) == SportType.X) {
                 throw InvalidSportType(args[Fields.SPORT_TYPE.ordinal])
             }
         }
