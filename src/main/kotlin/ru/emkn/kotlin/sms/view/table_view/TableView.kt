@@ -189,7 +189,7 @@ fun TableContentImmutable(
             TableContent(
                 modifier = modifier,
                 mutable = false,
-                drawHeader = true,
+                drawHeader = false,
                 firstRow = startProtocolFirstRow.map { it.toColumnType().getInfo(it) },
                 contentRows = list.toMListMListStr()
             ) {}

@@ -7,11 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.emkn.kotlin.sms.model.Team
+import ru.emkn.kotlin.sms.model.athlete.toStringList
 import ru.emkn.kotlin.sms.view.ClickableText
 import ru.emkn.kotlin.sms.view.ColorScheme
+import ru.emkn.kotlin.sms.view.table_view.TableContentImmutable
+import ru.emkn.kotlin.sms.view.table_view.TableType
 
 data class Hyperlink(val name: String, val onClick: () -> Unit)
-
 abstract class TabLetka(private val links: List<Hyperlink>, _modifier: Modifier) : ITab(_modifier) {
     val SPACING = 10.dp
     val FONT_SIZE = 17.sp
@@ -44,11 +47,25 @@ abstract class TabLetka(private val links: List<Hyperlink>, _modifier: Modifier)
     abstract fun split(linksList: List<Hyperlink>): List<List<Hyperlink>>
 }
 
-class TeamsTab(links: List<Hyperlink>, _modifier: Modifier) : TabLetka(links, _modifier) {
+class TeamsTab(teamList: List<Team>, _modifier: Modifier) : TabLetka(buildLinks(teamList, _modifier), _modifier) {
     private val N_COLUMNS = 2
 
     override fun split(linksList: List<Hyperlink>): List<List<Hyperlink>> =
         List(N_COLUMNS) { i -> linksList.filterIndexed { index, _ -> index % N_COLUMNS == i } }
+
+    private companion object {
+        fun buildLinks(teamList: List<Team>, _modifier: Modifier): List<Hyperlink> = teamList.map {
+            Hyperlink(it.name) {
+                /*TableContentImmutable(
+                    type = TableType.COURSES,
+                    modifier = _modifier,
+                    list = it.toCSV()
+                ) {}*/
+            }
+        }
+
+        fun Team.toCSV(): List<List<String>> = this.athletes.map { it.toStringList() }
+    }
 
 }
 
