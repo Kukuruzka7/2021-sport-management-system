@@ -3,9 +3,9 @@ package ru.emkn.kotlin.sms
 import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.TeamApplication
-import ru.emkn.kotlin.sms.model.athlete.Name
 import ru.emkn.kotlin.sms.model.input_result.InputAthleteResults
 import ru.emkn.kotlin.sms.model.input_result.InputCheckpointResults
+import kotlin.String
 
 class WeHaveAProblem(problem: String) : Exception(problem)
 
@@ -63,10 +63,12 @@ class MetaInfoTooFewArguments(actual: Int) :
 
 class InvalidSportType(sportType: String) : Exception("Некорректный вид спорта $sportType")
 
-class InvalidCompetitionName(name: String) : Exception("Некорректное название соревнования")
+class InvalidCompetitionName(name: String) : Exception("Некорректное название соревнования $name")
 
 class CompetitionAlreadyExist(name: String) : Exception("Соревнование с названием $name уже существует")
 
 class FileDoNotDownload() : Exception("Загрузите файл с результатами")
 
 class InvalidCSV(fileName: String) : Exception("$fileName не удовлевтворяет нужному формату (csv-таблица)")
+
+class FileDoesNotExist(fileName: String) : Exception("File $fileName does not exist")

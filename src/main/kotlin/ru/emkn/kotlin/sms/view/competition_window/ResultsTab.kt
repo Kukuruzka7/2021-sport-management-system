@@ -1,34 +1,46 @@
 package ru.emkn.kotlin.sms.view.competition_window
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.w3c.dom.Text
-import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
-import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.rememberDialogState
+import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.readCSV
+import ru.emkn.kotlin.sms.view.ColorScheme
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import ru.emkn.kotlin.sms.view.Model
+import ru.emkn.kotlin.sms.view.table_view.TableContent
+import ru.emkn.kotlin.sms.view.table_view.TableType
 
-class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier) {
+class ResultsTab(
+    _modifier: Modifier,
+    private val groupList: List<Group>,
+    private val stage: MutableState<Model.Companion.Stage>,
+    private val fileNameBuilder: (String) -> String
+) :
+    ITab(_modifier) {
+
     @Composable
     override fun render() {
-        require(model.competition != null)
-        when (model.stage.value) {
-            Model.Companion.Stage.FINISHED -> {
-                val links = model.competition!!.groupList.map { Hyperlink(it.race.groupName.value) {} }
-                WithResultTab(links, modifier).render()
-            }
+        when (stage.value) {
+            Model.Companion.Stage.FINISHED -> WithResultTab(
+                groupList, modifier, fileNameBuilder
+            ).render()
             Model.Companion.Stage.ONGOING -> NoResultTab(modifier).render()
-
         }
     }
 
@@ -42,14 +54,10 @@ class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier
                     verticalArrangement = Arrangement.spacedBy(SPACING)
                 ) {
                     Text(
-                        text = NO_RESULT_TEXT,
-                        fontSize = NO_RESULT_FONT_SIZE,
-                        color = TEXT_C
+                        text = NO_RESULT_TEXT, fontSize = NO_RESULT_FONT_SIZE, color = TEXT_C
                     )
                     Text(
-                        text = SUGGESTION_TEXT,
-                        fontSize = SUGGESTION_FONT_SIZE,
-                        color = TEXT_C
+                        text = SUGGESTION_TEXT, fontSize = SUGGESTION_FONT_SIZE, color = TEXT_C
                     )
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         DownloadResultByAthletesButton(Modifier)
@@ -71,9 +79,7 @@ class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier
         @Composable
         private fun DownloadResultsButton(modifier: Modifier, text: String, onClick: () -> Unit) {
             Button(
-                modifier = modifier,
-                onClick = onClick,
-                colors = ButtonDefaults.buttonColors(backgroundColor = GREY_C)
+                modifier = modifier, onClick = onClick, colors = ButtonDefaults.buttonColors(backgroundColor = GREY_C)
             ) {
                 Text(text = text, color = TEXT_C)
             }
@@ -91,8 +97,52 @@ class ResultsTab(_modifier: Modifier, private val model: Model) : ITab(_modifier
     }
 
 
-    private class WithResultTab(links: List<Hyperlink>, _modifier: Modifier) : TabLetka(links, _modifier) {
-        override fun split(linksList: List<Hyperlink>): List<List<Hyperlink>> =
-            linksList.groupBy { it.name[0] }.values.toList().reversed()
+    private class WithResultTab(
+        val groupList: List<Group>,
+        _modifier: Modifier,
+        private val fileNameBuilder: (String) -> String
+    ) :
+        TabLetka<Group>(_modifier, groupList) {
+        private val dialog: MutableState<String?> = mutableStateOf(null)
+        override fun split(): List<List<Group>> = groupList.groupBy { it.race.groupName[0] }.values.toList().reversed()
+
+
+        @Composable
+        override fun postrender() {
+            when (dialog.value) {
+                null -> {}
+                else -> Dialog(
+                    onCloseRequest = { dialog.value = null },
+                    title = dialog.value.toString(),
+                    state = rememberDialogState(
+                        width = DIALOG_WIDTH, height = DIALOG_HEIGHT
+
+                    ),
+                ) {
+                    Box(Modifier.fillMaxSize().background(color = ColorScheme.BACKGROUND_C).padding(DIALOG_PADDING)) {
+                        TableContent(TableType.FINISH_PROTOCOL, Modifier, readCSV(fileNameBuilder(dialog.value!!)))
+                    }
+                }
+            }
+        }
+
+        private companion object {
+            val DIALOG_WIDTH = 750.dp
+            val DIALOG_HEIGHT = 500.dp
+            val DIALOG_PADDING = 20.dp
+        }
+
+        @Composable
+        override fun toLink(element: Group) {
+            val annotatedText = buildAnnotatedString {
+                //append your initial text
+                withStyle(
+                    style = style
+                ) {
+                    append(element.race.groupName)
+                }
+            }
+            ClickableText(modifier = modifier, text = annotatedText, onClick = { dialog.value })
+        }
     }
 }

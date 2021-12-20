@@ -3,10 +3,8 @@ package ru.emkn.kotlin.sms.view.competition_window
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.view.Model
-import java.io.File
 
 enum class TabEnum {
     GROUPS, TEAMS, ATHLETES, START_PROTOCOLS, RESULT;
@@ -40,28 +38,25 @@ class TabFactory(private val model: Model) {
 
 
     private fun create(tabEnum: TabEnum, modifier: Modifier, model: Model): ITab {
-        require(model.competition != null)
+        val competition = model.competition
+        require(competition != null)
         return when (tabEnum) {
             TabEnum.GROUPS -> {
-                GroupsTab(buildRacesTable(model.competition!!.groupList), modifier)
+                GroupsTab(buildRacesTable(competition.groupList), modifier)
             }
-            TabEnum.TEAMS -> TeamsTab(
-                model.competition!!.teamList, modifier
-            )
-            TabEnum.ATHLETES -> AthletesTab(
-                model.competition!!.athleteList.map { Hyperlink(it.name.fullName) {} }, modifier
-            )
-            TabEnum.START_PROTOCOLS -> StartProtocolsTab(
-                model.competition!!.groupList.map { Hyperlink(it.race.groupName.value) {} }, modifier
-            )
-            TabEnum.RESULT -> ResultsTab(modifier, model)
+            TabEnum.TEAMS -> TeamsTab(competition.teamList, modifier)
+            TabEnum.ATHLETES -> AthletesTab(competition.athleteList, modifier)
+            TabEnum.START_PROTOCOLS -> StartProtocolsTab(competition.groupList, modifier)
+            { model.getStartProtocolByGroupName(it) }
+            TabEnum.RESULT -> ResultsTab(modifier, model.competition!!.groupList, model.stage)
+            { model.getFinishProtocolByGroupName(model.competition!!.info.name) }
         }
     }
 
     fun buildRacesTable(groupList: List<Group>): List<List<String>> {
         val races = groupList.map {
             it.race.checkPoints.map { checkpoint -> checkpoint.name }.toMutableList()
-                .apply { add(0, it.race.groupName.value) }
+                .apply { add(0, it.race.groupName) }
         }
         val maxLen = races.maxOf { it.size }
         return races.map { it + List(maxLen - it.size) { "" } }

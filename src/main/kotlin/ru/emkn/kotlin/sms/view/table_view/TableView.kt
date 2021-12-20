@@ -6,9 +6,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +21,7 @@ enum class TableType {
     FINISH_PROTOCOL,
     APPLICATION,
     CHECKPOINT_RES,
+    ATHLETE_RES,
     COURSES,
 }
 
@@ -51,6 +50,15 @@ private fun Header(row: List<ColumnInfo>) {
     repeat(row.size) { i -> HeaderTextField(Modifier.width(row[i].width).height(ROW_HEIGHT), row[i].name) }
 }
 
+
+@Composable
+private fun AddRowButton(onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
+        onClick = onClick,
+    ) { Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C) }
+}
+
 @Composable
 private fun DeleteRowButton(onClick: () -> Unit) {
     IconButton(
@@ -60,11 +68,19 @@ private fun DeleteRowButton(onClick: () -> Unit) {
 }
 
 @Composable
-private fun AddRowButton(onClick: () -> Unit) {
+private fun AddColumnButton(onClick: () -> Unit) {
     IconButton(
         modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
         onClick = onClick,
-    ) { Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C) }
+    ) { Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = ACCENT_C) }
+}
+
+@Composable
+private fun DeleteColumnButton(onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
+        onClick = onClick,
+    ) { Icon(Icons.Default.KeyboardArrowLeft, contentDescription = null, tint = ACCENT_C) }
 }
 
 @Composable
@@ -112,20 +128,44 @@ fun TableContent(
     modifier: Modifier,
     mutable: Boolean = false,
     drawHeader: Boolean = false,
-    firstRow: List<ColumnInfo> = emptyList(),
+    drawLastRow: Boolean = false,
+    columnsCnt: MutableState<Int> = mutableStateOf(1),
+    firstRowFunc: (Int) -> List<ColumnInfo>,
     contentRows: MutableList<MutableList<MutableState<String>>>,
     saveBtnAction: () -> Unit,
 ) {
     val rowsCount = mutableStateOf(contentRows.size)
+
+    fun firstRow() = firstRowFunc(columnsCnt.value)
     Column(modifier, Arrangement.spacedBy(5.dp)) {
         if (drawHeader) {
             Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(5.dp), Alignment.Top) {
-                Header(firstRow)
+                Header(firstRow())
                 if (mutable) {
                     AddRowButton {
-                        contentRows.add(0, MutableList(firstRow.size) { mutableStateOf("") })
+                        contentRows.add(0, MutableList(columnsCnt.value) { mutableStateOf("") })
                         rowsCount.value = contentRows.size
                     }
+                }
+                if(drawLastRow) {
+                    DeleteColumnButton {
+                        if(columnsCnt.value > 1) {
+                            columnsCnt.value -= 2
+                            contentRows.forEach {
+                                it.removeLast()
+                                it.removeLast()
+                            }
+                        }
+                    }
+                    AddColumnButton {
+                        columnsCnt.value += 2
+                        contentRows.forEach {
+                            it.add(mutableStateOf(""))
+                            it.add(mutableStateOf(""))
+                        }
+                    }
+                }
+                if (mutable) {
                     HomeButton {
                         saveBtnAction()
                     }
@@ -134,10 +174,10 @@ fun TableContent(
         }
         repeat(rowsCount.value) { i ->
             Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(5.dp), Alignment.Top) {
-                drawRow(contentRows[i], firstRow, mutable)
+                drawRow(contentRows[i], firstRow(), mutable)
                 if (mutable) {
                     AddRowButton {
-                        contentRows.add(i + 1, MutableList(firstRow.size) { mutableStateOf("") })
+                        contentRows.add(i + 1, MutableList(columnsCnt.value) { mutableStateOf("") })
                         rowsCount.value = contentRows.size
                     }
                     DeleteRowButton {
@@ -151,26 +191,38 @@ fun TableContent(
 }
 
 val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.", "Разряд")
-val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Год рождения", "Разряд", "Время старта")
+val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Г.р.", "Разряд", "Старт")
 val finishProtocolFirstRow =
     listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
+
+fun coursesFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
 
 fun checkpointResFirstRow(n: Int): List<ColumnInfo> =
     listOf(ColumnInfo("", 80.dp, ::onlyDigitsFilter)) + List(n - 1) {
         when (it % 2) {
-            1 -> {
-                ColumnInfo("", 95.dp, ::timeFilter)
+            0 -> {
+                ColumnInfo("Атлет", 70.dp)
             }
             else -> {
-                ColumnInfo("", 70.dp)
+                ColumnInfo("Время", 95.dp, ::timeFilter)
             }
         }
     }
 
-fun coursesFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
+fun athletesResFirstRow(n: Int): List<ColumnInfo> =
+    listOf(ColumnInfo("", 80.dp, ::onlyDigitsFilter)) + List(n - 1) {
+        when (it % 2) {
+            0 -> {
+                ColumnInfo("Чекпойнт", 70.dp)
+            }
+            else -> {
+                ColumnInfo("Время", 95.dp, ::timeFilter)
+            }
+        }
+    }
 
 @Composable
-fun TableContentImmutable(
+fun TableContent(
     type: TableType,
     modifier: Modifier,
     list: List<List<String>>,
@@ -181,7 +233,8 @@ fun TableContentImmutable(
                 modifier = modifier,
                 mutable = false,
                 drawHeader = true,
-                firstRow = finishProtocolFirstRow.map { it.toColumnType().getInfo(it) },
+                columnsCnt = mutableStateOf(10),
+                firstRowFunc = { _: Int -> (finishProtocolFirstRow.map { it.toColumnType().getInfo(it) }) },
                 contentRows = list.toMListMListStr()
             ) {}
         }
@@ -189,8 +242,9 @@ fun TableContentImmutable(
             TableContent(
                 modifier = modifier,
                 mutable = false,
-                drawHeader = false,
-                firstRow = startProtocolFirstRow.map { it.toColumnType().getInfo(it) },
+                drawHeader = true,
+                columnsCnt = mutableStateOf(6),
+                firstRowFunc = { _: Int -> startProtocolFirstRow.map { it.toColumnType().getInfo(it) } },
                 contentRows = list.toMListMListStr()
             ) {}
         }
@@ -198,12 +252,12 @@ fun TableContentImmutable(
             TableContent(
                 modifier = modifier,
                 mutable = false,
-                drawHeader = true,
-                firstRow = coursesFirstRow(list.first().size),
+                drawHeader = false,
+                firstRowFunc = { coursesFirstRow(list.first().size) },
                 contentRows = list.toMListMListStr()
             ) {}
         }
-        else -> throw Exception("Нужно вызвать функцию TableContent")
+        else -> throw Exception("Нужно вызвать вторую функцию TableContent")
     }
 }
 
@@ -212,6 +266,7 @@ fun TableContent(
     type: TableType,
     modifier: Modifier,
     contentRows: MutableList<MutableList<MutableState<String>>>,
+    columnsCnt: MutableState<Int> = mutableStateOf(1),
     saveBtnAction: () -> Unit = { },
 ) {
     when (type) {
@@ -220,7 +275,8 @@ fun TableContent(
                 modifier = modifier,
                 mutable = true,
                 drawHeader = true,
-                firstRow = applicationFirstRow.map { it.toColumnType().getInfo(it) },
+                columnsCnt = mutableStateOf(5),
+                firstRowFunc = { _: Int -> applicationFirstRow.map { it.toColumnType().getInfo(it) } },
                 contentRows = contentRows
             ) { saveBtnAction() }
         }
@@ -228,12 +284,25 @@ fun TableContent(
             TableContent(
                 modifier = modifier,
                 mutable = true,
-                drawHeader = false,
-                firstRow = checkpointResFirstRow(contentRows.first().size),
+                drawHeader = true,
+                drawLastRow = true,
+                firstRowFunc = { i: Int -> checkpointResFirstRow(i) },
+                columnsCnt = columnsCnt,
                 contentRows = contentRows
             ) { saveBtnAction() }
         }
-        else -> throw Exception("Нужно вызвать функцию TableContentImmutable")
+        TableType.ATHLETE_RES -> {
+            TableContent(
+                modifier = modifier,
+                mutable = true,
+                drawHeader = true,
+                drawLastRow = true,
+                firstRowFunc = { i: Int -> athletesResFirstRow(i) },
+                columnsCnt = columnsCnt,
+                contentRows = contentRows
+            ) { saveBtnAction() }
+        }
+        else -> throw Exception("Нужно вызвать первую функцию TableContent")
     }
 }
 

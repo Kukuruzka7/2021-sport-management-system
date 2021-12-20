@@ -23,7 +23,7 @@ fun getRows(file: File, indexOfApplication: Int): List<List<String>> =
     }
 
 //по данным из заявки получение данных об атлетах
-class TeamApplication(val teamName: String, val rows: List<List<String>>, private val indexOfApplication: Int) {
+class TeamApplication(var teamName: String, val rows: List<List<String>>, private val indexOfApplication: Int) {
 
     val team: Team
 
@@ -57,10 +57,10 @@ class TeamApplication(val teamName: String, val rows: List<List<String>>, privat
         // private
         fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
             logger.trace { "Вызов checkFormatOfApplication(${numberOfApplication})" }
-            if (rows.isEmpty()) {
+            /*if (rows.isEmpty()) {
                 logger.error { "В заявке $numberOfApplication нет данных об атлетах." }
                 throw ApplicationHasWrongFormat(numberOfApplication)
-            }
+            }*/
             rows.forEach {
                 checkRow(it, numberOfApplication)
             }
@@ -101,7 +101,7 @@ class TeamApplication(val teamName: String, val rows: List<List<String>>, privat
                 birthDate,
                 sportCategory,
                 _teamName = teamName,
-                _groupName = GroupName("$sex${birthDate.year}"),
+                _groupName = "$sex${birthDate.year}",
             )
         }
 

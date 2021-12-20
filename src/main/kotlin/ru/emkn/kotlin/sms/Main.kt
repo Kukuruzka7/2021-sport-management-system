@@ -20,6 +20,7 @@ import ru.emkn.kotlin.sms.view.Manager
 import ru.emkn.kotlin.sms.view.Model
 import ru.emkn.kotlin.sms.view.View
 import java.io.File
+import kotlin.String
 
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
@@ -48,7 +49,7 @@ const val dir = "src/main/resources/competitions/"
 
 fun main() {
     logger.info { "Начало работы программы." }
-    val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.ORIENTEERING)
+    val info = MetaInfo("NadeusZarabotaet", LocalDate(2021, 12, 15), SportType.RUNNING)
     val application = Application(
         listOf(
             File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),

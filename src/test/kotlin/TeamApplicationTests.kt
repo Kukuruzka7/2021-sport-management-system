@@ -117,7 +117,7 @@ internal class TeamApplicationTests {
         assert(athlete1.sex == Sex.FEMALE)
         assert(athlete1.teamName == "Команда мечты")
         assert(athlete1.birthDate == LocalDate(2003, 1, 1))
-        assert(athlete1.groupName.value == "Ж2003")
+        assert(athlete1.groupName == "Ж2003")
         assert(athlete1.sportCategory == Category.CANDIDATE)
     }
 
