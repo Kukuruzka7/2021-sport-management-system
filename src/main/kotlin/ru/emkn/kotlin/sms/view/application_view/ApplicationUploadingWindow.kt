@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,23 +21,17 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
 import kotlinx.datetime.toLocalDate
-import ru.emkn.kotlin.sms.CompetitionAlreadyExist
-import ru.emkn.kotlin.sms.InvalidCompetitionName
-import ru.emkn.kotlin.sms.InvalidDateFormat
-import ru.emkn.kotlin.sms.InvalidSportType
+import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
-import ru.emkn.kotlin.sms.view.ExceptionWindow
-import ru.emkn.kotlin.sms.view.IWindow
-import ru.emkn.kotlin.sms.view.StartWindow
-import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.table_view.TableContent
 import ru.emkn.kotlin.sms.view.table_view.TableType
 import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
@@ -54,14 +49,16 @@ interface AplUplWinManager : WindowManager {
 class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWindow(winManager) {
     private val competitionName = mutableStateOf("")
     private val competitionDate = mutableStateOf("")
-    private val competitionSportType = mutableStateOf("")
+    private val competitionSportType = mutableStateOf("Выбрать тип")
     private val teamApplications: MutableList<TeamApplication> = mutableListOf()
     private val teamApplicationsNames: MutableList<String> = mutableListOf()
     private val count = mutableStateOf(teamApplications.size)
+    private val expanded = mutableStateOf(true)
     private val openingApplication = mutableStateOf(-1)
     private val openingException = mutableStateOf<Exception?>(null)
     private val finished = mutableStateOf(false)
     private val eWindow = ExceptionWindow(winManager)
+    private val textColor = mutableStateOf(GREY_C)
 
     @Composable
     override fun render() {
@@ -74,7 +71,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             Box(
                 Modifier.background(BACKGROUND_C).padding(15.dp)
             ) {
-
                 if (openingException.value != null) {
                     eWindow.e = openingException.value
                     eWindow.render()
@@ -109,13 +105,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         ) {
                             competitionDate.value = it
                         }
-                        drawCompetitionDataRow(
-                            Modifier.size(HEADER_FIELD_WIDTH, BTN_HEIGHT),
-                            "Тип спорта",
-                            competitionSportType.value
-                        ) {
-                            competitionSportType.value = it
-                        }
+                        RaceSelector(modifier = Modifier)
                         val fileDialog = FileDialog(ComposeWindow())
                         CreateFileButton(Modifier.align(Alignment.CenterVertically)) {
                             teamApplications += TeamApplication("", emptyList(), 1)
@@ -340,6 +330,47 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
             onClick = onClick,
         ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ACCENT_C) }
+    }
+
+
+    @Composable
+    private fun RaceSelector(modifier: Modifier) {
+        TextField(
+            modifier = modifier.width(WIDTH_OF_TEXT),
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = TEXT_C,
+                focusedIndicatorColor = ACCENT_C,
+                cursorColor = ACCENT_C
+            ),
+            singleLine = true,
+            value = "",
+            onValueChange = {  },
+            readOnly = true,
+            placeholder = {
+                ClickableTexxxt(
+                    modifier = Modifier,
+                    text = competitionSportType.value,
+                    style = SpanStyle(color = textColor.value, fontSize = 17.sp)
+                ) {
+                    expanded.value = true
+                }
+            }
+        )
+        DropdownMenu(
+            modifier = Modifier,
+            expanded = expanded.value,
+            onDismissRequest = { expanded.value = false }
+        ) {
+            SportType.values().dropLast(1).forEach {
+                DropdownMenuItem(onClick = {
+                    competitionSportType.value = it.toRussian()
+                    textColor.value = TEXT_C
+                    expanded.value = false
+                }) {
+                    Text(it.toRussian())
+                }
+            }
+        }
     }
 
     @Composable
