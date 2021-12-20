@@ -77,11 +77,14 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             Box(
                 Modifier.background(BACKGROUND_C).padding(15.dp)
             ) {
+
+                //открытие окна исключения
                 if (openingException.value != null) {
                     eWindow.e = openingException.value
                     eWindow.render()
                     if (eWindow.finished.value) {
                         openingException.value = null
+                        eWindow.finished.value = false
                     }
                 }
 
@@ -197,7 +200,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             teamApplicationsNames += result.map { it.teamName }
             return result
         } catch (e: Exception) {
-            eWindow.finished.value = false
             openingException.value = e
         }
         return null

@@ -26,7 +26,7 @@ import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 import java.io.File
 
-class CompetitionOpeningWindow(val winManager: StartWindowManager) : IWindow(winManager) {
+class CompetitionOpeningWindow(private val winManager: StartWindowManager) : IWindow(winManager) {
     var chosenName: String? = null
     private val competitionNames = winManager.getCompetitionsNames()
     val finished = mutableStateOf(false)
@@ -49,9 +49,9 @@ class CompetitionOpeningWindow(val winManager: StartWindowManager) : IWindow(win
                     competitionNames.forEach { i ->
                         CompetitionButton(modifier = Modifier.align(Alignment.CenterHorizontally), i) {
                             finished.value = true
-                            chosenName = i
+                            chosenName = i //выбранное для открытия соревнование с именем i
                             require(chosenName != null)
-                            winManager.openCompetitionWindow(chosenName!!)
+                            winManager.openCompetitionWindow(chosenName!!) //открытие окна с этим соревнованием
                         }
                     }
                 }
@@ -69,6 +69,7 @@ class CompetitionOpeningWindow(val winManager: StartWindowManager) : IWindow(win
         }
     }
 
+    //кнопка с названием соревнований, которые уже существуют
     @Composable
     private fun CompetitionButton(modifier: Modifier, text: String, onClick: () -> Unit) {
         Button(
