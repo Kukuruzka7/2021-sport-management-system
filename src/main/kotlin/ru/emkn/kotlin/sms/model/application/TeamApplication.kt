@@ -101,7 +101,7 @@ class TeamApplication(val teamName: String, val rows: List<List<String>>, privat
                 birthDate,
                 sportCategory,
                 _teamName = teamName,
-                _groupName = GroupName("$sex${birthDate.year}"),
+                _groupName = "$sex${birthDate.year}",
             )
         }
 

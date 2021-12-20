@@ -3,10 +3,8 @@ package ru.emkn.kotlin.sms.view.competition_window
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.Group
 import ru.emkn.kotlin.sms.view.Model
-import java.io.File
 
 enum class TabEnum {
     GROUPS, TEAMS, ATHLETES, START_PROTOCOLS, RESULT;
@@ -49,10 +47,10 @@ class TabFactory(private val model: Model) {
                 model.competition!!.teamList, modifier
             )
             TabEnum.ATHLETES -> AthletesTab(
-                model.competition!!.athleteList.map { Hyperlink(it.name.fullName) {} }, modifier
+                model.competition!!.athleteList, modifier
             )
             TabEnum.START_PROTOCOLS -> StartProtocolsTab(
-                model.competition!!.groupList.map { Hyperlink(it.race.groupName.value) {} }, modifier
+                model.competition!!.groupList, modifier
             )
             TabEnum.RESULT -> ResultsTab(modifier, model)
         }
@@ -61,7 +59,7 @@ class TabFactory(private val model: Model) {
     fun buildRacesTable(groupList: List<Group>): List<List<String>> {
         val races = groupList.map {
             it.race.checkPoints.map { checkpoint -> checkpoint.name }.toMutableList()
-                .apply { add(0, it.race.groupName.value) }
+                .apply { add(0, it.race.groupName) }
         }
         val maxLen = races.maxOf { it.size }
         return races.map { it + List(maxLen - it.size) { "" } }

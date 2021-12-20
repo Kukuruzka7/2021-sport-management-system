@@ -39,7 +39,7 @@ internal class CompetitionTests {
         val athlete4 = TeamApplication.processingRow(row4, "C")
         val athletes = listOf(athlete1, athlete2, athlete3, athlete4)
         assertContentEquals(
-            Competition.generateGroupListByAthleteList(athletes, SportType.RUNNING).map { it.race.groupName.value },
+            Competition.generateGroupListByAthleteList(athletes, SportType.RUNNING).map { it.race.groupName },
             listOf("Ж2003", "М2002", "М2004", "М2003")
         )
     }
@@ -56,13 +56,13 @@ internal class CompetitionTests {
         val athlete4 = TeamApplication.processingRow(row4, "C")
         val athletes = listOf(athlete1, athlete2, athlete3, athlete4)
         assertContentEquals(
-            Competition.groupDivision(athletes, SportType.RUNNING).map { it.race.groupName.value },
+            Competition.groupDivision(athletes, SportType.RUNNING).map { it.race.groupName },
             listOf("Ж2003", "М2002", "М2004", "М2003")
         )
     }
 
     @Test
-    fun testCompetition(){
+    fun testCompetition() {
         val teamApplication1 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication1.csv"), 0)
         val teamApplication2 = TeamApplication(File("src/test/testFiles/testTeamApplication/teamApplication2.csv"), 0)
         val application = Application(
@@ -72,8 +72,8 @@ internal class CompetitionTests {
             )
         )
         val competition = Competition(MetaInfo("Olympiad", LocalDate(2010, 10, 10), SportType.RUNNING), application)
-        assert(competition.groupList.size==3)
-        assert(competition.teamList.size==2)
-        assert(competition.groupList.all{it.athletes.size==2})
+        assert(competition.groupList.size == 3)
+        assert(competition.teamList.size == 2)
+        assert(competition.groupList.all { it.athletes.size == 2 })
     }
 }

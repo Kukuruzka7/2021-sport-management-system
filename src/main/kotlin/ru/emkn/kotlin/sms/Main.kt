@@ -19,6 +19,7 @@ import ru.emkn.kotlin.sms.view.Manager
 import ru.emkn.kotlin.sms.view.Model
 import ru.emkn.kotlin.sms.view.View
 import java.io.File
+import kotlin.String
 
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
