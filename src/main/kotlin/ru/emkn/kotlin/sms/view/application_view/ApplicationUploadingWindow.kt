@@ -1,7 +1,6 @@
 package ru.emkn.kotlin.sms.view.application_view
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,11 +12,9 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,10 +30,8 @@ import ru.emkn.kotlin.sms.InvalidSportType
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.application.TeamApplication
-import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
-import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
@@ -125,7 +120,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             competitionSportType.value = it
                         }
                         val fileDialog = FileDialog(ComposeWindow())
-                        NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
+                        DownloadFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isMultipleMode = true
                             fileDialog.isVisible = true
                             teamApplications += getTeamApplicationsFromUser(fileDialog) ?: listOf()
@@ -143,7 +138,11 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             }
                         }
                     }
-                    Column(modifier = Modifier.fillMaxSize(0.90f), Arrangement.spacedBy(DEL_SHIFT), Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(0.90f),
+                        Arrangement.spacedBy(DEL_SHIFT),
+                        Alignment.CenterHorizontally
+                    ) {
                         repeat(count.value) { i ->
                             Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
                                 val teamN = mutableStateOf(teamApplications[i].teamName)
@@ -268,7 +267,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
 
     private companion object {
         val DEL_SHIFT = 15.dp
-        val MAIN_BUTTONS_GAP = 5.dp
         val WIDTH = 1000.dp
         val HEIGHT = 850.dp
 
@@ -314,7 +312,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     }
 
     @Composable
-    private fun NewFilesButton(modifier: Modifier, onClick: () -> Unit) {
+    private fun DownloadFilesButton(modifier: Modifier, onClick: () -> Unit) {
         IconButton(
             modifier = modifier,
             onClick = onClick
