@@ -7,20 +7,17 @@ import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.result_data.Checkpoint
 import java.io.File
 
-class GroupName(val value: String) {
-    override fun toString() = value
-}
 
-class Race(val groupName: GroupName, val sportType: SportType) {
-    val checkPoints = getCheckPoints(groupName.value, sportType)
+class Race(val groupName: String, val sportType: SportType) {
+    val checkPoints = getCheckPoints(groupName, sportType)
 
-    override fun toString() = groupName.toString()
+    override fun toString() = groupName
 
     override operator fun equals(other: Any?): Boolean {
         if (other !is Race) {
             return false
         }
-        return groupName.value == other.groupName.value
+        return groupName == other.groupName
     }
 
 
