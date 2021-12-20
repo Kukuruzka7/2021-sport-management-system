@@ -16,7 +16,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
+import ru.emkn.kotlin.sms.FileDoNotDownload
+import ru.emkn.kotlin.sms.InvalidSportType
 import ru.emkn.kotlin.sms.model.Competition
+import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResult
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
@@ -31,6 +34,7 @@ import java.io.File
 interface ResUplWinManager : WindowManager {
     fun closeResUplWindow()
     fun saveResults(files: List<File>)
+    fun getCompetitionsNames(): List<String>
 }
 
 enum class ResType {
@@ -42,7 +46,9 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
     IWindow(winManager) {
     private val openingResult = mutableStateOf(false)
     private val result: MutableState<InputCompetitionResult?> = mutableStateOf(null)
-    private val finished = mutableStateOf(false)
+    private val openingException = mutableStateOf<Exception?>(null)
+    var finished = mutableStateOf(false)
+    val eWindow = ExceptionWindow(winManager)
     private val competition: Competition =
         model.competition ?: throw Exception("ResultUploadingWindow получил model без competition")
 
@@ -56,6 +62,19 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
             Box(
                 Modifier.background(BACKGROUND_C)
             ) {
+
+                if (openingException.value != null) {
+                    eWindow.e = openingException.value
+                    eWindow.render()
+                    if (eWindow.finished.value) {
+                        openingException.value = null
+                    }
+                }
+
+                if (openingResult.value) {
+                    openResult()
+                }
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     Arrangement.spacedBy(5.dp),
@@ -65,27 +84,41 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                         val fileDialog = FileDialog(ComposeWindow())
                         NewFilesButton(Modifier.align(Alignment.CenterVertically)) {
                             fileDialog.isVisible = true
-                            result.value = when (resType) {
-                                ResType.BY_ATHLETES -> {
-                                    InputCompetitionResultByAthletes(fileDialog.files.first().path)
+                            try {
+                                result.value = when (resType) {
+                                    ResType.BY_ATHLETES -> {
+                                        InputCompetitionResultByAthletes(fileDialog.files.first().path)
+                                    }
+                                    ResType.BY_CHECKPOINTS -> {
+                                        InputCompetitionResultByCheckPoints(fileDialog.files.first().path, competition)
+                                    }
                                 }
-                                ResType.BY_CHECKPOINTS -> {
-                                    InputCompetitionResultByCheckPoints(fileDialog.files.first().path, competition)
-                                }
+                                openingResult.value = true
+                            } catch (e: Exception) {
+                                eWindow.finished.value = false
+                                openingException.value = e
                             }
-                            openingResult.value = true
                         }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
-                            finished.value = true
+                            val e = checkFileDownload()
+                            if (e == null) {
+                                finished.value = true
+                            } else {
+                                eWindow.finished.value = false
+                                openingException.value = e
+                            }
                         }
                     }
-                    if (openingResult.value) {
-                        openResult()
-                    }
-
                 }
             }
         }
+    }
+
+    private fun checkFileDownload(): Exception? {
+        if (result.value == null) {
+            return FileDoNotDownload()
+        }
+        return null
     }
 
     @Composable
@@ -106,13 +139,18 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                     .horizontalScroll(tableStateHorizontal),
                 contentRows = tableCells
             ) {
-                result.value = when (resType) {
-                    ResType.BY_ATHLETES -> {
-                        InputCompetitionResultByAthletes(tableCells.toListListStr())
+                try {
+                    result.value = when (resType) {
+                        ResType.BY_ATHLETES -> {
+                            InputCompetitionResultByAthletes(tableCells.toListListStr())
+                        }
+                        ResType.BY_CHECKPOINTS -> {
+                            InputCompetitionResultByCheckPoints(tableCells.toListListStr(), competition)
+                        }
                     }
-                    ResType.BY_CHECKPOINTS -> {
-                        InputCompetitionResultByCheckPoints(tableCells.toListListStr(), competition)
-                    }
+                } catch (e: Exception) {
+                    eWindow.finished.value = false
+                    openingException.value = e
                 }
             }
             HorizontalScrollbar(
