@@ -28,6 +28,7 @@ import ru.emkn.kotlin.sms.model.application.TeamApplication
 import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
+import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
@@ -37,6 +38,7 @@ import ru.emkn.kotlin.sms.view.table_view.TableType
 import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
 import java.awt.FileDialog
 import java.io.File
+import java.util.*
 
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
@@ -50,10 +52,13 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val competitionName = mutableStateOf("")
     private val competitionDate = mutableStateOf("")
     private val competitionSportType = mutableStateOf("Выбрать тип")
+
+    private val competitionIsDone = mutableStateOf(false)
+
     private val teamApplications: MutableList<TeamApplication> = mutableListOf()
     private val teamApplicationsNames: MutableList<String> = mutableListOf()
     private val count = mutableStateOf(teamApplications.size)
-    private val expanded = mutableStateOf(true)
+    private val expanded = mutableStateOf(false)
     private val openingApplication = mutableStateOf(-1)
     private val openingException = mutableStateOf<Exception?>(null)
     private val finished = mutableStateOf(false)
@@ -108,25 +113,33 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         RaceSelector(modifier = Modifier)
                         val fileDialog = FileDialog(ComposeWindow())
                         CreateFileButton(Modifier.align(Alignment.CenterVertically)) {
-                            teamApplications += TeamApplication("", emptyList(), 1)
-                            teamApplicationsNames += ""
-                            count.value = teamApplications.size
+                            if (competitionIsDone.value) {
+                                teamApplications += TeamApplication("", emptyList(), 1)
+                                teamApplicationsNames += ""
+                                count.value = teamApplications.size
+                            }
                         }
                         DownloadFilesButton(Modifier.align(Alignment.CenterVertically)) {
-                            fileDialog.isMultipleMode = true
-                            fileDialog.isVisible = true
-                            teamApplications += getTeamApplicationsFromUser(fileDialog) ?: listOf()
-                            count.value = teamApplications.size
+                            if (competitionIsDone.value) {
+                                fileDialog.isMultipleMode = true
+                                fileDialog.isVisible = true
+                                teamApplications += getTeamApplicationsFromUser(fileDialog) ?: listOf()
+                                count.value = teamApplications.size
+                            }
                         }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
-                            val e = checkCompetitionData()
-                            if (e == null) {
-                                winManager.addCompetitionName(competitionName.value)
-                                finished.value = true
+                            if(!competitionIsDone.value) {
+                                val e = checkCompetitionData()
+                                if (e == null) {
+                                    winManager.addCompetitionName(competitionName.value)
+                                    competitionIsDone.value = true
+                                    winManager.saveMetaInfo(TODO())
+                                } else {
+                                    eWindow.finished.value = false
+                                    openingException.value = e
+                                }
                             } else {
-                                eWindow.finished.value = false
-                                eWindow.finished.value = false
-                                openingException.value = e
+                                TODO("После того, как всё заработало" )
                             }
                         }
                     }
@@ -145,7 +158,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                                 ApplicationButton(Modifier.height(BTN_HEIGHT).width(BTN_WIDTH)) {
                                     openingApplication.value = i
                                 }
-                                DeleteFileButton {
+                                DeleteApplicationButton {
                                     teamApplications.removeAt(i)
                                     teamApplicationsNames.removeAt(i)
                                     count.value--
@@ -286,15 +299,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         )
     }
 
-    @Composable
-    private fun ApplicationButton(modifier: Modifier, onClick: () -> Unit) {
-        IconButton(
-            modifier = modifier,
-            onClick = onClick,
-        ) { Icon(Icons.Default.Create, contentDescription = null, tint = ACCENT_C) }
-    }
-
-    @Composable
+    @Composable //Сохраняем всё
     private fun SaveButton(modifier: Modifier, onClick: () -> Unit) {
         IconButton(
             modifier = modifier,
@@ -304,28 +309,49 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         }
     }
 
-    @Composable
+    @Composable //Кнопка скачивания файлов
     private fun DownloadFilesButton(modifier: Modifier, onClick: () -> Unit) {
         IconButton(
             modifier = modifier,
             onClick = onClick
         ) {
-            Icon(Icons.Default.Search, contentDescription = null, tint = ACCENT_C)
+            Icon(Icons.Default.Search, contentDescription = null, tint =
+            if (competitionIsDone.value) {
+                ACCENT_C
+            } else {
+                GREY_C
+            })
         }
     }
 
-    @Composable
+    @Composable //Кнопка создания пустого заявления
     private fun CreateFileButton(modifier: Modifier, onClick: () -> Unit) {
         IconButton(
             modifier = modifier,
             onClick = onClick
         ) {
-            Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C)
+            Icon(
+                Icons.Default.Add,
+                contentDescription = null,
+                tint = if (competitionIsDone.value) {
+                    ACCENT_C
+                } else {
+                    GREY_C
+                }
+            )
         }
     }
 
-    @Composable
-    private fun DeleteFileButton(onClick: () -> Unit) {
+    @Composable //Кнопка изменения таблички
+    private fun ApplicationButton(modifier: Modifier, onClick: () -> Unit) {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick,
+        ) { Icon(Icons.Default.Create, contentDescription = null, tint = ACCENT_C) }
+    }
+
+    @Composable //Кнопка удаления заявления
+    private fun DeleteApplicationButton(onClick: () -> Unit) {
         IconButton(
             modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH),
             onClick = onClick,
@@ -335,39 +361,49 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
 
     @Composable
     private fun RaceSelector(modifier: Modifier) {
-        TextField(
-            modifier = modifier.width(WIDTH_OF_TEXT),
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = TEXT_C,
-                focusedIndicatorColor = ACCENT_C,
-                cursorColor = ACCENT_C
-            ),
-            singleLine = true,
-            value = "",
-            onValueChange = {  },
-            readOnly = true,
-            placeholder = {
-                ClickableTexxxt(
-                    modifier = Modifier,
-                    text = competitionSportType.value,
-                    style = SpanStyle(color = textColor.value, fontSize = 17.sp)
-                ) {
-                    expanded.value = true
+        Column {
+            TextField(
+                modifier = modifier.width(WIDTH_OF_TEXT).height(BTN_HEIGHT),
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = TEXT_C,
+                    focusedIndicatorColor = ACCENT_C,
+                    cursorColor = ACCENT_C
+                ),
+                singleLine = true,
+                value = "",
+                onValueChange = { },
+                readOnly = true,
+                placeholder = {
+                    ClickableTexxxt(
+                        modifier = Modifier,
+                        text = competitionSportType.value.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                        style = SpanStyle(color = textColor.value, fontSize = 17.sp)
+                    ) {
+                        if (!competitionIsDone.value) {
+                            expanded.value = true
+                        }
+                    }
                 }
-            }
-        )
-        DropdownMenu(
-            modifier = Modifier,
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false }
-        ) {
-            SportType.values().dropLast(1).forEach {
-                DropdownMenuItem(onClick = {
-                    competitionSportType.value = it.toRussian()
-                    textColor.value = TEXT_C
-                    expanded.value = false
-                }) {
-                    Text(it.toRussian())
+            )
+            DropdownMenu(
+                modifier = Modifier.width(WIDTH_OF_TEXT).background(FOREGROUND_C),
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false }
+            ) {
+                Divider(color = BACKGROUND_C, thickness = 0.5.dp)
+                SportType.values().dropLast(1).forEach {
+                    DropdownMenuItem(onClick = {
+                        competitionSportType.value = it.toRussian()
+                        textColor.value = TEXT_C
+                        expanded.value = false
+                    }) {
+                        Text(
+                            it.toRussian()
+                                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                            color = TEXT_C
+                        )
+                    }
+                    Divider(color = BACKGROUND_C, thickness = 0.5.dp)
                 }
             }
         }
@@ -390,11 +426,10 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             singleLine = true,
             value = text,
             onValueChange = onValueChange,
-            readOnly = false,
+            readOnly = competitionIsDone.value,
             placeholder = {
                 Text(modifier = Modifier.width(WIDTH_OF_TEXT), text = textOfUnit, color = GREY_C)
             }
         )
-
     }
 }
