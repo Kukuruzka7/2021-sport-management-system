@@ -8,25 +8,24 @@ data class ColumnInfo(val name: String, val width: Dp = 150.dp, val filter: (Str
 fun onlyDigitsFilter(str: String): String = str.filter { ('0'..'9').contains(it) }
 fun onlyLettersFilter(str: String): String =
     str.filter { (('a'..'z') + ('A'..'Z') + ('а'..'я') + ('А'..'Я')).contains(it) }
+
 fun timeFilter(str: String): String = str.filter { (('0'..'9') + ':').contains(it) }
 fun delayFilter(str: String): String = str.filter { (('0'..'9') + ':' + '+').contains(it) }
 
-fun ColumnType.getInfo(str: String): ColumnInfo =
-    when (this) {
-        ColumnType.AthleteNum -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
-        ColumnType.FirstName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
-        ColumnType.LastName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
-        ColumnType.BirthYear -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
-        ColumnType.SportCategory -> ColumnInfo(str, 70.dp)
-        ColumnType.StartTime -> ColumnInfo(str, 100.dp, ::timeFilter)
-        ColumnType.Num -> ColumnInfo(str, 70.dp, ::onlyDigitsFilter)
-        ColumnType.Team -> ColumnInfo(str, 200.dp)
-        ColumnType.FinishResult -> ColumnInfo(str, 100.dp, ::timeFilter)
-        ColumnType.Place -> ColumnInfo(str, 70.dp, ::onlyDigitsFilter)
-        ColumnType.Delay -> ColumnInfo(str, 100.dp, ::delayFilter)
-        ColumnType.Sex -> ColumnInfo(str, 70.dp, ::onlyLettersFilter)
-    }
-
+fun ColumnType.getInfo(str: String): ColumnInfo = when (this) {
+    ColumnType.AthleteNum -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
+    ColumnType.FirstName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
+    ColumnType.LastName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
+    ColumnType.BirthYear -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
+    ColumnType.SportCategory -> ColumnInfo(str, 70.dp)
+    ColumnType.StartTime -> ColumnInfo(str, 100.dp, ::timeFilter)
+    ColumnType.Num -> ColumnInfo(str, 70.dp, ::onlyDigitsFilter)
+    ColumnType.Team -> ColumnInfo(str, 200.dp)
+    ColumnType.FinishResult -> ColumnInfo(str, 100.dp, ::timeFilter)
+    ColumnType.Place -> ColumnInfo(str, 70.dp, ::onlyDigitsFilter)
+    ColumnType.Delay -> ColumnInfo(str, 100.dp, ::delayFilter)
+    ColumnType.Sex -> ColumnInfo(str, 70.dp, ::onlyLettersFilter)
+}
 
 enum class ColumnType {
     AthleteNum,

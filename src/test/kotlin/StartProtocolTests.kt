@@ -1,7 +1,6 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import ru.emkn.kotlin.sms.Group
-import ru.emkn.kotlin.sms.GroupName
 import ru.emkn.kotlin.sms.Race
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.athlete.*
@@ -21,12 +20,12 @@ internal class StartProtocolTests {
             Sex.MALE,
             LocalDate(2002, 12, 30),
             Category.I,
-            GroupName("М2002"),
+            "М2002",
             "Б05",
-            GroupName("М2002"),
+            "М2002",
             AthleteNumber("$num")
         )
-        val group = Group(Race(GroupName("М2002"), SportType.RUNNING), listOf(athlete))
+        val group = Group(Race("М2002", SportType.RUNNING), listOf(athlete))
         GroupStartProtocol(group, "src/test/resources/StartProtocolTests/")
         val list = csvReader().readAll(File("src/test/resources/StartProtocolTests/М2002.csv"))
         assertEquals(num.toString(), list[1][0])

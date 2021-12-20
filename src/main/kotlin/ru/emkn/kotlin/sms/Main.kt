@@ -15,8 +15,11 @@ import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
+import ru.emkn.kotlin.sms.view.Manager
+import ru.emkn.kotlin.sms.view.Model
 import ru.emkn.kotlin.sms.view.View
 import java.io.File
+import kotlin.String
 
 enum class FieldsStart {
     BEHAVIOR, NAME, SPORT_TYPE, DATE, FILE_NAME_OF_APPLICATION
@@ -43,19 +46,21 @@ enum class UserBehavior(val behavior: String) {
 
 const val dir = "src/main/resources/competitions/"
 
-fun main(args: Array<String>) {
+fun main() {
     logger.info { "Начало работы программы." }
-    View().render()
-//    ApplicationUploadingWindow().render()
-//    println(StartWindow().render())
-    /*if (checkEmptyInput(args)) return
-    when (getBehavior(args[0])) {
-        UserBehavior.START -> start(args)
-        UserBehavior.FINISH_BY_ATHLETES -> finishByAthletes(args)
-        UserBehavior.FINISH_BY_CHECKPOINTS -> finishByCheckPoints(args)
-        UserBehavior.ERROR -> println("Вы ввели не корректную команду. Попробуйте еще раз.")
-    }
-    logger.info { "Завершение работы программы." }*/
+    val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.RUNNING)
+    val application = Application(
+        listOf(
+            File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),
+            File("src/test/testFiles/testTeamApplication/teamApplication2.csv"),
+            File("src/test/testFiles/NadeusZarabotaet/Application3.csv")
+        )
+    )
+    val model = Model(info, application) // создание модели выгрузка данных TODO()
+    val manager = Manager(model) //создание менеджера TODO()
+    val view = View(model, manager)
+    view.render()
+    logger.info { "Завершение работы программы." }
 }
 
 private fun checkEmptyInput(args: Array<String>): Boolean {

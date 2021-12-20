@@ -8,24 +8,16 @@ import ru.emkn.kotlin.sms.model.application.Application
 import java.io.File
 
 
-class View {
+class View(val model: Model, val manager: Manager) {
     fun render() {
-        val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.RUNNING)
-        val application = Application(
-            listOf(
-                File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),
-                File("src/test/testFiles/testTeamApplication/teamApplication2.csv"),
-                File("src/test/testFiles/NadeusZarabotaet/Application3.csv")
-            )
-        )
-        val manager = Manager(Model(info, application))
-        manager.open(Win.APPLICATION_UPLOADING)
+        manager.open(Win.START)
         application {
             manager.map.values.forEach {
                 if (it != null && it.state.value) {
                     it.render()
                 }
             }
+            model.save()
         }
     }
 }

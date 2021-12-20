@@ -6,13 +6,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 
+
 @Composable
-fun ClickableText(modifier: Modifier, text: String, style: SpanStyle, onClick: () -> Unit) {
+fun ClickableTexxxt(modifier: Modifier, text: String, style: SpanStyle, onClick: () -> Unit) {
     val annotatedText = buildAnnotatedString {
         //append your initial text
         withStyle(
             style = style
-
         ) {
             append(text)
         }

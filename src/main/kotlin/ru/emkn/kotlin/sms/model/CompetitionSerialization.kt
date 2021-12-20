@@ -10,7 +10,7 @@ import java.io.File
 import java.time.LocalTime
 
 
-class CompetitionSerialization(val athletesData: List<List<kotlin.String>>, val metaInfo: List<kotlin.String>) {
+class CompetitionSerialization(val athletesData: List<List<String>>, val metaInfo: List<String>) {
 
     init {
         logger.trace { "Создание экземпляра класса CompetitionData" }
@@ -31,7 +31,7 @@ class CompetitionSerialization(val athletesData: List<List<kotlin.String>>, val 
     }
 
 
-    private fun saveMetaInfo(fileName: kotlin.String) =
+    private fun saveMetaInfo(fileName: String) =
         CsvWriter().writeAll(listOf(metaInfo), File(fileName))
 
 
@@ -41,9 +41,9 @@ class CompetitionSerialization(val athletesData: List<List<kotlin.String>>, val 
             Sex.getSex(it[Fields.SEX.ordinal]),
             LocalDate.parse(it[Fields.BIRTH_DATE.ordinal]),
             Category.getCategory(it[Fields.CATEGORY.ordinal]),
-            GroupName(it[Fields.PREFERRED_GROUP.ordinal]),
+            it[Fields.PREFERRED_GROUP.ordinal],
             it[Fields.TEAM_NAME.ordinal],
-            GroupName(it[Fields.RACE.ordinal]),
+           it[Fields.RACE.ordinal],
             AthleteNumber(it[Fields.NUMBER.ordinal]),
         )
     }
@@ -53,7 +53,7 @@ class CompetitionSerialization(val athletesData: List<List<kotlin.String>>, val 
         { LocalTime.parse(it[Fields.START_TIME.ordinal]) })
 
 
-    private fun checkRow(row: List<kotlin.String>) {
+    private fun checkRow(row: List<String>) {
         if (row.size < Fields.values().size) {
             logger.error { CompetitionDataTooFewArgumentsInRow(row) }
             throw CompetitionDataTooFewArgumentsInRow(row)

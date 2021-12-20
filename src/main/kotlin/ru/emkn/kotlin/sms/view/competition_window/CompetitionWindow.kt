@@ -178,7 +178,7 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
                             TEXT_C
                         }
                     )
-                    ClickableText(
+                    ClickableTexxxt(
                         modifier = Modifier.padding(vertical = VERTICAL_PADDING),
                         text = tabToRussian(tabEnum),
                         style = style,

@@ -1,6 +1,5 @@
 import kotlinx.datetime.LocalDate
 import org.junit.Test
-import ru.emkn.kotlin.sms.GroupName
 import ru.emkn.kotlin.sms.model.athlete.Athlete
 import ru.emkn.kotlin.sms.model.athlete.Category
 import ru.emkn.kotlin.sms.model.athlete.Name
@@ -20,11 +19,13 @@ internal class AthleteTests {
     @Test
     fun testAthlete() {
         val athlete1 = Athlete(
-            Name("Розалина Миргалимова"), Sex.FEMALE, LocalDate(2003, 1, 1), Category.CANDIDATE, GroupName("Ж2003"),
-            "Команда мечты", GroupName("Ж2003")
+            Name("Розалина Миргалимова"), Sex.FEMALE, LocalDate(2003, 1, 1), Category.CANDIDATE,
+            "Ж2003",
+            "Команда мечты",
+           ("Ж2003")
         )
         assert(athlete1.name.fullName == "Розалина Миргалимова")
-        assert(athlete1.groupName.value == "Ж2003")
+        assert(athlete1.groupName == "Ж2003")
     }
 
     @Test
