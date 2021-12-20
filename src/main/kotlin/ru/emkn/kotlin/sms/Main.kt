@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import logger
@@ -47,7 +48,7 @@ const val dir = "src/main/resources/competitions/"
 
 fun main() {
     logger.info { "Начало работы программы." }
-    val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.RUNNING)
+    val info = MetaInfo("NadeusZarabotaet2", LocalDate(2021, 12, 15), SportType.ORIENTEERING)
     val application = Application(
         listOf(
             File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),

@@ -89,7 +89,7 @@ internal class TeamApplicationTests {
         try {
             checkFormatOfApplication(0, apl3)
         } catch (e: Exception) {
-            assert(e is ApplicationHasWrongFormatOnLine)
+            assert(e is WrongSexInApplicationOnLine)
         }
         try {
             checkFormatOfApplication(0, apl4)
