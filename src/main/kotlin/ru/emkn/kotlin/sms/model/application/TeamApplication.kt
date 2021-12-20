@@ -57,10 +57,10 @@ class TeamApplication(var teamName: String, val rows: List<List<String>>, privat
         // private
         fun checkFormatOfApplication(numberOfApplication: Int, rows: List<List<String>>) {
             logger.trace { "Вызов checkFormatOfApplication(${numberOfApplication})" }
-            if (rows.isEmpty()) {
+            /*if (rows.isEmpty()) {
                 logger.error { "В заявке $numberOfApplication нет данных об атлетах." }
                 throw ApplicationHasWrongFormat(numberOfApplication)
-            }
+            }*/
             rows.forEach {
                 checkRow(it, numberOfApplication)
             }
