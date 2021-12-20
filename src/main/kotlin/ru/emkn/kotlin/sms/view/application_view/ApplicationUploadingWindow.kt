@@ -48,6 +48,7 @@ interface AplUplWinManager : WindowManager {
     fun saveApplication(files: List<File>)
     fun saveMetaInfo(info: MetaInfo)
     fun getCompetitionsNames(): List<String>
+    fun addCompetitionName(name: String)
 }
 
 class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWindow(winManager) {
@@ -60,7 +61,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val openingApplication = mutableStateOf(-1)
     private val openingException = mutableStateOf<Exception?>(null)
     var finished = mutableStateOf(false)
-    val eWindow = ExceptionWindow(winManager)
+    private val eWindow = ExceptionWindow(winManager)
 
     @Composable
     override fun render() {
@@ -113,8 +114,10 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
                             val e = checkCompetitionData()
                             if (e == null) {
+                                winManager.addCompetitionName(competitionName.value)
                                 finished.value = true
                             } else {
+                                eWindow.finished.value = false
                                 eWindow.finished.value = false
                                 openingException.value = e
                             }
