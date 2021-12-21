@@ -50,6 +50,7 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
 
     override fun saveApplication(applications: List<TeamApplication>) {
         model.competitionBuilder.application(Application(applications))
+        model.createStartProtocols()
     }
 
     override fun saveMetaInfo(info: MetaInfo) {
@@ -57,7 +58,7 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         model.checkBuilder()
     }
 
-    override fun getCompetitionsNames(): List<String> = model.competitionsNames
+    override fun getCompetitionsNames(): List<String> = model.competitionsNames.get()
 
     override fun giveCompetitionNameToModel(name: String) {
         model.competition = getCompetition(name)
@@ -110,13 +111,12 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
     private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competition =
         Competition(CompetitionSerialization(data, info.toStringList()))
 
-    private fun getData(name: String): List<List<String>>? {
-        return try {
-            csvReader().readAll(File("$dir$name/competitionData.csv"))
-        } catch (e: Exception) {
-            null
-        }
+    private fun getData(name: String): List<List<String>>? = try {
+        csvReader().readAll(File("$dir$name/competitionData.csv"))
+    } catch (e: Exception) {
+        null
     }
+
 
     private fun getMetaInfo(name: String): MetaInfo? = try {
         MetaInfo(csvReader().readAll(File("$dir$name/competitionInfo.csv"))[0])

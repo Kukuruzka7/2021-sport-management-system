@@ -41,8 +41,8 @@ interface StartWindowManager : WindowManager {
 }
 
 class StartWindow(private val winManager: StartWindowManager) : IWindow(winManager) {
-    val openingCompOpenWin = mutableStateOf(false)
-    val compOpenWin = CompetitionOpeningWindow(winManager)
+    private val isNameSelectorOpen = mutableStateOf(false)
+    private val competitionNameSelectorWindow = CompetitionOpeningWindow(winManager)
 
     companion object {
         val WIDTH = 700.dp
@@ -63,11 +63,11 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
 
             Box(Modifier.fillMaxSize().background(BACKGROUND_C)) {
 
-                if (openingCompOpenWin.value) {
-                    compOpenWin.render()
-                    if (compOpenWin.finished.value) {
-                        openingCompOpenWin.value = false
-                        compOpenWin.finished.value = false
+                if (isNameSelectorOpen.value) {
+                    competitionNameSelectorWindow.render()
+                    if (competitionNameSelectorWindow.finished.value) {
+                        isNameSelectorOpen.value = false
+                        competitionNameSelectorWindow.finished.value = false
                     }
                 }
 
@@ -116,7 +116,7 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
 
     @Composable
     private fun OpenButton() = StartWindowButton("Открыть", Icons.Default.PlayArrow) {
-        openingCompOpenWin.value = true
+        isNameSelectorOpen.value = true
     }
 
 

@@ -135,7 +135,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             if (!competitionIsDone.value) {
                                 val e = checkCompetitionData()
                                 if (e == null) {
-                                    winManager.addCompetitionName(competitionName.value)
                                     competitionIsDone.value = true
                                     winManager.saveMetaInfo(
                                         MetaInfo(
@@ -150,6 +149,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                                 }
                             } else {
                                 winManager.saveApplication(teamApplications.toList())
+                                winManager.addCompetitionName(competitionName.value)
                                 winManager.openCompetitionWindow()
                                 winManager.closeAplUplWindow()
                             }

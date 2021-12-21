@@ -12,7 +12,6 @@ class View(val model: Model, val manager: Manager) {
                     it.render()
                 }
             }
-            model.save()
         }
     }
 }
