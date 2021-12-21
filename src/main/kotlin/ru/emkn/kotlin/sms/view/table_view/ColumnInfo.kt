@@ -21,7 +21,7 @@ fun ColumnType.getInfo(str: String): ColumnInfo = when (this) {
     ColumnType.AthleteNum -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
     ColumnType.FirstName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
     ColumnType.LastName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
-    ColumnType.FullName -> ColumnInfo(str, 250.dp, ::onlyLettersAndSpaceFilter)
+    ColumnType.FullName -> ColumnInfo(str, 210.dp, ::onlyLettersAndSpaceFilter)
     ColumnType.BirthYear -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
     ColumnType.SportCategory -> ColumnInfo(str, 80.dp)
     ColumnType.StartTime -> ColumnInfo(str, 100.dp, ::timeFilter)

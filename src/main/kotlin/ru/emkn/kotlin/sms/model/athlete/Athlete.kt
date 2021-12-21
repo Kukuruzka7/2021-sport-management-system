@@ -72,7 +72,7 @@ class Athlete(
         CompetitionSerialization.Companion.Fields.NUMBER -> number.toString()
         CompetitionSerialization.Companion.Fields.NAME -> name.toString()
         CompetitionSerialization.Companion.Fields.SEX -> sex.toString()
-        CompetitionSerialization.Companion.Fields.BIRTH_DATE -> birthDate.toString()
+        CompetitionSerialization.Companion.Fields.BIRTH_DATE -> birthDate.year.toString()
         CompetitionSerialization.Companion.Fields.CATEGORY -> sportCategory.toString()
         CompetitionSerialization.Companion.Fields.TEAM_NAME -> teamName
         CompetitionSerialization.Companion.Fields.RACE -> race.toString()
