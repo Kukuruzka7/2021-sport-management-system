@@ -176,13 +176,15 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                                 }
                             } //сохранение тим апликешнов
                             else  {
-                                winManager.saveApplication(teamApplications.toList())
-                                winManager.saveCompetition()
-                                winManager.createStartProtocols()
-                                winManager.addCompetitionName(competitionName.value)
-                                winManager.saveSerialization()
-                                winManager.openCompetitionWindow()
-                                winManager.closeAplUplWindow()
+                                if (teamApplications.isNotEmpty()) {
+                                    winManager.saveApplication(teamApplications.toList())
+                                    winManager.saveCompetition()
+                                    winManager.createStartProtocols()
+                                    winManager.addCompetitionName(competitionName.value)
+                                    winManager.saveSerialization()
+                                    winManager.openCompetitionWindow()
+                                    winManager.closeAplUplWindow()
+                                }
                             }
                         }
                     }

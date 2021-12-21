@@ -72,12 +72,17 @@ class Athlete(
         CompetitionSerialization.Companion.Fields.NUMBER -> number.toString()
         CompetitionSerialization.Companion.Fields.NAME -> name.toString()
         CompetitionSerialization.Companion.Fields.SEX -> sex.toString()
-        CompetitionSerialization.Companion.Fields.BIRTH_DATE -> birthDate.year.toString()
+        CompetitionSerialization.Companion.Fields.BIRTH_DATE -> birthDate.toString()
         CompetitionSerialization.Companion.Fields.CATEGORY -> sportCategory.toString()
         CompetitionSerialization.Companion.Fields.TEAM_NAME -> teamName
         CompetitionSerialization.Companion.Fields.RACE -> race.toString()
         CompetitionSerialization.Companion.Fields.PREFERRED_GROUP -> preferredGroup
         CompetitionSerialization.Companion.Fields.START_TIME -> startTime.toString()
+    }
+
+    fun extractFieldToStringWithShortDate(field: CompetitionSerialization.Companion.Fields): String = when (field) {
+        CompetitionSerialization.Companion.Fields.BIRTH_DATE -> birthDate.year.toString()
+        else -> extractFieldToString(field)
     }
 
     companion object {
@@ -95,4 +100,7 @@ class Athlete(
 
 fun Athlete.toStringList() =
     CompetitionSerialization.Companion.Fields.values().map { this.extractFieldToString(it) }
+
+fun Athlete.toStringListWithShortDate() =
+    CompetitionSerialization.Companion.Fields.values().map { this.extractFieldToStringWithShortDate(it) }
 

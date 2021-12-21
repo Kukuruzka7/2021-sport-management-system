@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.model.Team
-import ru.emkn.kotlin.sms.model.athlete.toStringList
+import ru.emkn.kotlin.sms.model.athlete.toStringListWithShortDate
 import ru.emkn.kotlin.sms.view.ClickableTexxxt
 import ru.emkn.kotlin.sms.view.ColorScheme
 import ru.emkn.kotlin.sms.view.table_view.TableContent
@@ -40,7 +40,8 @@ class TeamsTab(private val teamList: List<Team>, _modifier: Modifier) : TabLetka
                     val horizontalState = rememberScrollState(0)
                     val verticalState = rememberScrollState(0)
                     Box(Modifier.fillMaxSize().background(color = ColorScheme.BACKGROUND_C)) {
-                        TableContent(TableType.TEAM,
+                        TableContent(
+                            TableType.TEAM,
                             Modifier.align(Alignment.Center).verticalScroll(verticalState)
                                 .horizontalScroll(horizontalState),
                             team.toCSV()
@@ -91,6 +92,6 @@ class TeamsTab(private val teamList: List<Team>, _modifier: Modifier) : TabLetka
         val DIALOG_HEIGHT = 500.dp
         val DIALOG_PADDING = 20.dp
 
-        fun Team.toCSV(): List<List<String>> = this.athletes.map { it.toStringList() }
+        fun Team.toCSV(): List<List<String>> = this.athletes.map { it.toStringListWithShortDate() }
     }
 }

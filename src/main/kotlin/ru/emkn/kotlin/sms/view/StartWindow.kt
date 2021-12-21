@@ -31,8 +31,6 @@ interface StartWindowManager : CompNameSelectionWindowManager {
 
     fun openAplUplWindow()
 
-    fun giveCompetitionNameToModel(name: String)
-
 }
 
 class StartWindow(private val winManager: StartWindowManager) : IWindow(winManager) {

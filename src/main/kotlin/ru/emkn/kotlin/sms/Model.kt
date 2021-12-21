@@ -4,15 +4,20 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.model.Competition
+import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
+import ru.emkn.kotlin.sms.model.finishprotocol.FinishProtocol
+import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResult
+import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
 import java.io.File
 
 class Model(_info: MetaInfo? = null, _application: Application? = null) {
     lateinit var competition: Competition
+        private set
     val competitionBuilder = CompetitionBuilder()
-    var stage: MutableState<Stage> = mutableStateOf(Stage.ONGOING)
+    var stage: MutableState<Stage> = mutableStateOf(getStage())
 
     val resourcesPath = "src/main/resources/competitions"
 
@@ -39,6 +44,17 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
         }
     }
 
+    fun getStage(): Stage {
+        if (!isCompetitionInitialized()) {
+            return Stage.ONGOING
+        }
+        return if (File("$resourcesPath/${competition.info.name}/finishProtocol").exists()) {
+            Stage.FINISHED
+        } else {
+            Stage.ONGOING
+        }
+    }
+
     companion object {
         enum class Stage {
             ONGOING, FINISHED;
@@ -57,6 +73,28 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
         require(isCompetitionInitialized())
         StartProtocol(competition.groupList, "$competitionPath/")
     }
+
+    fun saveCompetition(): Boolean {
+        if (competitionBuilder.isReady()) {
+            competition = competitionBuilder.build()
+            stage.value = getStage()
+            return true
+        }
+        return false
+    }
+
+    fun saveCompetitionByName(name: String) {
+        competition = competitionBuilder.byName(name, resourcesPath)
+        stage.value = getStage()
+    }
+
+    fun saveResults(result: InputCompetitionResult) {
+        require(isCompetitionInitialized())
+        stage.value = Companion.Stage.FINISHED
+        val map = competition.athleteList.associateBy({ it.number }, { it.startTime })
+        FinishProtocol(ResultData(result, map), competition)
+    }
+
 
     fun isCompetitionInitialized(): Boolean = this::competition.isInitialized
 
@@ -104,6 +142,32 @@ class CompetitionBuilder {
     fun application(_application: Application?) = apply { application = _application }
 
     fun isReady(): Boolean = info != null && application != null
+
+    fun byName(name: String, dir: String): Competition {
+        val fullPath = "$dir/$name"
+        require(checkCompetitionExist(fullPath))
+        val data: List<List<String>>? = getData(fullPath) //получение Competition data
+        val info: MetaInfo? = getMetaInfo(fullPath) // получение мета информации
+        require(data != null)
+        require(info != null)
+        return Competition(CompetitionSerialization(data, info.toStringList())) //создание соревнования
+    }
+
+    private fun getData(fullPath: String): List<List<String>>? = try {
+        csvReader().readAll(File("$fullPath/competitionData.csv"))
+    } catch (e: Exception) {
+        null
+    }
+
+
+    private fun getMetaInfo(fullPath: String): MetaInfo? = try {
+        MetaInfo(csvReader().readAll(File("$fullPath/competitionInfo.csv"))[0])
+    } catch (e: Exception) {
+        null
+    }
+
+    private fun checkCompetitionExist(fullPath: String): Boolean =
+        File("$fullPath/competitionData.csv").exists()
 
     class CompetitionIsNotReadyException(property: String) :
         Exception("Property $property has not been initialized yet")

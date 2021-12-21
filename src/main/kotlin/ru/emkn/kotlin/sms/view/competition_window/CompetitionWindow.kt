@@ -28,7 +28,6 @@ import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 
 interface CompetitionWindowsManager : ResultsTabManager, WindowManager {
-    fun closeCompWindow()
 }
 
 

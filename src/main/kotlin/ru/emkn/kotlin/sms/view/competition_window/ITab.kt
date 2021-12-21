@@ -47,7 +47,7 @@ class TabFactory(private val model: Model, private val winManager: CompetitionWi
             TabEnum.START_PROTOCOLS -> StartProtocolsTab(competition.groupList, modifier)
             { model.getStartProtocolByGroupName(it) }
             TabEnum.RESULT -> ResultsTab(modifier, winManager, competition.groupList, model.stage)
-            { model.getFinishProtocolByGroupName(competition.info.name) }
+            { groupName -> model.getFinishProtocolByGroupName(groupName) }
         }
     }
 

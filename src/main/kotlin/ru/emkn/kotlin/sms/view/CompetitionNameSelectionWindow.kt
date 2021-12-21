@@ -18,7 +18,7 @@ import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 
 interface CompNameSelectionWindowManager : WindowManager {
     fun getCompetitionsNames(): List<String>
-    fun openCompetitionWindow(name: String)
+    fun openCompetitionWindowByName(name: String)
     fun closeStartWindow()
 }
 
@@ -46,7 +46,7 @@ class CompetitionNameSelectionWindow(private val winManager: CompNameSelectionWi
                             finished.value = true
                             chosenName = str //выбранное для открытия соревнование с именем str
                             require(chosenName != null)
-                            winManager.openCompetitionWindow(chosenName!!) //открытие окна с этим соревнованием
+                            winManager.openCompetitionWindowByName(chosenName!!) //открытие окна с этим соревнованием
                             winManager.closeStartWindow()
                         }
                     }
