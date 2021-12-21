@@ -3,8 +3,10 @@ package ru.emkn.kotlin.sms.view.table_view
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+//Информация о конкретной колонке
 data class ColumnInfo(val name: String, val width: Dp = 150.dp, val filter: (String) -> String = { it })
 
+//Разные фильтры
 fun onlyDigitsFilter(str: String): String = str.filter { ('0'..'9').contains(it) }
 fun onlyLettersFilter(str: String): String =
     str.filter { (('a'..'z') + ('A'..'Z') + ('а'..'я') + ('А'..'Я') + '-').contains(it) }
@@ -14,6 +16,7 @@ fun onlyLettersAndSpaceFilter(str: String): String =
 fun timeFilter(str: String): String = str.filter { (('0'..'9') + ':').contains(it) }
 fun delayFilter(str: String): String = str.filter { (('0'..'9') + ':' + '+').contains(it) }
 
+//Каст ColumnType в ColumnInfo
 fun ColumnType.getInfo(str: String): ColumnInfo = when (this) {
     ColumnType.AthleteNum -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
     ColumnType.FirstName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
@@ -32,6 +35,7 @@ fun ColumnType.getInfo(str: String): ColumnInfo = when (this) {
     ColumnType.PreferredGroup ->  ColumnInfo(str, 100.dp)
 }
 
+//Енум класс всех возможных типов колонок
 enum class ColumnType {
     AthleteNum,
     FirstName,
@@ -53,6 +57,7 @@ enum class ColumnType {
     PreferredGroup,
 }
 
+//Каст String в ColumnType
 fun String.toColumnType() = when (this) {
     "Фамилия" -> ColumnType.LastName
     "Имя" -> ColumnType.FirstName
