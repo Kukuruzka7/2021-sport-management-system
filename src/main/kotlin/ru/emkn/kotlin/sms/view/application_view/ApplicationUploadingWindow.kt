@@ -50,8 +50,11 @@ interface AplUplWinManager : WindowManager {
     fun openCompetitionWindow()
     fun saveApplication(applications: List<TeamApplication>)
     fun saveMetaInfo(info: MetaInfo)
+    fun saveCompetition()
     fun getCompetitionsNames(): List<String>
     fun addCompetitionName(name: String)
+    fun createStartProtocols()
+    fun saveSerialization()
 }
 
 //Класс загрузки командных заявок
@@ -174,7 +177,10 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             } //сохранение тим апликешнов
                             else  {
                                 winManager.saveApplication(teamApplications.toList())
+                                winManager.saveCompetition()
+                                winManager.createStartProtocols()
                                 winManager.addCompetitionName(competitionName.value)
+                                winManager.saveSerialization()
                                 winManager.openCompetitionWindow()
                                 winManager.closeAplUplWindow()
                             }

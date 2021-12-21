@@ -1,7 +1,6 @@
 package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import logger
@@ -11,7 +10,7 @@ import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.SportType.Companion.get
 import ru.emkn.kotlin.sms.model.application.Application
-import ru.emkn.kotlin.sms.model.application.TeamApplication
+
 import ru.emkn.kotlin.sms.model.finishprotocol.FinishProtocol
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
@@ -46,7 +45,7 @@ enum class UserBehavior(val behavior: String) {
     }
 }
 
-const val dir = "src/main/resources/competitions/"
+private const val dir = "src/main/resources/competitions/"
 
 fun main() {
     logger.info { "Начало работы программы." }

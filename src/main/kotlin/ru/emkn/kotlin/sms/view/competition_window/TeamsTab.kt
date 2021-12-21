@@ -30,7 +30,7 @@ class TeamsTab(private val teamList: List<Team>, _modifier: Modifier) : TabLetka
                 val team = dialog.value!!
                 Dialog(
                     onCloseRequest = { dialog.value = null },
-                    title = team.toString(),
+                    title = team.name,
                     state = rememberDialogState(
                         width = DIALOG_WIDTH, height = DIALOG_HEIGHT
                     ),
@@ -38,7 +38,7 @@ class TeamsTab(private val teamList: List<Team>, _modifier: Modifier) : TabLetka
                     Box(
                         Modifier.fillMaxSize().background(color = ColorScheme.BACKGROUND_C).padding(DIALOG_PADDING)
                     ) {
-                        TableContent(TableType.APPLICATION, Modifier, team.toCSV())
+                        TableContent(TableType.TEAM, Modifier, team.toCSV())
                     }
                 }
             }
@@ -57,7 +57,7 @@ class TeamsTab(private val teamList: List<Team>, _modifier: Modifier) : TabLetka
     private companion object {
         val N_COLUMNS = 2
 
-        val DIALOG_WIDTH = 750.dp
+        val DIALOG_WIDTH = 1000.dp
         val DIALOG_HEIGHT = 500.dp
         val DIALOG_PADDING = 20.dp
 

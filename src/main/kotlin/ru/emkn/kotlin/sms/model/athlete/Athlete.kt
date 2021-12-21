@@ -58,7 +58,7 @@ class Athlete(
         _sex: Sex,
         _birthDate: LocalDate,
         _sportCategory: Category,
-        _preferredGroup: String = "TODO()",
+        _preferredGroup: String = "",
         _teamName: String,
         _groupName: String
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())

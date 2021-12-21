@@ -43,9 +43,9 @@ class CompetitionSerialization(val athletesData: List<List<String>>, val metaInf
             Category.getCategory(it[Fields.CATEGORY.ordinal]),
             it[Fields.PREFERRED_GROUP.ordinal],
             it[Fields.TEAM_NAME.ordinal],
-           it[Fields.RACE.ordinal],
+            it[Fields.RACE.ordinal],
             AthleteNumber(it[Fields.NUMBER.ordinal]),
-        )
+        ).apply { startTime = LocalTime.parse(it[Fields.START_TIME.ordinal]) }
     }
 
     fun getStartTime(): Map<AthleteNumber, LocalTime> = athletesData.associateBy(

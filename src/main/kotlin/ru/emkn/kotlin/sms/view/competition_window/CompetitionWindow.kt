@@ -41,6 +41,7 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
         val SPACING = 30.dp
     }
 
+
     @Composable
     override fun render() {
         require(model.isCompetitionInitialized())

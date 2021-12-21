@@ -72,5 +72,3 @@ class FileDoNotDownload() : Exception("Загрузите файл с резул
 class InvalidCSV(fileName: String) : Exception("$fileName не удовлевтворяет нужному формату (csv-таблица)")
 
 class FileDoesNotExist(fileName: String) : Exception("File $fileName does not exist")
-
-class CompetitionNamesRepositoryIsDamaged() : Exception("Репозиторий имен соревнований поврежден")

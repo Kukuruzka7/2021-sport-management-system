@@ -3,7 +3,6 @@ package ru.emkn.kotlin.sms.view
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import ru.emkn.kotlin.sms.CompetitionNamesRepositoryIsDamaged
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
@@ -15,12 +14,12 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
     val competitionBuilder = CompetitionBuilder()
     var stage: MutableState<Stage> = mutableStateOf(Stage.ONGOING)
 
-    private val resourcesPath = "src/main/resources/competitions"
+    val resourcesPath = "src/main/resources/competitions"
 
-    private val competitionPath: String
+    val competitionPath: String
         get() {
-            require(!isCompetitionInitialized())
-            return "resourcesPath/${competition.info.name}"
+            require(isCompetitionInitialized())
+            return "$resourcesPath/${competition.info.name}"
         }
 
     val competitionsNames = CompetitionNames(resourcesPath)
@@ -51,31 +50,37 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
     }
 
     fun getStartProtocolByGroupName(name: String): String {
-        return "$competitionPath/${competition.info.name}/startProtocol/$name.csv"
+        return "$competitionPath/startProtocol/$name.csv"
     }
-
 
     fun createStartProtocols() {
         require(isCompetitionInitialized())
-        StartProtocol(competition.groupList, competitionPath)
+        StartProtocol(competition.groupList, "$competitionPath/")
     }
 
     fun isCompetitionInitialized(): Boolean = this::competition.isInitialized
 
-    class CompetitionNames(private val path: String) {
+    class CompetitionNames(path: String) {
         private val file = File("$path/competitionsNames.csv")
 
         fun add(name: String) {
-            file.appendText(",$name")
+            if (get().isEmpty()) {
+                file.appendText(name)
+            } else {
+                file.appendText(",$name")
+
+            }
         }
 
         fun get(): List<String> {
             val rows = csvReader().readAll(file)
             if (rows.isEmpty()) {
-                throw CompetitionNamesRepositoryIsDamaged()
+                throw return emptyList()
             }
             return rows[0]
         }
+
+        //class CompetitionNamesRepositoryIsDamaged() : Exception("Репозиторий имен соревнований поврежден")
     }
 }
 

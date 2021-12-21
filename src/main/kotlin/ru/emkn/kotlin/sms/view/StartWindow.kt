@@ -27,14 +27,9 @@ import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 
 
-interface StartWindowManager : WindowManager {
-    fun closeStartWindow()
+interface StartWindowManager : CompNameSelectionWindowManager {
 
     fun openAplUplWindow()
-
-    fun openCompetitionWindow(name: String)
-
-    fun getCompetitionsNames(): List<String>
 
     fun giveCompetitionNameToModel(name: String)
 
@@ -42,7 +37,7 @@ interface StartWindowManager : WindowManager {
 
 class StartWindow(private val winManager: StartWindowManager) : IWindow(winManager) {
     private val isNameSelectorOpen = mutableStateOf(false)
-    private val competitionNameSelectorWindow = CompetitionOpeningWindow(winManager)
+    private val competitionNameSelectorWindow = CompetitionNameSelectionWindow(winManager)
 
     companion object {
         val WIDTH = 700.dp
@@ -62,7 +57,6 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
         ) {
 
             Box(Modifier.fillMaxSize().background(BACKGROUND_C)) {
-
                 if (isNameSelectorOpen.value) {
                     competitionNameSelectorWindow.render()
                     if (competitionNameSelectorWindow.finished.value) {
