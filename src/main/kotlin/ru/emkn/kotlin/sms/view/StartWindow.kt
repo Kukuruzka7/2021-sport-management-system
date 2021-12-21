@@ -58,7 +58,7 @@ class StartWindow(private val winManager: StartWindowManager) : IWindow(winManag
             state = WindowState(
                 width = WIDTH,
                 height = HEIGHT
-            )
+            ),
         ) {
 
             Box(Modifier.fillMaxSize().background(BACKGROUND_C)) {

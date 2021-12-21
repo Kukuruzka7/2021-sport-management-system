@@ -7,7 +7,7 @@ enum class SportType() {
     RUNNING, SWIMMING, ORIENTEERING, X;
 
     fun toRussian() = when (this) {
-        ORIENTEERING -> "спортивное ориентирование"
+        ORIENTEERING -> "ориентирование"
         RUNNING -> "бег"
         SWIMMING -> "плавание"
         X -> "X"
@@ -20,6 +20,7 @@ enum class SportType() {
                 putAll(
                     setOf(
                         "спортивное ориентирование",
+                        "ориентирование",
                         "ориенташка",
                         "orienteering"
                     ).associateWith { ORIENTEERING })
