@@ -166,7 +166,7 @@ operator fun LocalTime?.minus(subtrahend: LocalTime): Duration? {
     if (this == null) return null
     val thisTime = this.toInt()
     val subtrahendTime = subtrahend.toInt()
-    val difference = (thisTime - subtrahendTime + 24 * 60 * 60) % (24 * 60 * 60)
+    val difference = (thisTime - subtrahendTime)
     return Duration.ofSeconds(difference.toLong())
 }
 
@@ -203,7 +203,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
         it.athlete.name.firstName,
         it.athlete.birthDate.year,
         it.athlete.sportCategory.toString(),
-        it.athlete.teamName.toString(),
+        it.athlete.teamName,
         it.finishTime?.toStringWithSeconds() ?: "снят",
         it.place,
         if (it.lag == null) null else "+" + it.lag.toStringWithoutHours(),

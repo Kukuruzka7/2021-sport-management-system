@@ -38,7 +38,6 @@ class TabFactory(private val model: Model, private val winManager: CompetitionWi
 
     private fun create(tabEnum: TabEnum, modifier: Modifier, model: Model): ITab {
         val competition = model.competition
-        require(true)
         return when (tabEnum) {
             TabEnum.GROUPS -> {
                 GroupsTab(buildRacesTable(competition.groupList), modifier)
