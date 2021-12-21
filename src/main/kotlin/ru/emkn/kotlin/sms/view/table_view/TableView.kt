@@ -23,6 +23,7 @@ enum class TableType {
     CHECKPOINT_RES,
     ATHLETE_RES,
     COURSES,
+    TEAM,
 }
 
 private val ROW_HEIGHT = 50.dp
@@ -147,9 +148,9 @@ fun TableContent(
                         rowsCount.value = contentRows.size
                     }
                 }
-                if(drawLastRow) {
+                if (drawLastRow) {
                     DeleteColumnButton {
-                        if(columnsCnt.value > 1) {
+                        if (columnsCnt.value > 1) {
                             columnsCnt.value -= 2
                             contentRows.forEach {
                                 it.removeLast()
@@ -190,10 +191,12 @@ fun TableContent(
     }
 }
 
-val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.", "Разряд")
+private val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.", "Разряд")
 val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Г.р.", "Разряд", "Старт")
 val finishProtocolFirstRow =
     listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
+val teamFirstRow =
+    listOf("Номер", "Фамилия Имя", "Пол", "Г.р.", "Разр.", "Команда", "Дистанция", "Пр. группа", "Старт")
 
 fun coursesFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
 
@@ -254,6 +257,16 @@ fun TableContent(
                 mutable = false,
                 drawHeader = false,
                 firstRowFunc = { coursesFirstRow(list.first().size) },
+                contentRows = list.toMListMListStr()
+            ) {}
+        }
+        TableType.TEAM -> {
+            TableContent(
+                modifier = modifier,
+                mutable = false,
+                drawHeader = true,
+                columnsCnt = mutableStateOf(9),
+                firstRowFunc = { _: Int -> teamFirstRow.map { it.toColumnType().getInfo(it) } },
                 contentRows = list.toMListMListStr()
             ) {}
         }

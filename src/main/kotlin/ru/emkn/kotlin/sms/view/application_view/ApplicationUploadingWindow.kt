@@ -62,7 +62,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val expanded = mutableStateOf(false)
     private val openingApplication = mutableStateOf(-1)
     private val openingException = mutableStateOf<Exception?>(null)
-    private val finished = mutableStateOf(false)
     private val eWindow = ExceptionWindow(winManager)
     private val textColor = mutableStateOf(GREY_C)
 
