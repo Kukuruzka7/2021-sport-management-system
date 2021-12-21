@@ -7,7 +7,9 @@ data class ColumnInfo(val name: String, val width: Dp = 150.dp, val filter: (Str
 
 fun onlyDigitsFilter(str: String): String = str.filter { ('0'..'9').contains(it) }
 fun onlyLettersFilter(str: String): String =
-    str.filter { (('a'..'z') + ('A'..'Z') + ('а'..'я') + ('А'..'Я')).contains(it) }
+    str.filter { (('a'..'z') + ('A'..'Z') + ('а'..'я') + ('А'..'Я') + '-').contains(it) }
+fun onlyLettersAndSpaceFilter(str: String): String =
+    str.filter { (('a'..'z') + ('A'..'Z') + ('а'..'я') + ('А'..'Я') + '-' + ' ').contains(it) }
 
 fun timeFilter(str: String): String = str.filter { (('0'..'9') + ':').contains(it) }
 fun delayFilter(str: String): String = str.filter { (('0'..'9') + ':' + '+').contains(it) }
@@ -16,6 +18,7 @@ fun ColumnType.getInfo(str: String): ColumnInfo = when (this) {
     ColumnType.AthleteNum -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
     ColumnType.FirstName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
     ColumnType.LastName -> ColumnInfo(str, 170.dp, ::onlyLettersFilter)
+    ColumnType.FullName -> ColumnInfo(str, 250.dp, ::onlyLettersAndSpaceFilter)
     ColumnType.BirthYear -> ColumnInfo(str, 80.dp, ::onlyDigitsFilter)
     ColumnType.SportCategory -> ColumnInfo(str, 80.dp)
     ColumnType.StartTime -> ColumnInfo(str, 100.dp, ::timeFilter)
@@ -25,11 +28,14 @@ fun ColumnType.getInfo(str: String): ColumnInfo = when (this) {
     ColumnType.Place -> ColumnInfo(str, 70.dp, ::onlyDigitsFilter)
     ColumnType.Delay -> ColumnInfo(str, 100.dp, ::delayFilter)
     ColumnType.Sex -> ColumnInfo(str, 70.dp, ::onlyLettersFilter)
+    ColumnType.Race ->  ColumnInfo(str, 100.dp)
+    ColumnType.PreferredGroup ->  ColumnInfo(str, 100.dp)
 }
 
 enum class ColumnType {
     AthleteNum,
     FirstName,
+    FullName,
     LastName,
     BirthYear,
     SportCategory,
@@ -42,6 +48,9 @@ enum class ColumnType {
     Delay,
 
     Sex,
+
+    Race,
+    PreferredGroup,
 }
 
 fun String.toColumnType() = when (this) {
@@ -59,6 +68,10 @@ fun String.toColumnType() = when (this) {
     "Отставание" -> ColumnType.Delay
 
     "Пол" -> ColumnType.Sex
+
+    "Дистанция" -> ColumnType.Race
+
+    "Пр. группа" -> ColumnType.PreferredGroup
 
     else -> ColumnType.AthleteNum
 }

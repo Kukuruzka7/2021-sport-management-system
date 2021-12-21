@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,11 +21,13 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberDialogState
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
-import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.CompetitionAlreadyExist
+import ru.emkn.kotlin.sms.InvalidCompetitionName
+import ru.emkn.kotlin.sms.InvalidDateFormat
+import ru.emkn.kotlin.sms.InvalidSportType
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.SportType
 import ru.emkn.kotlin.sms.model.application.TeamApplication
-import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.BACKGROUND_C
 import ru.emkn.kotlin.sms.view.ColorScheme.FOREGROUND_C
@@ -34,6 +35,10 @@ import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_HOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
+import ru.emkn.kotlin.sms.view.ExceptionWindow
+import ru.emkn.kotlin.sms.view.IWindow
+import ru.emkn.kotlin.sms.view.StartWindow
+import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.table_view.TableContent
 import ru.emkn.kotlin.sms.view.table_view.TableType
 import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
@@ -62,7 +67,6 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     private val expanded = mutableStateOf(false)
     private val openingApplication = mutableStateOf(-1)
     private val openingException = mutableStateOf<Exception?>(null)
-    private val finished = mutableStateOf(false)
     private val eWindow = ExceptionWindow(winManager)
     private val textColor = mutableStateOf(GREY_C)
 
@@ -114,7 +118,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                         ) {
                             competitionDate.value = it
                         }
-                        RaceSelector(modifier = Modifier)
+                        RaceSelector(modifier = Modifier.width(HEADER_FIELD_WIDTH))
                         val fileDialog = FileDialog(ComposeWindow())
                         CreateFileButton(Modifier.align(Alignment.CenterVertically)) {
                             if (competitionIsDone.value) {
@@ -131,6 +135,8 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                                 count.value = teamApplications.size
                             }
                         }
+
+                        //Кнопка сохранения компетишна (происходит в два этапа)
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
                             if (!competitionIsDone.value) {
                                 val e = checkCompetitionData()
@@ -375,31 +381,26 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     @Composable
     private fun RaceSelector(modifier: Modifier) {
         Column {
-            TextField(
-                modifier = modifier.width(WIDTH_OF_TEXT).height(BTN_HEIGHT),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = TEXT_C,
-                    focusedIndicatorColor = ACCENT_C,
-                    cursorColor = ACCENT_C
+            Button(
+                modifier = modifier.height(BTN_HEIGHT),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = FOREGROUND_C
                 ),
-                singleLine = true,
-                value = "",
-                onValueChange = { },
-                readOnly = true,
-                placeholder = {
-                    ClickableTexxxt(
-                        modifier = Modifier,
-                        text = competitionSportType.value.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                        style = SpanStyle(color = textColor.value, fontSize = 17.sp)
-                    ) {
-                        if (!competitionIsDone.value) {
-                            expanded.value = true
-                        }
+                onClick = {
+                    if (!competitionIsDone.value) {
+                        expanded.value = true
                     }
                 }
-            )
+            ) {
+                Text(
+                    text = competitionSportType.value.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                    style = TextStyle(textColor.value),
+                    fontSize = 17.sp,
+                )
+
+            }
             DropdownMenu(
-                modifier = Modifier.width(WIDTH_OF_TEXT).background(FOREGROUND_C),
+                modifier = modifier.background(FOREGROUND_C),
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false }
             ) {
