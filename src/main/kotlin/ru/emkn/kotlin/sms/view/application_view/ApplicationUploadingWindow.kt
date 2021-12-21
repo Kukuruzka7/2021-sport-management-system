@@ -125,7 +125,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             "Название соревнования",
                             competitionName.value
                         ) {
-                            competitionName.value = it
+                            competitionName.value = it.filter { ch -> ch != ',' }
                         }
                         //поле с датой
                         CompetitionDataField(
@@ -133,7 +133,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                             "Дата соревнования (YYYY-MM-DD)",
                             competitionDate.value
                         ) {
-                            competitionDate.value = it
+                            competitionDate.value = it.filter { ch -> (('0'..'9') + '-').contains(ch) }
                         }
                         //выбор дистанции
                         RaceSelector(modifier = Modifier.width(HEADER_FIELD_WIDTH))

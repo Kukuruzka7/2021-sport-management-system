@@ -60,6 +60,7 @@ enum class ColumnType {
 //Каст String в ColumnType
 fun String.toColumnType() = when (this) {
     "Фамилия" -> ColumnType.LastName
+    "Фамилия Имя" -> ColumnType.FullName
     "Имя" -> ColumnType.FirstName
     "Год рождения", "Г.р." -> ColumnType.BirthYear
     "Разряд", "Разр." -> ColumnType.SportCategory
