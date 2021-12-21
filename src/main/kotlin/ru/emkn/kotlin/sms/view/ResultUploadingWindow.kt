@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -18,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import ru.emkn.kotlin.sms.FileDoNotDownload
+import ru.emkn.kotlin.sms.Model
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResult
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
@@ -28,7 +28,6 @@ import ru.emkn.kotlin.sms.view.table_view.TableType
 import ru.emkn.kotlin.sms.view.table_view.toListListStr
 import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
 import java.awt.FileDialog
-import java.io.File
 
 interface ResUplWinManager : WindowManager {
     fun closeResUplWindow()
@@ -105,17 +104,6 @@ class ResultUploadingWindow(
                             } catch (e: Exception) {
                                 openingException.value = e
                             }
-                        }
-                        CreateButton(Modifier.align(Alignment.CenterVertically)) {
-//                            result.value = when (resultType) {
-//                                ResultType.BY_ATHLETES -> {
-//                                    InputCompetitionResultByAthletes(listOf())
-//                                }
-//                                ResultType.BY_CHECKPOINTS -> {
-//                                    InputCompetitionResultByCheckPoints(listOf(), competition)
-//                                }
-//                            }
-//                            openingResult.value = true
                         }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
                             val e = checkFileDownload()
@@ -214,16 +202,6 @@ class ResultUploadingWindow(
         val BTN_HEIGHT = 50.dp
         val FILE_BTN_WIDTH = 300.dp
         val CORNERS = 4.dp
-    }
-
-    @Composable
-    private fun CreateButton(modifier: Modifier, onClick: () -> Unit) {
-        IconButton(
-            modifier = modifier,
-            onClick = onClick
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null, tint = ColorScheme.ACCENT_C)
-        }
     }
 
     @Composable

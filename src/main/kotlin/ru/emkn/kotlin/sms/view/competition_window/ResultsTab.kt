@@ -1,7 +1,8 @@
 package ru.emkn.kotlin.sms.view.competition_window
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.Model
 import ru.emkn.kotlin.sms.readCSV
 import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
@@ -126,8 +128,38 @@ class ResultsTab(
 
                     ),
                 ) {
+                    val horizontalState = rememberScrollState(0)
+                    val verticalState = rememberScrollState(0)
                     Box(Modifier.fillMaxSize().background(color = ColorScheme.BACKGROUND_C).padding(DIALOG_PADDING)) {
-                        TableContent(TableType.FINISH_PROTOCOL, Modifier, readCSV(fileNameBuilder(dialog.value!!)).drop(2))
+                        TableContent(TableType.FINISH_PROTOCOL,
+                            Modifier.align(Alignment.Center).verticalScroll(state = verticalState)
+                                .horizontalScroll(horizontalState),
+                            readCSV(fileNameBuilder(dialog.value!!)).drop(2)
+                        )
+                        HorizontalScrollbar(
+                            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+                            adapter = rememberScrollbarAdapter(scrollState = horizontalState),
+                            style = ScrollbarStyle(
+                                hoverColor = ColorScheme.SCROLLBAR_HOVER_C,
+                                unhoverColor = ColorScheme.SCROLLBAR_UNHOVER_C,
+                                minimalHeight = 16.dp,
+                                thickness = 8.dp,
+                                shape = RoundedCornerShape(4.dp),
+                                hoverDurationMillis = 300,
+                            )
+                        )
+                        VerticalScrollbar(
+                            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                            adapter = rememberScrollbarAdapter(scrollState = verticalState),
+                            style = ScrollbarStyle(
+                                hoverColor = ColorScheme.SCROLLBAR_HOVER_C,
+                                unhoverColor = ColorScheme.SCROLLBAR_UNHOVER_C,
+                                minimalHeight = 16.dp,
+                                thickness = 8.dp,
+                                shape = RoundedCornerShape(4.dp),
+                                hoverDurationMillis = 300,
+                            )
+                        )
                     }
                 }
             }

@@ -17,7 +17,6 @@ import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByCheckPoints
 import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
 import ru.emkn.kotlin.sms.view.Manager
-import ru.emkn.kotlin.sms.view.Model
 import ru.emkn.kotlin.sms.view.View
 import java.io.File
 import kotlin.String
@@ -49,15 +48,7 @@ private const val dir = "src/main/resources/competitions/"
 
 fun main() {
     logger.info { "Начало работы программы." }
-    val info = MetaInfo("NadeusZarabotaet", LocalDate(2021, 12, 15), SportType.RUNNING)
-    val application = Application.create(
-        listOf(
-            File("src/test/testFiles/testTeamApplication/teamApplication1.csv"),
-            File("src/test/testFiles/testTeamApplication/teamApplication2.csv"),
-            File("src/test/testFiles/NadeusZarabotaet/Application3.csv")
-        )
-    )
-    val model = Model(info, application) // создание модели выгрузка данных TODO()
+    val model = Model()
     val manager = Manager(model) //создание менеджера TODO()
     val view = View(model, manager)
     view.render()

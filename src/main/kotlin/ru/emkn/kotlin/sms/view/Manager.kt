@@ -1,4 +1,5 @@
 package ru.emkn.kotlin.sms.view
+import ru.emkn.kotlin.sms.Model
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.model.application.TeamApplication

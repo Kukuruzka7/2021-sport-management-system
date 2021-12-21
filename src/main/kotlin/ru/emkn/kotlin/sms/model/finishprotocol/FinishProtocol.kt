@@ -49,10 +49,10 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Сделать индивидуальные результаты
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
-        logger.trace { "Делаю индивидуальные результаты для ${athlete.number.value}" }
         //Время начала и конца путешествия одного чела
         val startTime = data.startTime[athlete.number]
         val finishTime = data.table[athlete.number]?.last()?.date
+        logger.trace { "Делаю индивидуальные результаты для ${athlete.number.value}, ${startTime}, $finishTime" }
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
         return AthleteResult(athlete, finishTime - startTime)

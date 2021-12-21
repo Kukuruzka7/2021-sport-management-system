@@ -2,7 +2,6 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.LocalDate
 import org.junit.Test
-import ru.emkn.kotlin.sms.dir
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
@@ -16,23 +15,24 @@ import ru.emkn.kotlin.sms.model.result_data.ResultData
 import ru.emkn.kotlin.sms.model.startprotocol.StartProtocol
 import java.io.File
 import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
+
+private const val dir = "src/main/resources/competitions/"
 
 internal class TestOrienteering {
 
-    val dir = "src/test/testFiles/TestOrienteering/"
+    private val direct = "src/test/testFiles/TestOrienteering/"
 
-    val names = listOf("Тимофей", "Данил", "Розалина", "Art")
-    val lastNames = listOf("Москаленко", "Сибгатуллин", "Миргалимова", "Petrofffff")
-    val years = 1900..2015
-    val sexes = listOf("Ж", "М")
-    val categories = listOf("Iю", "IIю", "IIIю", "I", "II", "III", "КМС", "МС", "ММС")
-    var iteration = 0
+    private val names = listOf("Тимофей", "Данил", "Розалина", "Art")
+    private val lastNames = listOf("Москаленко", "Сибгатуллин", "Миргалимова", "Petrofffff")
+    private val years = 1900..2015
+    private val sexes = listOf("Ж", "М")
+    private val categories = listOf("Iю", "IIю", "IIIю", "I", "II", "III", "КМС", "МС", "ММС")
+    private var iteration = 0
 
-    val result = mutableListOf<List<kotlin.String>>()
+    private val result = mutableListOf<List<String>>()
 
-    fun generator(teamName: String) {
-        csvWriter().open("$dir$teamName.csv") {
+    private fun generator(teamName: String) {
+        csvWriter().open("$direct$teamName.csv") {
             writeRow(teamName, "", "", "", "")
             writeRow("Фамилия", "Имя", "Пол", "Год рождения", "Спорт категория")
             repeat(20) {
@@ -68,24 +68,29 @@ internal class TestOrienteering {
         }
     }
 
-    fun competition(): Competition {
+    private fun competition(): Competition {
         createDir("src/main/resources/competitions/MNEPLOHO")
         Athlete.lastUsedNumber = 1
         repeat(20) {
             generator("teamApplication" + (it + 1).toString())
         }
-        val apl = Application(
+        val apl = Application.create(
             List(20) {
                 File("src/test/testFiles/TestOrienteering/teamApplication${it + 1}.csv")
             }
         )
         val comp = Competition(MetaInfo("MNEPLOHO", LocalDate(2021, 12, 20), SportType.ORIENTEERING), apl)
-        StartProtocol(comp.groupList, "src/test/resources/OrienteeringTests/" + comp.info.name + "/")
+        StartProtocol(comp.groupList, "$dir${comp.info.name}/")
         comp.toCompetitionSerialization().save(
-            ru.emkn.kotlin.sms.dir + comp.info.name + "/competitionData.csv",
-            ru.emkn.kotlin.sms.dir + comp.info.name + "/competitionInfo.csv"
+            "${dir}${comp.info.name}/competitionData.csv",
+            "${dir}${comp.info.name}/competitionInfo.csv"
         )
-        val data: List<List<String>> = getData("MNEPLOHO")!!
+        val data: List<List<String>> = try {
+            csvReader().readAll(File("$dir${"MNEPLOHO"}/competitionData.csv"))
+        } catch (e: Exception) {
+            println("Что-то пошло не так, попробуйте ввести заявки заново.")
+            null
+        }!!
         val comp1 = Competition(CompetitionSerialization(data, listOf("MNEPLOHO", "2021-12-20", "ORIENTEERING")))
         val rows = comp1.athleteList.map {
             listOf(it.number.value) + List(it.race.checkPoints.size * 2) { i ->
@@ -125,14 +130,5 @@ internal class TestOrienteering {
         println(set.toList())
         println(comp1.athleteList.map { it.number.value.toInt() })
         assertContentEquals(set.toList().sorted(), comp1.athleteList.map { it.number.value.toInt() })
-    }
-}
-
-private fun getData(name: String): List<List<String>>? {
-    return try {
-        csvReader().readAll(File("$dir$name/competitionData.csv"))
-    } catch (e: Exception) {
-        println("Что-то пошло не так, попробуйте ввести заявки заново.")
-        null
     }
 }

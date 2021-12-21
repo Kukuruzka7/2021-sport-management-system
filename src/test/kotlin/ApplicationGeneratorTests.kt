@@ -17,7 +17,7 @@ internal class ApplicationGeneratorTests {
     val categories = listOf("Iю", "IIю", "IIIю", "I", "II", "III", "КМС", "МС", "ММС")
     var iteration = 0
 
-    val result = mutableListOf<List<kotlin.String>>()
+    val result = mutableListOf<List<String>>()
 
     fun generator(teamName: String) {
         csvWriter().open("$dir$teamName.csv") {
@@ -41,7 +41,7 @@ internal class ApplicationGeneratorTests {
                         category,
                         ((iteration - 1) / 20).toString(),
                         "$sex$year",
-                        "TODO()",
+                        "",
                         "${hours / 10}${hours % 10}:${minutes / 10}${minutes % 10}"
                     )
                 )

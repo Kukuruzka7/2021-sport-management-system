@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import ru.emkn.kotlin.sms.Group
-import ru.emkn.kotlin.sms.view.Model
+import ru.emkn.kotlin.sms.Model
 
 enum class TabEnum {
     GROUPS, TEAMS, ATHLETES, START_PROTOCOLS, RESULT;

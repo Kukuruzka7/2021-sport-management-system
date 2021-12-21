@@ -1,8 +1,9 @@
-package ru.emkn.kotlin.sms.view
+package ru.emkn.kotlin.sms
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import logger
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.CompetitionSerialization
 import ru.emkn.kotlin.sms.model.MetaInfo
@@ -29,9 +30,6 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
 
     val competitionsNames = CompetitionNames(resourcesPath)
 
-
-    private fun getAlreadyExistingCompetitions(): MutableList<String> =
-        csvReader().readAll(File("$resourcesPath/competitionsNames.csv")).map { it[0] }.toMutableList()
 
     init {
         competitionBuilder.info(_info).application(_application)
@@ -90,8 +88,13 @@ class Model(_info: MetaInfo? = null, _application: Application? = null) {
 
     fun saveResults(result: InputCompetitionResult) {
         require(isCompetitionInitialized())
-        stage.value = Companion.Stage.FINISHED
+        stage.value = Stage.FINISHED
         val map = competition.athleteList.associateBy({ it.number }, { it.startTime })
+        logger.trace { "Сохраняю результаты ${competition.info.name}" }
+        competition.athleteList.forEach {
+            logger.info { "${it.number}, ${it.name}" }
+        }
+
         FinishProtocol(ResultData(result, map), competition)
     }
 
