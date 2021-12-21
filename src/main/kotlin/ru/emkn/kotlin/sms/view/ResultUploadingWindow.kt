@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -18,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import ru.emkn.kotlin.sms.FileDoNotDownload
+import ru.emkn.kotlin.sms.Model
 import ru.emkn.kotlin.sms.model.Competition
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResult
 import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResultByAthletes
@@ -28,12 +28,12 @@ import ru.emkn.kotlin.sms.view.table_view.TableType
 import ru.emkn.kotlin.sms.view.table_view.toListListStr
 import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
 import java.awt.FileDialog
-import java.io.File
 
 interface ResUplWinManager : WindowManager {
     fun closeResUplWindow()
-    fun saveResults(files: List<File>)
     fun getCompetitionsNames(): List<String>
+    fun openCompetitionWindow()
+    fun saveResults(result: InputCompetitionResult)
 }
 
 enum class ResultType {
@@ -41,21 +41,33 @@ enum class ResultType {
     BY_ATHLETES,
 }
 
-class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManager, private val resultType: ResultType) :
+class ResultUploadingWindow(
+    model: Model,
+    private val winManager: ResUplWinManager,
+    private val resultType: ResultType
+) :
     IWindow(winManager) {
     private val openingResult = mutableStateOf(false)
     private val result: MutableState<InputCompetitionResult?> = mutableStateOf(null)
     private val openingException = mutableStateOf<Exception?>(null)
     private val finished = mutableStateOf(false)
     private val eWindow = ExceptionWindow(winManager)
-    private val competition: Competition =
-        model.competition ?: throw Exception("ResultUploadingWindow получил model без competition")
+
+    init {
+        require(model.isCompetitionInitialized())
+    }
+
+    private val competition: Competition = model.competition
 
     @Composable
     override fun render() {
+        val title = when (resultType) {
+            ResultType.BY_CHECKPOINTS -> "Загрузка результатов по пунктам"
+            ResultType.BY_ATHLETES -> "Загрузка результатов по спортсменам"
+        }
         Window(
             onCloseRequest = { winManager.closeResUplWindow() },
-            title = "Загрузка результатов",
+            title = title,
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
             Box(
@@ -93,21 +105,16 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
                                 openingException.value = e
                             }
                         }
-                        CreateButton(Modifier.align(Alignment.CenterVertically)) {
-                            result.value = when (resultType) {
-                                ResultType.BY_ATHLETES -> {
-                                    InputCompetitionResultByAthletes(listOf(listOf("")))
-                                }
-                                ResultType.BY_CHECKPOINTS -> {
-                                    InputCompetitionResultByCheckPoints(listOf(listOf("")), competition)
-                                }
-                            }
-                            openingResult.value = true
-                        }
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
                             val e = checkFileDownload()
                             if (e == null) {
+                                val res = result.value
+                                require(res != null)
                                 finished.value = true
+                                winManager.saveResults(res)
+                                winManager.openCompetitionWindow()
+                                winManager.closeResUplWindow()
+
                             } else {
                                 eWindow.finished.value = false
                                 openingException.value = e
@@ -190,21 +197,11 @@ class ResultUploadingWindow(model: Model, private val winManager: ResUplWinManag
     }
 
     private companion object {
-        val WIDTH = 1500.dp
-        val HEIGHT = 1000.dp
+        val WIDTH = 1250.dp
+        val HEIGHT = 800.dp
         val BTN_HEIGHT = 50.dp
         val FILE_BTN_WIDTH = 300.dp
         val CORNERS = 4.dp
-    }
-
-    @Composable
-    private fun CreateButton(modifier: Modifier, onClick: () -> Unit) {
-        IconButton(
-            modifier = modifier,
-            onClick = onClick
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null, tint = ColorScheme.ACCENT_C)
-        }
     }
 
     @Composable

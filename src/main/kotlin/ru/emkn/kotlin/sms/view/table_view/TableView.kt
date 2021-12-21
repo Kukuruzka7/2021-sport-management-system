@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 
+//Тип таблицы
 enum class TableType {
     START_PROTOCOL,
     FINISH_PROTOCOL,
@@ -23,12 +24,14 @@ enum class TableType {
     CHECKPOINT_RES,
     ATHLETE_RES,
     COURSES,
+    TEAM,
 }
 
 private val ROW_HEIGHT = 50.dp
 private val BTN_HEIGHT = 50.dp
 private val BTN_WIDTH = 50.dp
 
+//Текстовое поле заголовка таблицы
 @Composable
 fun HeaderTextField(modifier: Modifier, str: String) {
     TextField(
@@ -45,12 +48,13 @@ fun HeaderTextField(modifier: Modifier, str: String) {
     )
 }
 
+//Сам заголовок
 @Composable
 private fun Header(row: List<ColumnInfo>) {
     repeat(row.size) { i -> HeaderTextField(Modifier.width(row[i].width).height(ROW_HEIGHT), row[i].name) }
 }
 
-
+//Кнопка добавить ряд
 @Composable
 private fun AddRowButton(onClick: () -> Unit) {
     IconButton(
@@ -59,6 +63,7 @@ private fun AddRowButton(onClick: () -> Unit) {
     ) { Icon(Icons.Default.Add, contentDescription = null, tint = ACCENT_C) }
 }
 
+//Кнопка удалить ряд
 @Composable
 private fun DeleteRowButton(onClick: () -> Unit) {
     IconButton(
@@ -67,6 +72,7 @@ private fun DeleteRowButton(onClick: () -> Unit) {
     ) { Icon(Icons.Default.Delete, contentDescription = null, tint = ACCENT_C) }
 }
 
+//Кнопка добавить колонку
 @Composable
 private fun AddColumnButton(onClick: () -> Unit) {
     IconButton(
@@ -75,6 +81,7 @@ private fun AddColumnButton(onClick: () -> Unit) {
     ) { Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = ACCENT_C) }
 }
 
+//Кнопка удалить колонку
 @Composable
 private fun DeleteColumnButton(onClick: () -> Unit) {
     IconButton(
@@ -83,6 +90,7 @@ private fun DeleteColumnButton(onClick: () -> Unit) {
     ) { Icon(Icons.Default.KeyboardArrowLeft, contentDescription = null, tint = ACCENT_C) }
 }
 
+//Кнопка домой (хочу домой)
 @Composable
 private fun HomeButton(onClick: () -> Unit) {
     IconButton(
@@ -91,6 +99,7 @@ private fun HomeButton(onClick: () -> Unit) {
     ) { Icon(Icons.Default.Home, contentDescription = null, tint = ACCENT_C) }
 }
 
+//Рисовальщик ряда (в зависимости от изменяемости таблицы)
 @Composable
 private fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<ColumnInfo>, mutable: Boolean) =
     repeat(list.size) { i ->
@@ -123,12 +132,13 @@ private fun drawRow(list: MutableList<MutableState<String>>, firstRow: List<Colu
         }
     }
 
+//Рисовальщик всей таблицы (внутренняя функция)
 @Composable
-fun TableContent(
+private fun TableContent(
     modifier: Modifier,
-    mutable: Boolean = false,
-    drawHeader: Boolean = false,
-    drawLastRow: Boolean = false,
+    mutable: Boolean = false,//изменяемая
+    drawHeader: Boolean = false,//с заголовком
+    columnsAdder: Boolean = false,//добавление колонок
     columnsCnt: MutableState<Int> = mutableStateOf(1),
     firstRowFunc: (Int) -> List<ColumnInfo>,
     contentRows: MutableList<MutableList<MutableState<String>>>,
@@ -138,6 +148,7 @@ fun TableContent(
 
     fun firstRow() = firstRowFunc(columnsCnt.value)
     Column(modifier, Arrangement.spacedBy(5.dp)) {
+        //Заголовок
         if (drawHeader) {
             Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(5.dp), Alignment.Top) {
                 Header(firstRow())
@@ -147,9 +158,9 @@ fun TableContent(
                         rowsCount.value = contentRows.size
                     }
                 }
-                if(drawLastRow) {
+                if (columnsAdder) {
                     DeleteColumnButton {
-                        if(columnsCnt.value > 1) {
+                        if (columnsCnt.value > 1) {
                             columnsCnt.value -= 2
                             contentRows.forEach {
                                 it.removeLast()
@@ -172,6 +183,7 @@ fun TableContent(
                 }
             }
         }
+        //все оставшиеся ряды
         repeat(rowsCount.value) { i ->
             Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(5.dp), Alignment.Top) {
                 drawRow(contentRows[i], firstRow(), mutable)
@@ -190,14 +202,17 @@ fun TableContent(
     }
 }
 
-val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.", "Разряд")
-val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Г.р.", "Разряд", "Старт")
-val finishProtocolFirstRow =
+//Поля и функции отрисовки заголовка таблиц
+private val applicationFirstRow = listOf("Фамилия", "Имя", "Пол", "Г.р.", "Разряд")
+private val startProtocolFirstRow = listOf("Номер", "Фамилия", "Имя", "Г.р.", "Разряд", "Старт")
+private val finishProtocolFirstRow =
     listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
+private val teamFirstRow =
+    listOf("Номер", "Фамилия Имя", "Пол", "Г.р.", "Разр.", "Команда", "Дистанция", "Пр. группа", "Старт")
 
-fun coursesFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
+private fun coursesFirstRow(n: Int): List<ColumnInfo> = List(n) { ColumnInfo("", 80.dp) }
 
-fun checkpointResFirstRow(n: Int): List<ColumnInfo> =
+private fun checkpointResFirstRow(n: Int): List<ColumnInfo> =
     listOf(ColumnInfo("", 80.dp, ::onlyDigitsFilter)) + List(n - 1) {
         when (it % 2) {
             0 -> {
@@ -209,7 +224,7 @@ fun checkpointResFirstRow(n: Int): List<ColumnInfo> =
         }
     }
 
-fun athletesResFirstRow(n: Int): List<ColumnInfo> =
+private fun athletesResFirstRow(n: Int): List<ColumnInfo> =
     listOf(ColumnInfo("", 80.dp, ::onlyDigitsFilter)) + List(n - 1) {
         when (it % 2) {
             0 -> {
@@ -221,6 +236,7 @@ fun athletesResFirstRow(n: Int): List<ColumnInfo> =
         }
     }
 
+//функция, которой пользоваться могут все
 @Composable
 fun TableContent(
     type: TableType,
@@ -257,10 +273,21 @@ fun TableContent(
                 contentRows = list.toMListMListStr()
             ) {}
         }
+        TableType.TEAM -> {
+            TableContent(
+                modifier = modifier,
+                mutable = false,
+                drawHeader = true,
+                columnsCnt = mutableStateOf(9),
+                firstRowFunc = { _: Int -> teamFirstRow.map { it.toColumnType().getInfo(it) } },
+                contentRows = list.toMListMListStr()
+            ) {}
+        }
         else -> throw Exception("Нужно вызвать вторую функцию TableContent")
     }
 }
 
+//функция, которой пользоваться могут все
 @Composable
 fun TableContent(
     type: TableType,
@@ -285,7 +312,7 @@ fun TableContent(
                 modifier = modifier,
                 mutable = true,
                 drawHeader = true,
-                drawLastRow = true,
+                columnsAdder = true,
                 firstRowFunc = { i: Int -> checkpointResFirstRow(i) },
                 columnsCnt = columnsCnt,
                 contentRows = contentRows
@@ -296,7 +323,7 @@ fun TableContent(
                 modifier = modifier,
                 mutable = true,
                 drawHeader = true,
-                drawLastRow = true,
+                columnsAdder = true,
                 firstRowFunc = { i: Int -> athletesResFirstRow(i) },
                 columnsCnt = columnsCnt,
                 contentRows = contentRows
@@ -306,8 +333,9 @@ fun TableContent(
     }
 }
 
+//MListMListStr -> ListListStr
 fun MutableList<MutableList<MutableState<String>>>.toListListStr(): List<List<String>> =
     this.map { list -> list.map { it.value } }
-
+//ListListStr -> MListMListStr
 fun List<List<String>>.toMListMListStr(): MutableList<MutableList<MutableState<String>>> =
     this.map { list -> list.map { mutableStateOf(it) }.toMutableList() }.toMutableList()

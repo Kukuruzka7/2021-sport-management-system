@@ -28,8 +28,8 @@ internal class LocalTimeTests {
         assertEquals(time2 - time2, duration0)
         assertEquals(time3 - time3, duration0)
         assertEquals(time2 - time1, duration2 - duration1)
-        assertEquals(time1 - time2, Duration.ofSeconds(86400) + duration1 - duration2)
-        assertEquals(time0 - time3, Duration.ofSeconds(86400) + duration0 - duration3)
+        assertEquals(time1 - time2, duration1 - duration2)
+        assertEquals(time0 - time3, duration0 - duration3)
     }
 
     @Test
@@ -47,6 +47,7 @@ internal class LocalTimeTests {
         assertEquals(duration2.toStringWithSeconds(), "06:54:32")
         assertEquals(duration3.toStringWithSeconds(), "23:59:59")
     }
+
     @Test
     fun testToStringWithoutHours() {
         assertEquals(duration0.toStringWithoutHours(), "00:00")

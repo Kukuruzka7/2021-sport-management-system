@@ -1,17 +1,13 @@
 package ru.emkn.kotlin.sms.view
-
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import ru.emkn.kotlin.sms.dir
-import ru.emkn.kotlin.sms.model.Competition
-import ru.emkn.kotlin.sms.model.CompetitionSerialization
+import ru.emkn.kotlin.sms.Model
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.model.application.Application
 import ru.emkn.kotlin.sms.model.application.TeamApplication
+import ru.emkn.kotlin.sms.model.input_result.InputCompetitionResult
 import ru.emkn.kotlin.sms.view.application_view.AplUplWinManager
 import ru.emkn.kotlin.sms.view.application_view.ApplicationUploadingWindow
 import ru.emkn.kotlin.sms.view.competition_window.CompetitionWindow
 import ru.emkn.kotlin.sms.view.competition_window.CompetitionWindowsManager
-import java.io.File
 
 enum class Win {
     START, APPLICATION_UPLOADING, COMPETITION, RESULT_UPLOADING;
@@ -19,7 +15,8 @@ enum class Win {
 
 interface WindowManager
 
-class Manager(val model: Model) : AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager {
+class Manager(val model: Model) :
+    AplUplWinManager, StartWindowManager, CompetitionWindowsManager, ResUplWinManager, CompNameSelectionWindowManager {
     val map: MutableMap<Win, IWindow?> = Win.values().associateWith { null }.toMutableMap()
 
 
@@ -29,15 +26,25 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
             Win.START -> StartWindow(this)
             Win.APPLICATION_UPLOADING -> ApplicationUploadingWindow(this)
             Win.COMPETITION -> CompetitionWindow(model, this)
-            else -> map[win]
+            else -> throw Exception("Это окно так открывать нельзя")
         }
-        map[win]?.state?.value = true
+        map[win]!!.state.value = true
+        //closeAllExcept(win)
     }
 
 
     private fun open(win: Win, window: IWindow) {
         map[win] = window
         window.state.value = true
+        // closeAllExcept(win)
+    }
+
+    private fun closeAllExcept(win: Win) {
+        map.forEach { (key, value) ->
+            if (key != win && value != null) {
+                value.state.value = false
+            }
+        }
     }
 
     private fun close(win: Win) {
@@ -57,14 +64,24 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         model.checkBuilder()
     }
 
-    override fun getCompetitionsNames(): List<String> = model.competitionsNames
-
-    override fun giveCompetitionNameToModel(name: String) {
-        model.competition = getCompetition(name)
+    override fun saveCompetition() {
+        require(model.competitionBuilder.isReady())
+        model.saveCompetition()
     }
+
+    override fun getCompetitionsNames(): List<String> = model.competitionsNames.get()
 
     override fun addCompetitionName(name: String) {
         model.competitionsNames.add(name)
+    }
+
+    override fun createStartProtocols() = model.createStartProtocols()
+
+    override fun saveSerialization() {
+        model.competition.toCompetitionSerialization().save(
+            "${model.competitionPath}/competitionData.csv",
+            "${model.competitionPath}/competitionInfo.csv"
+        )
     }
 
     override fun openAplUplWindow() {
@@ -72,10 +89,11 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
         map[Win.APPLICATION_UPLOADING]!!.state.value = true
     }
 
-    override fun openCompetitionWindow(name: String) {
-        giveCompetitionNameToModel(name)
+    override fun openCompetitionWindowByName(name: String) {
+        model.saveCompetitionByName(name)
         open(Win.COMPETITION)
     }
+
 
     override fun openCompetitionWindow() {
         open(Win.COMPETITION)
@@ -85,8 +103,6 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
 
     override fun closeAplUplWindow() = close(Win.APPLICATION_UPLOADING)
 
-
-
     override fun closeCompWindow() = close(Win.COMPETITION)
 
     override fun openResUplWindow(resultType: ResultType) {
@@ -95,42 +111,5 @@ class Manager(val model: Model) : AplUplWinManager, StartWindowManager, Competit
 
     override fun closeResUplWindow() = close(Win.RESULT_UPLOADING)
 
-    override fun saveResults(files: List<File>) {
-        model.stage.value = Model.Companion.Stage.FINISHED
-        TODO("Not yet implemented")
-    }
-
-    private fun getCompetition(name: String): Competition {
-        require(checkCompetitionExist(name))
-        val data: List<List<String>>? = getData(name) //получение Competition data
-        val info: MetaInfo? = getMetaInfo(name) // получение мета информации
-        require(data != null)
-        require(info != null)
-        return getCompetition(data, info) //создание соревнования
-    }
-
-    private fun getCompetition(data: List<List<String>>, info: MetaInfo): Competition =
-        Competition(CompetitionSerialization(data, info.toStringList()))
-
-    private fun getData(name: String): List<List<String>>? {
-        return try {
-            csvReader().readAll(File("$dir$name/competitionData.csv"))
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun getMetaInfo(name: String): MetaInfo? = try {
-        MetaInfo(csvReader().readAll(File("$dir$name/competitionInfo.csv"))[0])
-    } catch (e: Exception) {
-        null
-    }
-
-    private fun checkCompetitionExist(name: String): Boolean {
-        if (!File("$dir$name/competitionData.csv").exists()) {
-            return true
-        }
-        return false
-    }
-
+    override fun saveResults(result: InputCompetitionResult) = model.saveResults(result)
 }

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
+import ru.emkn.kotlin.sms.Model
 import ru.emkn.kotlin.sms.model.MetaInfo
 import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.ACCENT_C
@@ -28,7 +29,6 @@ import ru.emkn.kotlin.sms.view.ColorScheme.SCROLLBAR_UNHOVER_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
 
 interface CompetitionWindowsManager : ResultsTabManager, WindowManager {
-    fun closeCompWindow()
 }
 
 
@@ -41,10 +41,11 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
         val SPACING = 30.dp
     }
 
+
     @Composable
     override fun render() {
-        require(model.competition != null)
-        val info = model.competition!!.info
+        require(model.isCompetitionInitialized())
+        val info = model.competition.info
         Window(
             onCloseRequest = { winManager.closeCompWindow() }, title = info.name, state = WindowState(
                 width = WIDTH, height = HEIGHT
@@ -193,4 +194,5 @@ class CompetitionWindow(private val model: Model, private val winManager: Compet
             TabEnum.RESULT -> "Результаты"
         }
     }
+
 }

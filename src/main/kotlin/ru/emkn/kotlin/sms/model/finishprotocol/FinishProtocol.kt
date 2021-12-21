@@ -49,10 +49,10 @@ class FinishProtocol(private val data: ResultData, competition: Competition) {
 
     //Сделать индивидуальные результаты
     private fun makeIndividualResults(athlete: Athlete): AthleteResult {
-        logger.trace { "Делаю индивидуальные результаты для ${athlete.number.value}" }
         //Время начала и конца путешествия одного чела
         val startTime = data.startTime[athlete.number]
         val finishTime = data.table[athlete.number]?.last()?.date
+        logger.trace { "Делаю индивидуальные результаты для ${athlete.number.value}, ${startTime}, $finishTime" }
         //Очень сильно просим, чтобы чел начал дистанцию
         require(startTime != null) { "Нет стартового времени у чела под номером ${athlete.number}" }
         return AthleteResult(athlete, finishTime - startTime)
@@ -166,7 +166,7 @@ operator fun LocalTime?.minus(subtrahend: LocalTime): Duration? {
     if (this == null) return null
     val thisTime = this.toInt()
     val subtrahendTime = subtrahend.toInt()
-    val difference = (thisTime - subtrahendTime + 24 * 60 * 60) % (24 * 60 * 60)
+    val difference = (thisTime - subtrahendTime)
     return Duration.ofSeconds(difference.toLong())
 }
 
@@ -203,7 +203,7 @@ fun ICsvFileWriter.writeAthleteProtocol(it: AthleteProtocol) {
         it.athlete.name.firstName,
         it.athlete.birthDate.year,
         it.athlete.sportCategory.toString(),
-        it.athlete.teamName.toString(),
+        it.athlete.teamName,
         it.finishTime?.toStringWithSeconds() ?: "снят",
         it.place,
         if (it.lag == null) null else "+" + it.lag.toStringWithoutHours(),

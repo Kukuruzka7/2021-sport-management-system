@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms.view
 
 import androidx.compose.ui.window.application
+import ru.emkn.kotlin.sms.Model
 
 
 class View(val model: Model, val manager: Manager) {
@@ -12,7 +13,6 @@ class View(val model: Model, val manager: Manager) {
                     it.render()
                 }
             }
-            model.save()
         }
     }
 }

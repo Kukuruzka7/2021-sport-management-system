@@ -1,8 +1,8 @@
 package ru.emkn.kotlin.sms.view.competition_window
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -11,25 +11,22 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
 import ru.emkn.kotlin.sms.Group
+import ru.emkn.kotlin.sms.Model
 import ru.emkn.kotlin.sms.readCSV
-import ru.emkn.kotlin.sms.view.ColorScheme
+import ru.emkn.kotlin.sms.view.*
 import ru.emkn.kotlin.sms.view.ColorScheme.GREY_C
 import ru.emkn.kotlin.sms.view.ColorScheme.TEXT_C
-import ru.emkn.kotlin.sms.view.Model
-import ru.emkn.kotlin.sms.view.ResultType
-import ru.emkn.kotlin.sms.view.WindowManager
 import ru.emkn.kotlin.sms.view.table_view.TableContent
 import ru.emkn.kotlin.sms.view.table_view.TableType
 
 interface ResultsTabManager : WindowManager {
     fun openResUplWindow(resultType: ResultType)
+    fun closeCompWindow()
 }
 
 class ResultsTab(
@@ -47,11 +44,11 @@ class ResultsTab(
             Model.Companion.Stage.FINISHED -> WithResultTab(
                 groupList, modifier, fileNameBuilder
             ).render()
-            Model.Companion.Stage.ONGOING -> NoResultTab(modifier).render()
+            Model.Companion.Stage.ONGOING -> NoResultTab(modifier, winManager).render()
         }
     }
 
-    private class NoResultTab(private val modifier: Modifier) {
+    private class NoResultTab(private val modifier: Modifier, private val winManager: ResultsTabManager) {
         @Composable
         fun render() {
             Box(modifier = modifier.padding(PADDING).fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -95,12 +92,17 @@ class ResultsTab(
 
         @Composable
         private fun DownloadResultByAthletesButton(modifier: Modifier) =
-            DownloadResultsButton(modifier, "По спортсменам") {}
+            DownloadResultsButton(modifier, "По спортсменам") {
+                winManager.openResUplWindow(ResultType.BY_ATHLETES)
+                winManager.closeCompWindow()
+            }
 
         @Composable
         private fun DownloadResultByCheckpointButton(modifier: Modifier) =
-            DownloadResultsButton(modifier, "По пунктам") {}
-
+            DownloadResultsButton(modifier, "По пунктам") {
+                winManager.openResUplWindow(ResultType.BY_ATHLETES)
+                winManager.closeCompWindow()
+            }
     }
 
 
@@ -126,8 +128,38 @@ class ResultsTab(
 
                     ),
                 ) {
+                    val horizontalState = rememberScrollState(0)
+                    val verticalState = rememberScrollState(0)
                     Box(Modifier.fillMaxSize().background(color = ColorScheme.BACKGROUND_C).padding(DIALOG_PADDING)) {
-                        TableContent(TableType.FINISH_PROTOCOL, Modifier, readCSV(fileNameBuilder(dialog.value!!)))
+                        TableContent(TableType.FINISH_PROTOCOL,
+                            Modifier.align(Alignment.Center).verticalScroll(state = verticalState)
+                                .horizontalScroll(horizontalState),
+                            readCSV(fileNameBuilder(dialog.value!!)).drop(2)
+                        )
+                        HorizontalScrollbar(
+                            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+                            adapter = rememberScrollbarAdapter(scrollState = horizontalState),
+                            style = ScrollbarStyle(
+                                hoverColor = ColorScheme.SCROLLBAR_HOVER_C,
+                                unhoverColor = ColorScheme.SCROLLBAR_UNHOVER_C,
+                                minimalHeight = 16.dp,
+                                thickness = 8.dp,
+                                shape = RoundedCornerShape(4.dp),
+                                hoverDurationMillis = 300,
+                            )
+                        )
+                        VerticalScrollbar(
+                            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                            adapter = rememberScrollbarAdapter(scrollState = verticalState),
+                            style = ScrollbarStyle(
+                                hoverColor = ColorScheme.SCROLLBAR_HOVER_C,
+                                unhoverColor = ColorScheme.SCROLLBAR_UNHOVER_C,
+                                minimalHeight = 16.dp,
+                                thickness = 8.dp,
+                                shape = RoundedCornerShape(4.dp),
+                                hoverDurationMillis = 300,
+                            )
+                        )
                     }
                 }
             }
@@ -141,15 +173,7 @@ class ResultsTab(
 
         @Composable
         override fun toLink(element: Group) {
-            val annotatedText = buildAnnotatedString {
-                //append your initial text
-                withStyle(
-                    style = style
-                ) {
-                    append(element.race.groupName)
-                }
-            }
-            ClickableText(modifier = modifier, text = annotatedText, onClick = { dialog.value })
+            ClickableTexxxt(Modifier, element.race.groupName, style) { dialog.value = element.race.groupName }
         }
     }
 }

@@ -58,7 +58,7 @@ class Athlete(
         _sex: Sex,
         _birthDate: LocalDate,
         _sportCategory: Category,
-        _preferredGroup: String = "TODO()",
+        _preferredGroup: String = "",
         _teamName: String,
         _groupName: String
     ) : this(_name, _sex, _birthDate, _sportCategory, _preferredGroup, _teamName, _groupName, numerate())
@@ -80,6 +80,11 @@ class Athlete(
         CompetitionSerialization.Companion.Fields.START_TIME -> startTime.toString()
     }
 
+    fun extractFieldToStringWithShortDate(field: CompetitionSerialization.Companion.Fields): String = when (field) {
+        CompetitionSerialization.Companion.Fields.BIRTH_DATE -> birthDate.year.toString()
+        else -> extractFieldToString(field)
+    }
+
     companion object {
         var lastUsedNumber = 1
         private fun numerate() = AthleteNumber(lastUsedNumber++.toString())
@@ -95,4 +100,7 @@ class Athlete(
 
 fun Athlete.toStringList() =
     CompetitionSerialization.Companion.Fields.values().map { this.extractFieldToString(it) }
+
+fun Athlete.toStringListWithShortDate() =
+    CompetitionSerialization.Companion.Fields.values().map { this.extractFieldToStringWithShortDate(it) }
 

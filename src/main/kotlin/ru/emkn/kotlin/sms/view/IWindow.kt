@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 abstract class IWindow(manager: WindowManager) {
     val state: MutableState<Boolean> = mutableStateOf(false)
 
+
     @Composable
     abstract fun render()
 }

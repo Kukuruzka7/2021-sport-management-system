@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import ru.emkn.kotlin.sms.Group
-import ru.emkn.kotlin.sms.view.Model
+import ru.emkn.kotlin.sms.Model
 
 enum class TabEnum {
     GROUPS, TEAMS, ATHLETES, START_PROTOCOLS, RESULT;
@@ -30,7 +30,6 @@ class TabFactory(private val model: Model, private val winManager: CompetitionWi
         }
         map[tab] = create(tab, modifier, model)
         return map[tab]!!
-
     }
 
     //Если уверены, что Tab уже создан
@@ -39,7 +38,6 @@ class TabFactory(private val model: Model, private val winManager: CompetitionWi
 
     private fun create(tabEnum: TabEnum, modifier: Modifier, model: Model): ITab {
         val competition = model.competition
-        require(competition != null)
         return when (tabEnum) {
             TabEnum.GROUPS -> {
                 GroupsTab(buildRacesTable(competition.groupList), modifier)
@@ -49,7 +47,7 @@ class TabFactory(private val model: Model, private val winManager: CompetitionWi
             TabEnum.START_PROTOCOLS -> StartProtocolsTab(competition.groupList, modifier)
             { model.getStartProtocolByGroupName(it) }
             TabEnum.RESULT -> ResultsTab(modifier, winManager, competition.groupList, model.stage)
-            { model.getFinishProtocolByGroupName(competition.info.name) }
+            { groupName -> model.getFinishProtocolByGroupName(groupName) }
         }
     }
 
