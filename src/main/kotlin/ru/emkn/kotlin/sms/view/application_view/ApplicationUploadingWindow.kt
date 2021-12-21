@@ -45,6 +45,7 @@ import ru.emkn.kotlin.sms.view.table_view.toMListMListStr
 import java.awt.FileDialog
 import java.util.*
 
+//Интерфейс для работы с оставшимися окнами
 interface AplUplWinManager : WindowManager {
     fun closeAplUplWindow()
     fun openCompetitionWindow()
@@ -54,22 +55,30 @@ interface AplUplWinManager : WindowManager {
     fun addCompetitionName(name: String)
 }
 
+//Класс загрузки командных заявок
 class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWindow(winManager) {
+    //переменные для трёх первых входных параметров
     private val competitionName = mutableStateOf("")
     private val competitionDate = mutableStateOf("")
     private val competitionSportType = mutableStateOf("Выбрать тип")
 
-    private val competitionIsDone = mutableStateOf(false)
+    //Выполнен ли первый этап работы (загрузка названия типа и даты соревнования)
+    private val metaInfoUploaded = mutableStateOf(false)
 
+    //Информация о тимапликейшонах
     private val teamApplications: MutableList<TeamApplication> = mutableListOf()
     private val teamApplicationsNames: MutableList<String> = mutableListOf()
-    private val count = mutableStateOf(teamApplications.size)
-    private val expanded = mutableStateOf(false)
+    private val teamApplicationsSize = mutableStateOf(teamApplications.size)
     private val openingApplication = mutableStateOf(-1)
+
+    //Открыта ли менбшка с выбором
+    private val menuIsExpanded = mutableStateOf(false)
+
     private val openingException = mutableStateOf<Exception?>(null)
     private val eWindow = ExceptionWindow(winManager)
     private val textColor = mutableStateOf(GREY_C)
 
+    //Функция рендера окна
     @Composable
     override fun render() {
         Window(
@@ -77,7 +86,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             title = "Загрузка командных заявок",
             state = WindowState(width = WIDTH, height = HEIGHT)
         ) {
-
+            //Весь внутренний контент в коробке
             Box(
                 Modifier.background(BACKGROUND_C).padding(15.dp)
             ) {
@@ -92,57 +101,67 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                     }
                 }
 
+                //Окртываем тим апликейшн, если это надо
                 if (openingApplication.value != -1) {
                     openTeamApplication()
                 }
 
+                //Запоминаем скролл стейт
                 val scrollState = rememberScrollState()
 
+                //Колонка с основными данными
                 Column(
                     modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
                     Arrangement.spacedBy(DEL_SHIFT),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    //Первый ряд
                     Row(modifier = Modifier.wrapContentWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
-                        drawCompetitionDataRow(
+                        //поле с названием
+                        CompetitionDataField(
                             Modifier.size(HEADER_FIELD_WIDTH, BTN_HEIGHT),
                             "Название соревнования",
                             competitionName.value
                         ) {
                             competitionName.value = it
                         }
-                        drawCompetitionDataRow(
+                        //поле с датой
+                        CompetitionDataField(
                             Modifier.size(HEADER_FIELD_WIDTH, BTN_HEIGHT),
-                            "Дата соревнования",
+                            "Дата соревнования (YYYY-MM-DD)",
                             competitionDate.value
                         ) {
                             competitionDate.value = it
                         }
+                        //выбор дистанции
                         RaceSelector(modifier = Modifier.width(HEADER_FIELD_WIDTH))
                         val fileDialog = FileDialog(ComposeWindow())
-                        CreateFileButton(Modifier.align(Alignment.CenterVertically)) {
-                            if (competitionIsDone.value) {
+                        //кнопка создания пустого заявления
+                        CreateAplicationButton(Modifier.align(Alignment.CenterVertically)) {
+                            if (metaInfoUploaded.value) {
                                 teamApplications += TeamApplication("", emptyList(), 1)
                                 teamApplicationsNames += ""
-                                count.value = teamApplications.size
+                                teamApplicationsSize.value = teamApplications.size
                             }
                         }
+                        //кнопка загрузки заявлений
                         DownloadFilesButton(Modifier.align(Alignment.CenterVertically)) {
-                            if (competitionIsDone.value) {
+                            if (metaInfoUploaded.value) {
                                 fileDialog.isMultipleMode = true
                                 fileDialog.isVisible = true
                                 teamApplications += getTeamApplicationsFromUser(fileDialog) ?: listOf()
-                                count.value = teamApplications.size
+                                teamApplicationsSize.value = teamApplications.size
                             }
                         }
 
                         //Кнопка сохранения компетишна (происходит в два этапа)
                         SaveButton(Modifier.align(Alignment.CenterVertically)) {
-                            if (!competitionIsDone.value) {
+                            //сохранение метаданных
+                            if (!metaInfoUploaded.value) {
                                 val e = checkCompetitionData()
                                 if (e == null) {
                                     winManager.addCompetitionName(competitionName.value)
-                                    competitionIsDone.value = true
+                                    metaInfoUploaded.value = true
                                     winManager.saveMetaInfo(
                                         MetaInfo(
                                             competitionName.value,
@@ -154,22 +173,24 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                                     eWindow.finished.value = false
                                     openingException.value = e
                                 }
-                            } else {
+                            } //сохранение тим апликешнов
+                            else  {
                                 winManager.saveApplication(teamApplications.toList())
                                 winManager.openCompetitionWindow()
                                 winManager.closeAplUplWindow()
                             }
                         }
                     }
+                    //Списки заявок
                     Column(
                         modifier = Modifier.fillMaxSize(0.90f),
                         Arrangement.spacedBy(DEL_SHIFT),
                         Alignment.CenterHorizontally
                     ) {
-                        repeat(count.value) { i ->
+                        repeat(teamApplicationsSize.value) { i ->
                             Row(Modifier.wrapContentWidth(), Arrangement.spacedBy(DEL_SHIFT), Alignment.Top) {
                                 val teamN = mutableStateOf(teamApplications[i].teamName)
-                                FileField(teamN, Modifier.height(BTN_HEIGHT).width(FILE_FIELD_WIDTH)) {
+                                ApplicationNameField(teamN, Modifier.height(BTN_HEIGHT).width(FILE_FIELD_WIDTH)) {
                                     teamN.value = it
                                     teamApplications[i].teamName = it
                                 }
@@ -179,12 +200,13 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                                 DeleteApplicationButton {
                                     teamApplications.removeAt(i)
                                     teamApplicationsNames.removeAt(i)
-                                    count.value--
+                                    teamApplicationsSize.value--
                                 }
                             }
                         }
                     }
                 }
+                //скролбар
                 VerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                     adapter = rememberScrollbarAdapter(scrollState = scrollState),
@@ -197,11 +219,11 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             }
         }
     }
-
+    //функция скачивания файлов от чела и проверка их на правильность
     private fun getTeamApplicationsFromUser(fileDialog: FileDialog): List<TeamApplication>? {
         try {
             val result = fileDialog.files
-                .mapIndexed { idx, it -> TeamApplication(it, idx + count.value) }
+                .mapIndexed { idx, it -> TeamApplication(it, idx + teamApplicationsSize.value) }
                 .filter { !teamApplicationsNames.contains(it.teamName) }
             teamApplicationsNames += result.map { it.teamName }
             return result
@@ -211,7 +233,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         return null
     }
 
-
+    //проверка компетишндаты
     private fun checkCompetitionData(): Exception? {
         if (SportType.get(competitionSportType.value) == SportType.X) {
             return InvalidSportType(competitionSportType.value)
@@ -234,6 +256,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         return null
     }
 
+    //открытие окна с заявлениями
     @Composable
     private fun openTeamApplication() {
         val isOpen = mutableStateOf(true)
@@ -300,8 +323,8 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         val WIDTH_OF_TEXT = 200.dp
     }
 
-    @Composable
-    private fun FileField(name: MutableState<String>, modifier: Modifier, onValueChange: (String) -> Unit) {
+    @Composable //Поле с заявлением
+    private fun ApplicationNameField(name: MutableState<String>, modifier: Modifier, onValueChange: (String) -> Unit) {
         TextField(
             modifier = modifier,
             singleLine = true,
@@ -334,7 +357,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         ) {
             Icon(
                 Icons.Default.Search, contentDescription = null, tint =
-                if (competitionIsDone.value) {
+                if (metaInfoUploaded.value) {
                     ACCENT_C
                 } else {
                     GREY_C
@@ -344,7 +367,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     }
 
     @Composable //Кнопка создания пустого заявления
-    private fun CreateFileButton(modifier: Modifier, onClick: () -> Unit) {
+    private fun CreateAplicationButton(modifier: Modifier, onClick: () -> Unit) {
         IconButton(
             modifier = modifier,
             onClick = onClick
@@ -352,7 +375,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             Icon(
                 Icons.Default.Add,
                 contentDescription = null,
-                tint = if (competitionIsDone.value) {
+                tint = if (metaInfoUploaded.value) {
                     ACCENT_C
                 } else {
                     GREY_C
@@ -378,7 +401,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
     }
 
 
-    @Composable
+    @Composable //всплывающее окно выбора типа соревнования
     private fun RaceSelector(modifier: Modifier) {
         Column {
             Button(
@@ -387,8 +410,8 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                     backgroundColor = FOREGROUND_C
                 ),
                 onClick = {
-                    if (!competitionIsDone.value) {
-                        expanded.value = true
+                    if (!metaInfoUploaded.value) {
+                        menuIsExpanded.value = true
                     }
                 }
             ) {
@@ -399,17 +422,18 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
                 )
 
             }
+            //сама выпадающая менюшка
             DropdownMenu(
                 modifier = modifier.background(FOREGROUND_C),
-                expanded = expanded.value,
-                onDismissRequest = { expanded.value = false }
+                expanded = menuIsExpanded.value,
+                onDismissRequest = { menuIsExpanded.value = false }
             ) {
                 Divider(color = BACKGROUND_C, thickness = 0.5.dp)
                 SportType.values().dropLast(1).forEach {
                     DropdownMenuItem(onClick = {
                         competitionSportType.value = it.toRussian()
                         textColor.value = TEXT_C
-                        expanded.value = false
+                        menuIsExpanded.value = false
                     }) {
                         Text(
                             it.toRussian()
@@ -423,8 +447,9 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
         }
     }
 
+    //Рисует первые 2 текстфилда
     @Composable
-    private fun drawCompetitionDataRow(
+    private fun CompetitionDataField(
         modifier: Modifier,
         textOfUnit: String,
         text: String,
@@ -440,7 +465,7 @@ class ApplicationUploadingWindow(private val winManager: AplUplWinManager) : IWi
             singleLine = true,
             value = text,
             onValueChange = onValueChange,
-            readOnly = competitionIsDone.value,
+            readOnly = metaInfoUploaded.value,
             placeholder = {
                 Text(modifier = Modifier.width(WIDTH_OF_TEXT), text = textOfUnit, color = GREY_C)
             }
